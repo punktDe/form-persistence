@@ -1,0 +1,3 @@
+prototype(PunktDe.Form.Persistence:SaveFormDataFinisher.Definition) < prototype(Neos.Form.Builder:Finisher.Definition) {
+    formElementType = 'PunktDe.Form.Persistence:SaveFormDataFinisher'
+}

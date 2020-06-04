@@ -1,0 +1,16 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        'PunktDe.Form.Persistence': true
+
+  Form:
+    presets:
+        finisherPresets:
+          'PunktDe.Form.Persistence:SaveFormDataFinisher':
+            implementationClassName: PunktDe\Form\Persistence\Finishers\SaveFormDataFinisher
+            options: {  }
+
+    FusionRenderer:
+      fusionAutoInclude:
+        'PunktDe.Form.Persistence': true

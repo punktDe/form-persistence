@@ -1,0 +1,10 @@
+'PunktDe.Form.Persistence:SaveFormDataFinisher':
+  superTypes:
+    'Neos.Form.Builder:AbstractFinisher': TRUE
+  ui:
+    label: 'Save Form Data Finisher'
+    icon: 'fas fa-save'
+    inspector:
+      groups:
+        'finisher':
+          icon: 'fas fa-save'
