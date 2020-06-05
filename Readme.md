@@ -3,14 +3,14 @@
 This package adds a persistence finisher to save from data into your site database. 
 The saved form data can be downloaded as a csv file in the backend at any given time.
 
-The forms categorized through the combination of th form identifier and a hash of the form field identifiers.
+The forms categorized through the combination of th form identifier as well as a hash of the form field identifiers.
 
 ## Installation
 ```
 composer require punktde/form-persitence
 ```
 
-After the succesfull installation run `./flow doctrine:migrate` to initialize the database table.
+After the successful installation run `./flow doctrine:migrate` to initialize the database table.
 
 # Usage
 ## Using the flow form configuration
