@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @Flow\Entity
- * @ORM\Table(uniqueConstraints={@UniqueConstraint(name="form_identifier_hash_index", columns={"formidentifier", "hash"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="form_identifier_hash_index", columns={"formidentifier", "hash"})})
  */
 class FormData
 {
@@ -24,12 +24,12 @@ class FormData
     protected $formIdentifier;
 
     /**
-     * @var string;
+     * @var string
      */
     protected $hash;
 
     /**
-     * @var string;
+     * @var string
      */
     protected $formDataJson;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PunktDe\Form\Persistence\Backend;
+namespace PunktDe\Form\Persistence\Controller\Backend;
 
 /*
  *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - https://punkt.de

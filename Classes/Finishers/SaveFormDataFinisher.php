@@ -11,7 +11,7 @@ namespace PunktDe\Form\Persistence\Finishers;
 
 use Neos\Form\Core\Model\AbstractFinisher;
 
-class SaveFromDataFinisher extends AbstractFinisher
+class SaveFormDataFinisher extends AbstractFinisher
 {
 
     protected function executeInternal()

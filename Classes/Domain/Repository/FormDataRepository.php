@@ -9,8 +9,12 @@ namespace PunktDe\Form\Persistence\Domain\Repository;
  *  All rights reserved.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 class FormDataRepository extends Repository
 {
 
