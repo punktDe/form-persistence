@@ -64,15 +64,13 @@ class FormDataController extends ActionController
         $formDataItems = $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray();
 
         $csv = Writer::createFromString('');
+        $headerSet = false;
 
-        $header = array_keys($formDataItems[0]->getFormData());
-        $csv->insertOne($header);
-
-        foreach ($formDataItems as $formDataItem) {
+        foreach ($formDataItems as $key => $formDataItem) {
             $dataRow = [];
-            foreach ($formDataItem->getFormData() as $identifier => $fieldValue) {
+            foreach ($formDataItem->getFormData() as $fieldIdentifier => $fieldValue) {
                 if ($fieldValue instanceof PersistentResource) {
-                    $dataRow[] = $fieldValue->getFilename();
+                    $dataRow[$fieldIdentifier] = $fieldValue->getFilename();
                     continue;
                 }
 
@@ -87,7 +85,13 @@ class FormDataController extends ActionController
                     continue;
                 }
 
-                $dataRow[] = $fieldValue;
+                $dataRow[$fieldIdentifier] = $fieldValue;
+            }
+
+            if (!$headerSet) {
+                $header = array_keys($dataRow);
+                $csv->insertOne($header);
+                $headerSet = true;
             }
 
             $csv->insertOne($dataRow);
@@ -97,9 +101,9 @@ class FormDataController extends ActionController
         $this->response->setComponentParameter(
             SetHeaderComponent::class,
             'Content-Disposition',
-            'attachment; filename="Form-Export-' . $formIdentifier . (new DateTime())->format('Y-m-d-H-i-s').'.csv"'
+            'attachment; filename="Form-Export-' . $formIdentifier . (new DateTime())->format('Y-m-d-H-i-s') . '.csv"'
         );
-        $csv->output('Form-Export-' . $formIdentifier . '-' . (new DateTime())->format('Y-m-d-H-i-s') .'.csv');
+        $csv->output('Form-Export-' . $formIdentifier . '-' . (new DateTime())->format('Y-m-d-H-i-s') . '.csv');
         die();
     }
 }
