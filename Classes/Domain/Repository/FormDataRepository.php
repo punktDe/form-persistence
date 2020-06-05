@@ -24,7 +24,10 @@ class FormDataRepository extends Repository
         'date' => QueryInterface::ORDER_DESCENDING,
     ];
 
-    public function findAllUniqueForms()
+    /**
+     * @return iterable
+     */
+    public function findAllUniqueForms(): iterable
     {
         $queryBuilder = $this->createQueryBuilder('form');
         $queryBuilder->groupBy('form.formIdentifier')
