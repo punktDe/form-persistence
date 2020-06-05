@@ -8,13 +8,14 @@ Neos:
         submodules:
           formDataDownlaod:
             label: 'Form Data Download'
-            controller: 'PunktDe\Form\Persistence\Controller\Backend\DownloadController'
+            controller: 'PunktDe\Form\Persistence\Controller\Backend\FormDataController'
             description: 'Download saved form data for the forms on this site'
             icon: 'fas fa-file-download'
             privilegeTarget: 'PunktDe.Form.Persistence:DownLoadFormData'
 
   Form:
     presets:
+      'default':
         finisherPresets:
           'PunktDe.Form.Persistence:SaveFormDataFinisher':
             implementationClassName: PunktDe\Form\Persistence\Finishers\SaveFormDataFinisher

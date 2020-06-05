@@ -9,12 +9,11 @@ namespace PunktDe\Form\Persistence\Domain\Model;
  *  All rights reserved.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Entity
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="form_identifier_hash_index", columns={"formidentifier", "hash"})})
  */
 class FormData
 {
@@ -29,9 +28,10 @@ class FormData
     protected $hash;
 
     /**
-     * @var string
+     * @ORM\Column(type="flow_json_array")
+     * @var array
      */
-    protected $formDataJson;
+    protected $formData;
 
     /**
      * @return string
@@ -66,19 +66,19 @@ class FormData
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getFormDataJson(): string
+    public function getFormData(): array
     {
-        return $this->formDataJson;
+        return $this->formData;
     }
 
     /**
-     * @param string $formDataJson
+     * @param array $formData
      */
-    public function setFormDataJson(string $formDataJson): void
+    public function setFormData(array $formData): void
     {
-        $this->formDataJson = $formDataJson;
+        $this->formData = $formData;
     }
 
 }

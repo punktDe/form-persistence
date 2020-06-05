@@ -1,0 +1,7 @@
+-
+  requestFilter: 'isPackage("PunktDe.Form.Persistence") && isController("FormData")'
+  viewObjectName: 'Neos\Fusion\View\FusionView'
+  options:
+    fusionPathPatterns:
+      - 'resource://Neos.Fusion/Private/Fusion'
+      - 'resource://PunktDe.Form.Persistence/Private/Fusion'

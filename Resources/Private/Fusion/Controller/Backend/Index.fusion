@@ -1,0 +1,51 @@
+prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Component) {
+
+    tableRows = Neos.Fusion:Loop {
+        items = ${formTypes}
+        itemName = 'formType'
+        itemRenderer = Neos.Fusion:Component {
+            formType = ${formType}
+
+            href = Neos.Fusion:UriBuilder {
+                package = 'PunktDe.Form.Persistence'
+                controller = 'Backend\\FormData'
+                action = 'download'
+                additionalParams {
+                    formIdentifier = ${formType.formIdentifier}
+                    hash = ${formType.hash}
+                }
+            }
+
+            renderer = afx`
+                <tr>
+                    <td>{props.formType.formIdentifier}</td>
+                    <td>{props.formType.hash}</td>
+                    <td class="neos-action"><a href={props.href} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
+                </tr>
+            `
+        }
+    }
+
+    renderer = afx`
+        <div class="neos-content neos-container-fluid">
+            <div class="neos-module-container">
+                <table class="neos-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Form Identifier
+                            </th>
+                            <th>
+                                Formfields hash
+                            </th>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {props.tableRows}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `
+}

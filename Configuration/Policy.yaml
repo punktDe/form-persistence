@@ -1,7 +1,7 @@
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'PunktDe.Form.Persistence:DownLoadFormData':
-      matcher: 'method(PunktDe\Form\Persistence\Controller\Backend\DownloadController->(?!initialize).*Action())'
+      matcher: 'method(PunktDe\Form\Persistence\Controller\Backend\FormDataController->(?!initialize).*Action())'
 
 roles:
   'Neos.Neos:Administrator':
