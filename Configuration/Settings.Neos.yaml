@@ -6,7 +6,7 @@ Neos:
     modules:
       administration:
         submodules:
-          formDataDownlaod:
+          formDataDownload:
             label: 'Form Data Download'
             controller: 'PunktDe\Form\Persistence\Controller\Backend\FormDataController'
             description: 'Download saved form data for the forms on this site'
