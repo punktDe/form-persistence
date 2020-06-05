@@ -27,4 +27,4 @@ finishers:
 ```
 
 ## Using the Neos Form Builder
-Requires the suggested package neos/form-builder and add the save form data finisher to your node base form in the neos backend.
+Requires the suggested package neos/form-builder and add the save form data finisher to your node based form in the neos backend.
