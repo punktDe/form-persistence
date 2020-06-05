@@ -11,6 +11,7 @@ namespace PunktDe\Form\Persistence\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
@@ -18,6 +19,11 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class FormDataRepository extends Repository
 {
+
+    protected $defaultOrderings = [
+        'date' => QueryInterface::ORDER_DESCENDING,
+    ];
+
     public function findAllUniqueForms()
     {
         $queryBuilder = $this->createQueryBuilder('form');
@@ -34,6 +40,7 @@ class FormDataRepository extends Repository
     public function findByFormIdentifierAndHash(string $formIdentifier, string $hash): QueryResultInterface
     {
         $query = $this->createQuery();
+
         return $query->matching(
             $query->logicalAnd(
                 $query->equals('formIdentifier', $formIdentifier),

@@ -28,6 +28,11 @@ class FormData
     protected $hash;
 
     /**
+     * @var \DateTime
+     */
+    protected $date;
+
+    /**
      * @ORM\Column(type="flow_json_array")
      * @var array
      */
@@ -81,4 +86,19 @@ class FormData
         $this->formData = $formData;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getDate(): \DateTime
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate(\DateTime $date): void
+    {
+        $this->date = $date;
+    }
 }
