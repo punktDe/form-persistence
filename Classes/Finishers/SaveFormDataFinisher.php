@@ -47,6 +47,7 @@ class SaveFormDataFinisher extends AbstractFinisher
         $formData->setFormIdentifier($formRuntime->getIdentifier());
         $formData->setHash(sha1($fieldIdentifiersString));
         $formData->setFormData($formFieldsData);
+        $formData->setDate(new \DateTime());
 
         $this->formDataRepository->add($formData);
     }

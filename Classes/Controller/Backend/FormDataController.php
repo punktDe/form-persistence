@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace PunktDe\Form\Persistence\Controller\Backend;
@@ -9,22 +8,17 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
  *  All rights reserved.
  */
 
-use DateTime;
-use DateTimeZone;
 use Exception;
-use GuzzleHttp\Psr7\Stream;
 use League\Csv\CannotInsertRecord;
-use League\Csv\Writer;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Fusion\View\FusionView;
+use PunktDe\Form\Persistence\Domain\Exporter\CsvExporter;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
-use function GuzzleHttp\Psr7\stream_for;
 
 class FormDataController extends ActionController
 {
@@ -44,9 +38,15 @@ class FormDataController extends ActionController
      */
     protected $formDataRepository;
 
+    /**
+     * @Flow\Inject
+     * @var CsvExporter
+     */
+    protected $csvExporter;
+
     public function indexAction(): void
     {
-        $formTypes = $this->formDataRepository->findAllUniqueForms() ?? [];
+        $formTypes = $this->formDataRepository->findAllUniqueForms();
         $this->view->assign('formTypes', $formTypes);
     }
 
@@ -55,7 +55,7 @@ class FormDataController extends ActionController
      * @throws NoSuchArgumentException
      * @throws Exception
      */
-    public function downloadAction()
+    public function downloadAction(): void
     {
         $formIdentifier = $this->request->getParentRequest()->getArgument('formIdentifier');
         $hash = $this->request->getParentRequest()->getArgument('hash');
@@ -63,43 +63,10 @@ class FormDataController extends ActionController
         /** @var FormData[] $formDataItems */
         $formDataItems = $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray();
 
-        $csv = Writer::createFromString('');
+        $fileName = sprintf('Form-Export-%s-%s.csv', $formIdentifier, (new \DateTime())->format('Y-m-d-H-i-s'));
 
-        $header = array_keys($formDataItems[0]->getFormData());
-        $csv->insertOne($header);
+        $this->csvExporter->compileAndSend($formDataItems, $fileName);
 
-        foreach ($formDataItems as $formDataItem) {
-            $dataRow = [];
-            foreach ($formDataItem->getFormData() as $identifier => $fieldValue) {
-                if ($fieldValue instanceof PersistentResource) {
-                    $dataRow[] = $fieldValue->getFilename();
-                    continue;
-                }
-
-                if (is_array($fieldValue) && array_key_exists('date', $fieldValue)) {
-                    $dataRow[] = (new DateTime($fieldValue['date']))
-                        ->setTimezone(new DateTimeZone($fieldValue['timezone']))
-                        ->format('d.m.Y');
-                    continue;
-                }
-
-                if (is_array($fieldValue)) {
-                    continue;
-                }
-
-                $dataRow[] = $fieldValue;
-            }
-
-            $csv->insertOne($dataRow);
-        }
-
-        $this->response->setContentType('application/text');
-        $this->response->setComponentParameter(
-            SetHeaderComponent::class,
-            'Content-Disposition',
-            'attachment; filename="Form-Export-' . $formIdentifier . (new DateTime())->format('Y-m-d-H-i-s').'.csv"'
-        );
-        $csv->output('Form-Export-' . $formIdentifier . '-' . (new DateTime())->format('Y-m-d-H-i-s') .'.csv');
         die();
     }
 }

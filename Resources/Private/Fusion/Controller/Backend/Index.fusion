@@ -4,9 +4,8 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
         items = ${formTypes}
         itemName = 'formType'
         itemRenderer = Neos.Fusion:Component {
-            formType = ${formType}
 
-            href = Neos.Fusion:UriBuilder {
+            downloadLInk = Neos.Fusion:UriBuilder {
                 package = 'PunktDe.Form.Persistence'
                 controller = 'Backend\\FormData'
                 action = 'download'
@@ -16,11 +15,14 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                 }
             }
 
+            date = ${Date.format(formType.date, 'Y-m-d H:i:s')}
+
             renderer = afx`
                 <tr>
-                    <td>{props.formType.formIdentifier}</td>
-                    <td>{props.formType.hash}</td>
-                    <td class="neos-action"><a href={props.href} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
+                    <td>{formType.formIdentifier}</td>
+                    <td>{formType.hash}</td>
+                    <td>{props.date}</td>
+                    <td class="neos-action"><a href={props.downloadLInk} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
                 </tr>
             `
         }
@@ -36,7 +38,10 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                                 Form Identifier
                             </th>
                             <th>
-                                Formfields hash
+                                Form Version
+                            </th>
+                            <th>
+                                Latest Entry
                             </th>
                             <th/>
                         </tr>
