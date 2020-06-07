@@ -1,4 +1,4 @@
-# Form Persistence Finisher and example CSV-Download for Neo.Form
+# Form Persistence Finisher with a backend module to download the form-data
 
 This package adds a persistence finisher to persist form data into your database. 
 The saved form data can be downloaded as a csv file in the backend at any given time.
