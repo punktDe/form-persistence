@@ -6,9 +6,6 @@ use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 
-/**
- * Auto-generated Migration: Please modify to your needs! This block will be used as the migration description if getDescription() is not used.
- */
 class Version20200605110650 extends AbstractMigration
 {
 

@@ -8,8 +8,6 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
  *  All rights reserved.
  */
 
-use Neos\Flow\Persistence\QueryResultInterface;
-
 interface FormDataExporterInterface
 {
     /**

@@ -9,9 +9,6 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
  */
 
 use League\Csv\Writer;
-use Neos\Flow\Http\Component\SetHeaderComponent;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 
 class CsvExporter implements FormDataExporterInterface
@@ -20,7 +17,7 @@ class CsvExporter implements FormDataExporterInterface
     /**
      * @param iterable $formDataItems
      * @param string $fileName
-     * @return string
+     * @return void
      * @throws \League\Csv\CannotInsertRecord
      */
     public function compileAndSend(iterable $formDataItems, string $fileName): void
