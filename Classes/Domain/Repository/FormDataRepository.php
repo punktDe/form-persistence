@@ -31,7 +31,7 @@ class FormDataRepository extends Repository
     {
         $queryBuilder = $this->createQueryBuilder('form');
         $queryBuilder->groupBy('form.formIdentifier')
-            ->groupBy('form.hash');
+            ->addGroupBy('form.hash');
         return $queryBuilder->getQuery()->execute();
     }
 
