@@ -1,16 +1,17 @@
 {
-    "description": "",
+    "description": "Provides a form finisher to save the form data to the database and a backend module to download the data.",
     "type": "neos-package",
+    "homepage": "https://github.com/punktDe/form-persistence",
     "name": "punktde/form-persistence",
+    "license": "MIT",
     "require": {
-        "neos/neos": "*",
+        "neos/neos": "^4.0 || ^5.0",
         "neos/form": "*",
         "neos/fusion": "*",
         "league/csv":"^9.0"
     },
     "suggest": {
-        "neos/form-builder": "Adds a builder for the Flow Form Framework to the Neos CMS backend.",
-        "neos/form-fusionrenderer": "A Flow Form Framework preset for Fusion based Form rendering."
+        "neos/form-builder": "Adds a builder for the Flow Form Framework to the Neos CMS backend."
     },
     "autoload": {
         "psr-4": {
