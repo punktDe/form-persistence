@@ -10,17 +10,20 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                 controller = 'Backend\\FormData'
                 action = 'download'
                 additionalParams {
-                    formIdentifier = ${formType.formIdentifier}
-                    hash = ${formType.hash}
+                    formIdentifier = ${formType[0].formIdentifier}
+                    hash = ${formType[0].hash}
                 }
             }
 
-            date = ${Date.format(formType.date, 'Y-m-d H:i:s')}
+            date = ${Date.format(formType[0].date, 'Y-m-d H:i:s')}
+            formObject = ${formType[0]}
+            entryCount = ${formType.entryCount}
 
             renderer = afx`
                 <tr>
-                    <td>{formType.formIdentifier}</td>
-                    <td>{formType.hash}</td>
+                    <td>{props.formObject.formIdentifier}</td>
+                    <td>{props.formObject.hash}</td>
+                    <td>{props.entryCount}</td>
                     <td>{props.date}</td>
                     <td class="neos-action"><a href={props.downloadLInk} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
                 </tr>
@@ -39,6 +42,9 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                             </th>
                             <th>
                                 Form Version
+                            </th>
+                            <th>
+                                Entry Count
                             </th>
                             <th>
                                 Latest Entry
