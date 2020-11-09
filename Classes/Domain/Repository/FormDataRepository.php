@@ -68,8 +68,8 @@ class FormDataRepository extends Repository
 
         $result = $query->matching(
             $query->logicalAnd(
-                $query->equals('fromIdentifier', $formIdentifier),
-                $query->like('formData', $data)
+                $query->equals('formIdentifier', $formIdentifier),
+                $query->like('formData', '%' . $data . '%')
             )
         )->execute()->getFirst();
         /** @var FormData $result */
