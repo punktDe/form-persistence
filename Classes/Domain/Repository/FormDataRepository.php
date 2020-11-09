@@ -11,8 +11,10 @@ namespace PunktDe\Form\Persistence\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 
 /**
  * @Flow\Scope("singleton")
@@ -52,5 +54,25 @@ class FormDataRepository extends Repository
                 $query->equals('hash', $hash)
             )
         )->execute();
+    }
+
+    /**
+     * @param string $formIdentifier
+     * @param string $data
+     * @return FormData|null
+     * @throws InvalidQueryException
+     */
+    public function findFormDataWithIdentifierContainingData(string $formIdentifier, string $data): ?FormData
+    {
+        $query = $this->createQuery();
+
+        $result = $query->matching(
+            $query->logicalAnd(
+                $query->equals('fromIdentifier', $formIdentifier),
+                $query->like('formData', $data)
+            )
+        )->execute()->getFirst();
+        /** @var FormData $result */
+        return $result;
     }
 }
