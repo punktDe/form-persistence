@@ -11,7 +11,7 @@ Form data is aggregated by the combination of the form identifier and a hash of 
 
 ## Installation
 ```
-composer require punktde/form-persitence
+composer require punktde/form-persistence
 ```
 
 After the successful installation run `./flow doctrine:migrate` to initialize the database table.
