@@ -1,0 +1,6 @@
+PuntkDe:
+  Form:
+    Persistence:
+      exporter:
+        generiCSV:
+          enabled: true

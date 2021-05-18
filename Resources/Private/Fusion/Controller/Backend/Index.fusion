@@ -1,11 +1,21 @@
 prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Component) {
 
+     exportDefinitionsLink = Neos.Fusion:UriBuilder {
+        package = 'PunktDe.Form.Persistence'
+        controller = 'Backend\\FormData'
+        action = 'download'
+        additionalParams {
+            formIdentifier = ${formType[0].formIdentifier}
+            hash = ${formType[0].hash}
+        }
+    }
+
     tableRows = Neos.Fusion:Loop {
         items = ${formTypes}
         itemName = 'formType'
         itemRenderer = Neos.Fusion:Component {
 
-            downloadLInk = Neos.Fusion:UriBuilder {
+            downloadLink = Neos.Fusion:UriBuilder {
                 package = 'PunktDe.Form.Persistence'
                 controller = 'Backend\\FormData'
                 action = 'download'
@@ -25,7 +35,7 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                     <td>{props.formObject.hash}</td>
                     <td>{props.entryCount}</td>
                     <td>{props.date}</td>
-                    <td class="neos-action"><a href={props.downloadLInk} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
+                    <td class="neos-action"><a href={props.downloadLink} class="neos-button neos-button-primary" title="Export form data as csv"><i class="fas fa-file-download icon-white"></i> Export as CSV</a></td>
                 </tr>
             `
         }
@@ -56,6 +66,9 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                         {props.tableRows}
                     </tbody>
                 </table>
+            </div>
+            <div class="neos-footer">
+                <a class="neos-button neos-button-primary" title="Create user" href="https://app.cgm.punkt.dev:8014/neos/administration/users?moduleArguments%5B%40package%5D=neos.neos&amp;moduleArguments%5B%40controller%5D=module%5Cadministration%5Cusers&amp;moduleArguments%5B%40action%5D=new&amp;moduleArguments%5B%40format%5D=html&amp;moduleArguments%5B%40subpackage%5D=">Create user</a>
             </div>
         </div>
     `
