@@ -1,9 +1,9 @@
-prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Component) {
+prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusion:Component) {
 
      exportDefinitionsLink = Neos.Fusion:UriBuilder {
         package = 'PunktDe.Form.Persistence'
-        controller = 'Backend\\FormData'
-        action = 'download'
+        controller = 'Backend\\ExportDefinition'
+        action = 'new'
         additionalParams {
             formIdentifier = ${formType[0].formIdentifier}
             hash = ${formType[0].hash}
@@ -68,7 +68,7 @@ prototype(PunktDe.Form.Persistence:Backend.Index) < prototype(Neos.Fusion:Compon
                 </table>
             </div>
             <div class="neos-footer">
-                <a class="neos-button neos-button-primary" title="Create user" href="https://app.cgm.punkt.dev:8014/neos/administration/users?moduleArguments%5B%40package%5D=neos.neos&amp;moduleArguments%5B%40controller%5D=module%5Cadministration%5Cusers&amp;moduleArguments%5B%40action%5D=new&amp;moduleArguments%5B%40format%5D=html&amp;moduleArguments%5B%40subpackage%5D=">Create user</a>
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Export definitions</a>
             </div>
         </div>
     `

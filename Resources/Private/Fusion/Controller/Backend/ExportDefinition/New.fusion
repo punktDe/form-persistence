@@ -1,0 +1,5 @@
+prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.New) < prototype(Neos.Fusion:Component) {
+
+    renderer = 'NEW!'
+
+}

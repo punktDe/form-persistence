@@ -1,0 +1,3 @@
+prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(Neos.Fusion:Component) {
+
+}
