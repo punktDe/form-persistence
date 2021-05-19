@@ -46,8 +46,12 @@ class ExportDefinition implements ExportDefinitionInterface
     protected $persistenceManager;
 
 
-    public function isSuitableFor(FormData $formData): bool
+    public function isSuitableFor(?FormData $formData): bool
     {
+        if ($formData === null) {
+            return false;
+        }
+
         return !empty(array_intersect(array_keys($this->definition), $formData->getFieldNames()));
     }
 

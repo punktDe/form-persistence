@@ -99,9 +99,6 @@ class FormDataController extends ActionController
             );
         }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
 
-        \Neos\Flow\var_dump($formDataItems, __METHOD__ . ':' . __LINE__);
-        die();
-
         $exporter->compileAndSend($formDataItems);
         $exporter->setFileName($fileName);
 

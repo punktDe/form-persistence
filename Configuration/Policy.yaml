@@ -2,11 +2,10 @@ privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'PunktDe.Form.Persistence:DownLoadFormData':
       label: Form Data Download
-      matcher: 'method(PunktDe\Form\Persistence\Controller\Backend\FormDataController->(?!initialize).*Action())'
-
+      matcher: 'method(PunktDe\Form\Persistence\Controller\(Backend|Api)\FormDataController->(?!initialize).*Action())'
     'PunktDe.Form.Persistence:ExportDefinitions':
       label: Form Data Export Definitions
-      matcher: 'method(PunktDe\Form\Persistence\Controller\Backend\ExportDefinitionController->(?!initialize).*Action())'
+      matcher: 'method(PunktDe\Form\Persistence\Controller\(Backend|Api)\ExportDefinitionController->(?!initialize).*Action())'
 
 
 roles:

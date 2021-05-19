@@ -47,7 +47,6 @@ class FormDataRepository extends Repository
     public function findByFormIdentifierAndHash(string $formIdentifier, string $hash): QueryResultInterface
     {
         $query = $this->createQuery();
-
         return $query->matching(
             $query->logicalAnd(
                 $query->equals('formIdentifier', $formIdentifier),

@@ -10,6 +10,7 @@ namespace PunktDe\Form\Persistence\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 
 /**
  * @Flow\Entity

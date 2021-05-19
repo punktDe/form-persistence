@@ -1,4 +1,20 @@
 Neos:
+  Flow:
+    mvc:
+      routes:
+        'PunktDe.Form.Persistence':
+          position: start
+
+    security:
+      authentication:
+        providers:
+          'Neos.Neos:Backend':
+            requestPatterns:
+              'PunktDe.Form.Persistence':
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'PunktDe\Form\Persistence\Controller\.*'
+
   Neos:
     fusion:
       autoInclude:
