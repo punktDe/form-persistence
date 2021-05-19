@@ -9,12 +9,28 @@ The saved form data can be downloaded as a csv file in the backend at any given 
 
 Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers.
 
-## Installation
+# Installation
 ```
 composer require punktde/form-persitence
 ```
 
 After the successful installation run `./flow doctrine:migrate` to initialize the database table.
+
+# Configuration
+## Export Definitions
+
+Static export definitions can be defined via settings.
+
+**fileNamePattern**: 
+
+Example: `Form-Export-{formIdentifier}-{currentDate}.csv`
+
+The following variables ca be used: 
+
+* formIdentifier
+* currentDate
+* presetIdentifier
+
 
 # Usage
 ## Add the SaveFormDataFinisher

@@ -13,6 +13,10 @@ Neos:
             icon: 'fas fa-file-download'
             privilegeTarget: 'PunktDe.Form.Persistence:DownLoadFormData'
 
+  Fusion:
+    defaultContext:
+      PunktDe.FormExport.ExportDefinition: 'PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper'
+
   Form:
     presets:
       'default':
@@ -24,3 +28,4 @@ Neos:
     FusionRenderer:
       fusionAutoInclude:
         'PunktDe.Form.Persistence': true
+

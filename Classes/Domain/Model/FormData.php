@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace PunktDe\Form\Persistence\Domain\Model;
@@ -38,6 +37,11 @@ class FormData
      */
     protected $formData;
 
+    public function getFieldNames(): array
+    {
+        return array_keys($this->formData);
+    }
+
     /**
      * @return string
      */
@@ -48,10 +52,12 @@ class FormData
 
     /**
      * @param string $formIdentifier
+     * @return FormData
      */
-    public function setFormIdentifier(string $formIdentifier): void
+    public function setFormIdentifier(string $formIdentifier): FormData
     {
         $this->formIdentifier = $formIdentifier;
+        return $this;
     }
 
     /**
@@ -64,26 +70,12 @@ class FormData
 
     /**
      * @param string $hash
+     * @return FormData
      */
-    public function setHash(string $hash): void
+    public function setHash(string $hash): FormData
     {
         $this->hash = $hash;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFormData(): array
-    {
-        return $this->formData;
-    }
-
-    /**
-     * @param array $formData
-     */
-    public function setFormData(array $formData): void
-    {
-        $this->formData = $formData;
+        return $this;
     }
 
     /**
@@ -96,9 +88,29 @@ class FormData
 
     /**
      * @param \DateTime $date
+     * @return FormData
      */
-    public function setDate(\DateTime $date): void
+    public function setDate(\DateTime $date): FormData
     {
         $this->date = $date;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormData(): array
+    {
+        return $this->formData;
+    }
+
+    /**
+     * @param array $formData
+     * @return FormData
+     */
+    public function setFormData(array $formData): FormData
+    {
+        $this->formData = $formData;
+        return $this;
     }
 }

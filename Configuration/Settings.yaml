@@ -1,6 +1,13 @@
-PuntkDe:
+PunktDe:
   Form:
     Persistence:
+      exportDefinitions:
+        csv:
+          label: Generic CSV
+          exporter: csv
+          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.csv"
+
       exporter:
-        generiCSV:
-          enabled: true
+        csv:
+          className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
+          options: []

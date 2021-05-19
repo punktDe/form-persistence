@@ -13,14 +13,13 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 
 class CsvExporter implements FormDataExporterInterface
 {
-
     /**
      * @param iterable $formDataItems
      * @param string $fileName
      * @return void
      * @throws \League\Csv\CannotInsertRecord
      */
-    public function compileAndSend(iterable $formDataItems, string $fileName): void
+    public function compileAndSend(iterable $formDataItems): void
     {
         $csv = Writer::createFromString('');
         $headerSet = false;

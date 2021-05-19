@@ -6,7 +6,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 
-class Version20200605110650 extends AbstractMigration
+final class Version20200605110650 extends AbstractMigration
 {
 
     /**
