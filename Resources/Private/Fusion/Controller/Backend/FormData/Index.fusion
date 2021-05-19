@@ -35,7 +35,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                     <td>{props.date}</td>
                     <td class="neos-action">
                         <Neos.Fusion.Form:Form form.target.action="download" form.target.controller="Backend\\FormData">
-                            <Neos.Fusion.Form:Select field.name="exportDefinition">{props.options}</Neos.Fusion.Form:Select>
+                            <Neos.Fusion.Form:Select field.name="exportDefinitionIdentifier">{props.options}</Neos.Fusion.Form:Select>
                             <Neos.Fusion.Form:Hidden field.name="formIdentifier" attributes.value={props.formObject.formIdentifier}/>
                             <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={props.formObject.hash}/>
                             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">Download</Neos.Fusion.Form:Button>

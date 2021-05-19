@@ -28,8 +28,9 @@ Example: `Form-Export-{formIdentifier}-{currentDate}.csv`
 The following variables ca be used: 
 
 * formIdentifier
+* formVersionHash
 * currentDate
-* presetIdentifier
+* exportDefinitionIdentifier
 
 
 # Usage

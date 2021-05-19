@@ -14,8 +14,27 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 class CsvExporter implements FormDataExporterInterface
 {
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * @var string
+     */
+    protected $fileName = 'FormData.csv';
+
+    public function setFileName(string $fileName): void
+    {
+        $this->$fileName = $fileName;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    /**
      * @param iterable $formDataItems
-     * @param string $fileName
      * @return void
      * @throws \League\Csv\CannotInsertRecord
      */
@@ -26,25 +45,6 @@ class CsvExporter implements FormDataExporterInterface
 
         foreach ($formDataItems as $key => $formDataItem) {
             $dataRow = [];
-            foreach ($formDataItem->getFormData() as $fieldIdentifier => $fieldValue) {
-                if ($fieldValue instanceof PersistentResource) {
-                    $dataRow[$fieldIdentifier] = $fieldValue->getFilename();
-                    continue;
-                }
-
-                if (is_array($fieldValue) && array_key_exists('date', $fieldValue)) {
-                    $dataRow[] = (new \DateTime($fieldValue['date']))
-                        ->setTimezone(new \DateTimeZone($fieldValue['timezone']))
-                        ->format('d.m.Y');
-                    continue;
-                }
-
-                if (is_array($fieldValue)) {
-                    continue;
-                }
-
-                $dataRow[$fieldIdentifier] = $fieldValue;
-            }
 
             if (!$headerSet) {
                 $header = array_keys($dataRow);
@@ -55,6 +55,6 @@ class CsvExporter implements FormDataExporterInterface
             $csv->insertOne($dataRow);
         }
 
-        $csv->output($fileName);
+        $csv->output($this->fileName);
     }
 }

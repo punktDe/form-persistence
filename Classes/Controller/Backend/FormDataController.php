@@ -8,8 +8,6 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
  *  All rights reserved.
  */
 
-use Exception;
-use League\Csv\CannotInsertRecord;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -19,6 +17,8 @@ use Neos\Fusion\View\FusionView;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
+use PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor;
+use PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
@@ -52,6 +52,18 @@ class FormDataController extends ActionController
      */
     protected $exporterFactory;
 
+    /**
+     * @Flow\Inject
+     * @var FieldKeyMappingProcessor
+     */
+    protected $fieldKeyMappingProcessor;
+
+    /**
+     * @Flow\Inject
+     * @var ValueFormattingProcessor
+     */
+    protected $valueFormattingProcessor;
+
     public function indexAction(): void
     {
         $formTypes = $this->formDataRepository->findAllUniqueForms();
@@ -61,19 +73,37 @@ class FormDataController extends ActionController
     /**
      * @param string $formIdentifier
      * @param string $hash
-     * @param string $exportDefinition
+     * @param string $exportDefinitionIdentifier
      * @throws InvalidConfigurationTypeException
      * @throws CannotBuildObjectException
      * @throws UnknownObjectException
      * @throws ConfigurationException
      */
-    public function downloadAction(string $formIdentifier, string $hash, string $exportDefinition): void
+    public function downloadAction(string $formIdentifier, string $hash, string $exportDefinitionIdentifier): void
     {
         /** @var FormData[] $formDataItems */
-        $formDataItems = $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray();
 
-        $exporter = $this->exporterFactory->makeExporterByExportDefinition($this->exportDefinitionProvider->getExportDefinitionByIdentifier($exportDefinition));
+        $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($exportDefinitionIdentifier);
+        $exporter = $this->exporterFactory->makeExporterByExportDefinition($exportDefinition);
+
+        $fileName = str_replace(
+            ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
+            [$formIdentifier, date('Y-m-d_his'), $exportDefinition, $hash],
+            $exportDefinition->getFileNamePattern()
+        );
+
+        $formDataItems = array_map(function (FormData $formData) use ($exportDefinition) {
+            return $this->valueFormattingProcessor->convertFormData(
+                $this->fieldKeyMappingProcessor->convertFormData($formData->getFormData(), $exportDefinition->getDefinition()),
+                $exportDefinition->getDefinition()
+            );
+        }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
+
+        \Neos\Flow\var_dump($formDataItems, __METHOD__ . ':' . __LINE__);
+        die();
+
         $exporter->compileAndSend($formDataItems);
+        $exporter->setFileName($fileName);
 
         die();
     }

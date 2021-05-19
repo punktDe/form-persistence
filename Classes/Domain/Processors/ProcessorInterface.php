@@ -12,6 +12,6 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
 interface ProcessorInterface
 {
 
-
+    public function convertFormData(array $formData, array $conversionDefinition): array;
 
 }
