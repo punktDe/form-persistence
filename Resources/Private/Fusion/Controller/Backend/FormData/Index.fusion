@@ -16,7 +16,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
         itemRenderer = Neos.Fusion:Component {
 
             date = ${Date.format(formType[0].date, 'Y-m-d H:i:s')}
-            formObject = ${formType[0]}
+            formDataEntry = ${formType[0]}
             entryCount = ${formType.entryCount}
 
             options = Neos.Fusion:Loop {
@@ -29,18 +29,23 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
 
             renderer = afx`
                 <tr>
-                    <td>{props.formObject.formIdentifier}</td>
-                    <td>{String.crop(props.formObject.hash,10)}</td>
+                    <td>{props.formDataEntry.formIdentifier}</td>
+                    <td>{String.crop(props.formDataEntry.hash,10)}</td>
                     <td>{props.entryCount}</td>
                     <td>{props.date}</td>
                     <td class="neos-action">
                         <Neos.Fusion.Form:Form form.target.action="download" form.target.controller="Backend\\FormData">
                             <Neos.Fusion.Form:Select field.name="exportDefinitionIdentifier">{props.options}</Neos.Fusion.Form:Select>
-                            <Neos.Fusion.Form:Hidden field.name="formIdentifier" attributes.value={props.formObject.formIdentifier}/>
-                            <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={props.formObject.hash}/>
+                            <Neos.Fusion.Form:Hidden field.name="formIdentifier" attributes.value={props.formDataEntry.formIdentifier}/>
+                            <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={props.formDataEntry.hash}/>
                             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">Download</Neos.Fusion.Form:Button>
                         </Neos.Fusion.Form:Form>
-
+                    </td>
+                    <td>
+                        <Neos.Fusion.Form:Form form.target.action="delete" form.target.controller="Backend\\FormData" form.data.formDataEntry={props.formDataEntry}>
+                            <Neos.Fusion.Form:Hidden field.name="formDataEntry[hash]"/>
+                            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-danger"><i class="fas fa-trash-alt icon-white"></i></Neos.Fusion.Form:Button>
+                        </Neos.Fusion.Form:Form>
                     </td>
                 </tr>
             `
@@ -65,6 +70,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                             <th>
                                 Latest Entry
                             </th>
+                            <th/>
                             <th/>
                         </tr>
                     </thead>

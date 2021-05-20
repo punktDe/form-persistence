@@ -1,5 +1,10 @@
 prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(Neos.Fusion:Component) {
 
+    backToFormDataLink = Neos.Fusion:UriBuilder {
+        package = 'PunktDe.Form.Persistence'
+        controller = 'Backend\\FormData'
+        action = 'index'
+    }
 
     exportDefinitionEditorApp =   Neos.Fusion:ResourceUri {
         path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'

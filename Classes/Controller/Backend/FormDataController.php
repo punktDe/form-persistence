@@ -13,6 +13,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Fusion\View\FusionView;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
@@ -103,5 +104,16 @@ class FormDataController extends ActionController
         $exporter->setFileName($fileName);
 
         die();
+    }
+
+    /**
+     * @param FormData $formDataEntry
+     * @throws \Doctrine\ORM\ORMException
+     * @throws IllegalObjectTypeException
+     */
+    public function deleteAction(FormData $formDataEntry): void
+    {
+        $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $this->redirect('index');
     }
 }
