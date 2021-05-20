@@ -25,14 +25,7 @@ class ExportDefinitionController extends ActionController
      */
     protected $defaultViewObjectName = FusionView::class;
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDataRepository;
-
     public function indexAction(): void
     {
-
     }
 }

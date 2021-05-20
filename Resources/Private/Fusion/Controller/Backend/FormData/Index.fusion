@@ -3,7 +3,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
      exportDefinitionsLink = Neos.Fusion:UriBuilder {
         package = 'PunktDe.Form.Persistence'
         controller = 'Backend\\ExportDefinition'
-        action = 'new'
+        action = 'index'
         additionalParams {
             formIdentifier = ${formType[0].formIdentifier}
             hash = ${formType[0].hash}

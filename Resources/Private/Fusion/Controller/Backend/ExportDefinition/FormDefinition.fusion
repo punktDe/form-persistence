@@ -1,4 +1,3 @@
 PunktDe.Form.Persistence.Backend.ExportDefinitionController {
     index = PunktDe.Form.Persistence:Backend.ExportDefinition.Index
-    new = PunktDe.Form.Persistence:Backend.ExportDefinition.New
 }
