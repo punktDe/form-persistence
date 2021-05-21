@@ -77,7 +77,7 @@ class FormDataController extends ActionController
 
         $fileName = str_replace(
             ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
-            [$formIdentifier, date('Y-m-d_his'), $exportDefinition, $hash],
+            [$formIdentifier, date('Y-m-d_his'), $exportDefinition->getIdentifier(), $hash],
             $exportDefinition->getFileNamePattern()
         );
 
