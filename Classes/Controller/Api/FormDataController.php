@@ -51,7 +51,9 @@ class FormDataController extends RestController
                 ]
             ]
         ]);
-        $this->view->assign('value', $this->formDataRepository->findAllUniqueForms());
+        $this->view->assign('value', array_map(static function ($entryGroup) {
+            return current($entryGroup);
+        }, $this->formDataRepository->findAllUniqueForms()));
     }
 
     public function showAction(): void

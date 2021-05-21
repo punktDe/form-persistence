@@ -32,14 +32,11 @@ class FormDataRepository extends Repository
     public function findAllUniqueForms(): iterable
     {
         $queryBuilder = $this->createQueryBuilder('form');
-        $queryBuilder
+        return $queryBuilder
             ->groupBy('form.formIdentifier')
             ->addGroupBy('form.hash')
-            ->addSelect('count(form) AS entryCount');
-
-        return array_map(static function ($entryGroup) {
-            return current($entryGroup);
-        }, $queryBuilder->getQuery()->execute());
+            ->addSelect('count(form) AS entryCount')
+            ->getQuery()->execute();
     }
 
     /**

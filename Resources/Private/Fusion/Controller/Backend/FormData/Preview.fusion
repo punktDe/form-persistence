@@ -22,6 +22,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
     }
 
     renderer = afx`
+        <legend>{formIdentifier}</legend>
         <div class="neos-content neos-container-fluid">
             <div class="neos-module-container">
                 <table class="neos-table">
