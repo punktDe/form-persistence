@@ -27,7 +27,7 @@ class ExportDefinitionProvider
     /**
      * @var ExportDefinition[]
      */
-    protected $dynamicExportDefinitions;
+    protected $dynamicExportDefinitions = [];
 
     /**
      * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="exportDefinitions")
