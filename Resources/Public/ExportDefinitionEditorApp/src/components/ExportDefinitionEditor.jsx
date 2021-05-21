@@ -68,8 +68,8 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                             conversionValue: ''
                         };
                     }),
-                    keyStart: formData?.formData.length || 0,
-                    formFields: Object.keys(formData.formData).map((item) => {
+                    keyStart: formData?.processedFormData.length || 0,
+                    formFields: Object.keys(formData.processedFormData).map((item) => {
                         return {
                             id: item,
                             label: item
