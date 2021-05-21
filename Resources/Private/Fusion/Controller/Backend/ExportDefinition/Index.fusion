@@ -6,7 +6,7 @@ prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(N
         action = 'index'
     }
 
-    exportDefinitionEditorApp =   Neos.Fusion:ResourceUri {
+    exportDefinitionEditorApp = Neos.Fusion:ResourceUri {
         path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'
     }
 

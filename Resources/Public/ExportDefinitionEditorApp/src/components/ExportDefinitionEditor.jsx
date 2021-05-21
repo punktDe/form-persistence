@@ -25,7 +25,11 @@ const InputLines = ({ lines, formFieldNameChanged, conversionFieldNameChanged, r
     ));
 };
 
-const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, baseUrl, action }) => {
+const unique = (array, propertyName) => {
+    return array.filter((e, i) => array.findIndex(a => a[propertyName] === e[propertyName]) === i);
+}
+
+const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, apiFormData, apiExportDefinition, action }) => {
 
     const initialState = {
         label: '',
@@ -40,9 +44,9 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
 
     useEffect(() => {
         Promise.all([
-            fetch(baseUrl + '/api/formpersistence/formdata/' + formIdentifier),
-            fetch(baseUrl + '/api/formpersistence/exportdefinition/' + definitionIdentifier),
-            fetch(baseUrl + '/api/formpersistence/exportdefinition')
+            fetch(apiFormData + '/' + formIdentifier),
+            fetch(apiExportDefinition + '/' + definitionIdentifier),
+            fetch(apiExportDefinition)
         ]).then(([formDataResponse, exportDefinitionResponse, allExportDefinitionResponse]) =>
             Promise.all([
                 formDataResponse.json(),
@@ -51,12 +55,12 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
             ]).then(([formData, exportDefinitionData, allExportDefinitionResponseData]) => {
                 const data = {
                     label: exportDefinitionData.label || '',
-                    types: allExportDefinitionResponseData.map((item) => {
+                    types: unique(allExportDefinitionResponseData.map((item) => {
                         return {
                             label: item.exporter,
                             value: item.exporter
                         };
-                    }),
+                    }), 'label'),
                     lines: Object.keys(exportDefinitionData?.definition || {}).map((item, index) => {
                         return {
                             id: `id-${index}`,
@@ -150,42 +154,47 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
 
     const sendData = () => {
         setIsLoading(true);
+
         const data = {
             label: state.label,
             exporter: state.selectedType,
-            definition: state.lines.map((line) => {
+            definition: Object.assign({}, ...state.lines.map((line) => {
                 return {
                     [line.value]: {
                         changeKey: line.conversionValue
                     }
                 };
-            })
+            }))
         };
         if (action === 'create') {
-            fetch(baseUrl + '/api/formpersistence/exportdefinition', {
+            fetch(apiExportDefinition, {
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8'
                 },
                 method: 'POST',
                 body: JSON.stringify(data)
             }).then(response => {
-                console.log(response);
-                if (response.ok) {
-                    reset();
+                if (!response.ok) {
+                    throw response;
                 }
-            });
+                reset();
+            }).catch(error => {
+                console.error('An Error occurred:', error);
+            }).finally(() => {
+                setIsLoading(false);
+            })
         } else {
-            fetch(baseUrl + '/api/formpersistence/exportdefinition/' + definitionIdentifier, {
+            fetch(apiExportDefinition + '/' + definitionIdentifier, {
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8'
                 },
                 method: 'PUT',
                 body: JSON.stringify(data)
             }).then(response => {
-                console.log(response);
-                if (response.ok) {
-                    reset();
+                if (!response.ok) {
+                    throw response;
                 }
+                reset();
             });
         }
     };
@@ -208,11 +217,11 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
 
     return (
         <>
-            {isLoading ? <div>Loading...</div> :
-                <div className={'neos-row-fluid'}>
-                    <div className={'neos-span10'}>
-                        <div className={'neos-span8'} >
-                            <legend>Export Definition</legend>
+            <div className={'neos-row-fluid'}>
+                <div className={'neos-span8 neos-table'}>
+                    <legend>Export Definition</legend>
+                    {isLoading ? <div>Loading...</div> :
+                        <>
                             <div className={'neos-control-group'}>
                                 <label className={'neos-control-label'} htmlFor={'id-label'}>
                                     Label
@@ -235,12 +244,10 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div className={'neos-span10'} >
                             <DragDropContext onDragEnd={onDragEnd}>
                                 <Droppable droppableId="assosittive-fields">
                                     {provided => (
-                                        <div ref={provided.innerRef} {...provided.droppableProps} className={'neos-control-group'}>
+                                        <div ref={provided.innerRef} {...provided.droppableProps}>
                                             <InputLines
                                                 lines={state.lines}
                                                 formFields={state.formFields}
@@ -253,17 +260,21 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, b
                                     )}
                                 </Droppable>
                             </DragDropContext>
-                            <div className={'nesol-pull-right'}>
-                                <button className={'neos-button neos-button-primary'} onClick={addLine}><i className={'fas fa-plus icon-white'}/> add Line</button>
-                                <button className={'neos-button neos-button-primary'} onClick={sendData}><i className={'fas fa-save icon-white'}/> Save</button>
-                                <button className={'neos-button neos-button-primary'} onClick={reset}><i className={'fas fa-chevron-left icon-white'}/> Back</button>
+                            <div className={'neos-pull-right'}>
+                                <button className={'neos-button neos-button-primary'} onClick={addLine}><i className={'fas fa-plus icon-white'}/> Add a field association</button>
+                                <button className={'neos-button neos-button-primary'} onClick={sendData}><i className={'fas fa-save icon-white'}/> Save export definition</button>
                             </div>
-                        </div>
-                    </div>
+                        </>
+                    }
                 </div>
-            }
+            </div>
+            <div className={'neos-row-fluid'}>
+                <div className={'neos-span4'}>
+                    <button className={'neos-button neos-button-primary'} onClick={reset}><i className={'fas fa-chevron-left icon-white'}/> Back to export definition listing</button>
+                </div>
+            </div>
         </>
     );
-};
+}
 
 export default ExportDefinitionEditor;

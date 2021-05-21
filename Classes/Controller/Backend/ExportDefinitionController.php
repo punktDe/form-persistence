@@ -33,6 +33,8 @@ class ExportDefinitionController extends ActionController
 
     public function indexAction(): void
     {
+        $request = $this->uriBuilder->getRequest();
+        $format = $this->uriBuilder->getFormat();
         $this->uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
         $this->uriBuilder->setFormat('json');
 
@@ -42,5 +44,8 @@ class ExportDefinitionController extends ActionController
                 'exportDefinition' => $this->uriBuilder->uriFor('index', [], 'Api\\ExportDefinition', 'PunktDe.Form.Persistence'),
             ]
         ]);
+
+        $this->uriBuilder->setRequest($request);
+        $this->uriBuilder->setFormat($format);
     }
 }

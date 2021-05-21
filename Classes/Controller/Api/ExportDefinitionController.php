@@ -45,6 +45,11 @@ class ExportDefinitionController extends RestController
      */
     protected $exportDefinitionRepository;
 
+    protected function initializeCreateAction()
+    {
+    }
+
+
     public function listAction(): void
     {
         $this->view->setConfiguration([
@@ -104,8 +109,7 @@ class ExportDefinitionController extends RestController
 
     private function setDataFromRequestBody(ExportDefinition $exportDefinition): void
     {
-        $body = $this->request->getHttpRequest()->getParsedBody();
-        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        $data = $this->request->getHttpRequest()->getParsedBody();
 
         $propertyNames = ObjectAccess::getSettablePropertyNames($exportDefinition);
         foreach ($propertyNames as $propertyName) {

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 
-const FormSelection = ({setStep, setFormIdentifier, baseUrl}) => {
+const FormSelection = ({setStep, setFormIdentifier, apiFormData}) => {
     const [list, setList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [formIdentifier, setSelectedFormIdentifier] = useState('')
 
     useEffect(() => {
-        fetch(baseUrl + '/api/formpersistence/formdata')
+        fetch(apiFormData)
             .then(response => {
                 if(response.ok) {
                     return response.json();
@@ -35,29 +35,34 @@ const FormSelection = ({setStep, setFormIdentifier, baseUrl}) => {
 
     return (
         <>
-            {
-                isLoading ? <div>Loading...</div> :
-                    <div className={'neos-row-fluid'}>
-                        <div  className={'neos-control-group'}>
-                            <div className={'neos-controls neos-span8'}>
-                                <legend>Select a Form</legend>
-                                {list.length > 0 ?
-                                    <select className={'neos-span9'} onChange={onFormSelected} value={formIdentifier}>
-                                        {
-                                            list.map(item => {
-                                                return <option key={item.id} value={item.id}>{item.label}</option>
-                                            })
-                                        }
-                                    </select>
-                                    : <div className={'neos-span12 aCenter'}>Please create an export definition.</div>
-                                }
-                                <div className={'neos-span2 neos-pull-right'}>
-                                    <button className={'neos-button neos-button-primary'} onClick={() => {setFormIdentifier(formIdentifier); setStep('export-definition-editor')}}>Next <i className={'fas fa-chevron-right icon-white'} /></button>
+            <div className={'neos-row-fluid'}>
+                <div className={'neos-span6'}>
+                    <legend>From selection for export definition</legend>
+                    {
+                        isLoading ? <div>Loading...</div> :
+                            <div className={'neos-control-group'}>
+                                <label className={'neos-control-label'} htmlFor={'form-selection'}>Select a form</label>
+                                <div className={'neos-controls'}>
+                                    {list.length > 0 ?
+                                        <select className={'neos-span12'} onChange={onFormSelected} value={formIdentifier} id={'form-selection'}>
+                                            {
+                                                list.map(item => {
+                                                    return <option key={item.id} value={item.id}>{item.label}</option>
+                                                })
+                                            }
+                                        </select>
+                                        : <div className={'neos-span12 aCenter'}>Please create an export definition.</div>
+                                    }
                                 </div>
                             </div>
-                        </div>
-                    </div>
-            }
+                    }
+                </div>
+            </div>
+            <div className={'neos-row-fluid'}>
+                <div className={'neos-span4'}>
+                    <button className={'neos-button neos-button-primary'} onClick={() => {setFormIdentifier(formIdentifier); setStep('export-definition-editor')}}>Configure export definition for form <i className={'fas fa-chevron-right icon-white'} /></button>
+                </div>
+            </div>
         </>
     )
 }
