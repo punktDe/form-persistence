@@ -3,29 +3,31 @@ import ExportDefinitionEditor from "./components/ExportDefinitionEditor";
 import FormSelection from "./components/FormSelection";
 import { useState } from "react";
 
-const App = () => {
+const App = ({baseUrl}) => {
   const [step, setStep] = useState('');
   const [formIdentifier, setFormIdentifier] = useState('');
-  const [definitionIdenitifier, setDefinitionIdenitfier] = useState('');
+  const [definitionIdentifier, setDefinitionIdentifier] = useState('');
+  const [action, setAction] = useState('create')
 
   const reset = () => {
     setStep('');
     setFormIdentifier('');
-    setDefinitionIdenitfier('');
+    setDefinitionIdentifier('');
   }
+
   const renderStep = (step) => {
     switch(step) {
-      case 'form-selction':
+      case 'form-selection':
         return (
-          <FormSelection setStep={setStep} setFormIdentifier={setFormIdentifier} />
+          <FormSelection setStep={setStep} setFormIdentifier={setFormIdentifier} baseUrl={baseUrl}/>
         )
       case 'export-definition-editor':
         return (
-          <ExportDefinitionEditor reset={reset} formIdentifier={formIdentifier} definitionIdenitifier={definitionIdenitifier}/>
+          <ExportDefinitionEditor reset={reset} formIdentifier={formIdentifier} definitionIdentifier={definitionIdentifier} baseUrl={baseUrl} action={action}/>
         )
       default:
           return (
-            <ExportDefinitionListing setStep={setStep} setFormIdentifier={setFormIdentifier} setDefinitionIdenitfier={setDefinitionIdenitfier} />
+            <ExportDefinitionListing setStep={setStep} setFormIdentifier={setFormIdentifier} setDefinitionIdentifier={setDefinitionIdentifier} baseUrl={baseUrl} setAction={setAction}/>
           )
     }
   }

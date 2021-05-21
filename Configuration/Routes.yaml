@@ -6,7 +6,7 @@
     '@controller': 'Api\FormData'
     '@format': 'json'
     '@action': 'index'
-  httpMethods: ['GET', 'PUT']
+  httpMethods: ['GET', 'POST']
 -
   name: 'Form Data Rest API'
   uriPattern: 'api/formpersistence/formdata/{resource}'
@@ -15,7 +15,7 @@
     '@controller': 'Api\FormData'
     '@format': 'json'
     '@action': 'index'
-  httpMethods: ['GET', 'POST', 'DELETE']
+  httpMethods: ['GET', 'PUT', 'DELETE']
 
 -
   name: 'Export Definition Rest API'
@@ -25,7 +25,7 @@
     '@controller': 'Api\ExportDefinition'
     '@format': 'json'
     '@action': 'index'
-  httpMethods: ['GET', 'PUT']
+  httpMethods: ['GET', 'POST']
 -
   name: 'Export Definition Rest API'
   uriPattern: 'api/formpersistence/exportdefinition/{resource}'
@@ -34,4 +34,4 @@
     '@controller': 'Api\ExportDefinition'
     '@format': 'json'
     '@action': 'index'
-  httpMethods: ['GET', 'POST', 'DELETE']
+  httpMethods: ['GET', 'PUT', 'DELETE']

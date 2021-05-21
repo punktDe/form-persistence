@@ -51,7 +51,7 @@ class ExportDefinitionController extends RestController
             'value' => [
                 '_descendAll' => [
                     '_exposeObjectIdentifier' => true,
-                    '_only' => ['label'],
+                    '_only' => ['label', 'exporter'],
                 ]
             ]
         ]);

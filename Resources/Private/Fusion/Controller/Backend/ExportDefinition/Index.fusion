@@ -10,11 +10,18 @@ prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(N
         path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'
     }
 
+//    baseUrl = Neos.Neos:NodeUri {
+//        node = ${q(documentNode == site ? site : q(documentNode).parent().get()).context({workspaceName: 'live'}).get(0)}
+//        absolute = true
+//    }
+
+    baseUrl = 'https://app.cgm.punkt.dev:8014'
+
     renderer = afx`
 
         <div class="neos-content neos-container-fluid">
             <div class="neos-module-container">
-                <div id="root"></div>
+                <div id="app" data-base-url={props.baseUrl}></div>
             </div>
             <div class="neos-footer">
                 <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back to Form data export</a>
