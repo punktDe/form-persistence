@@ -10,8 +10,8 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\View\FusionView;
-use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 
 class ExportDefinitionController extends ActionController
 {
@@ -25,7 +25,22 @@ class ExportDefinitionController extends ActionController
      */
     protected $defaultViewObjectName = FusionView::class;
 
+    /**
+     * @Flow\Inject
+     * @var UriBuilder
+     */
+    protected $uriBuilder;
+
     public function indexAction(): void
     {
+        $this->uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
+        $this->uriBuilder->setFormat('json');
+
+        $this->view->assignMultiple([
+            'apiEndpoint' => [
+                'formData' => $this->uriBuilder->uriFor('index', [], 'Api\\FormData', 'PunktDe.Form.Persistence'),
+                'exportDefinition' => $this->uriBuilder->uriFor('index', [], 'Api\\ExportDefinition', 'PunktDe.Form.Persistence'),
+            ]
+        ]);
     }
 }
