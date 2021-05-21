@@ -105,6 +105,11 @@ class FormData
         return $this->formData;
     }
 
+    public function getProcessedFormData(?ExportDefinition $exportDefinition): array
+    {
+        return $this->formData;
+    }
+
     /**
      * @param array $formData
      * @return FormData
