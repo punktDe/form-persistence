@@ -19,6 +19,10 @@ class FieldKeyMappingProcessor implements ProcessorInterface
             return $formData;
         }
 
+        if (empty($exportDefinition->getDefinition())) {
+            return $formData;
+        }
+
         $convertedData = [];
         foreach ($exportDefinition->getDefinition() as $formKey => $configuration) {
             $newKey = $configuration['changeKey'] ?? $formKey;

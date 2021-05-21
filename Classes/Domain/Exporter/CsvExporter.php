@@ -44,15 +44,14 @@ class CsvExporter implements FormDataExporterInterface
         $headerSet = false;
 
         foreach ($formDataItems as $key => $formDataItem) {
-            $dataRow = [];
 
             if (!$headerSet) {
-                $header = array_keys($dataRow);
+                $header = array_keys($formDataItem);
                 $csv->insertOne($header);
                 $headerSet = true;
             }
 
-            $csv->insertOne($dataRow);
+            $csv->insertOne($formDataItem);
         }
 
         $csv->output($this->fileName);
