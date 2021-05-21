@@ -9,11 +9,12 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
  */
 
 use Neos\Flow\ResourceManagement\PersistentResource;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 
 class ValueFormattingProcessor implements ProcessorInterface
 {
 
-    public function convertFormData(array $formData, array $conversionDefinition): array
+    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
     {
         $convertedData = [];
 

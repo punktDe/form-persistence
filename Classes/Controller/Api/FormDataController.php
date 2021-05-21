@@ -11,6 +11,7 @@ namespace PunktDe\Form\Persistence\Controller\Api;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\Controller\RestController;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 
 class FormDataController extends RestController
@@ -64,6 +65,10 @@ class FormDataController extends RestController
                 ]
             ]
         ]);
-        $this->view->assign('value', $this->formDataRepository->findByIdentifier($this->request->getArgument($this->resourceArgumentName)));
+        $formData = $this->formDataRepository->findByIdentifier($this->request->getArgument($this->resourceArgumentName));
+
+        if ($formData instanceof FormData) {
+            $this->view->assign('value', $formData->getProcessedFormData());
+        }
     }
 }

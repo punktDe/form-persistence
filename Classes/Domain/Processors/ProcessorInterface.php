@@ -9,9 +9,9 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
  */
 
 
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+
 interface ProcessorInterface
 {
-
-    public function convertFormData(array $formData, array $conversionDefinition): array;
-
+    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array;
 }

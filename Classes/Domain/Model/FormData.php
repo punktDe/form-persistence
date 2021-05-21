@@ -10,7 +10,8 @@ namespace PunktDe\Form\Persistence\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
 
 /**
  * @Flow\Entity
@@ -36,7 +37,13 @@ class FormData
      * @ORM\Column(type="flow_json_array")
      * @var array
      */
-    protected $formData;
+    protected $formData = [];
+
+    /**
+     * @Flow\Inject
+     * @var ProcessorChain
+     */
+    protected $processorChain;
 
     public function getFieldNames(): array
     {
@@ -105,9 +112,9 @@ class FormData
         return $this->formData;
     }
 
-    public function getProcessedFormData(?ExportDefinition $exportDefinition): array
+    public function getProcessedFormData(?ExportDefinitionInterface $exportDefinition = null): array
     {
-        return $this->formData;
+        return $this->processorChain->convertFormData($this->formData, $exportDefinition);
     }
 
     /**

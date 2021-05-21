@@ -53,18 +53,6 @@ class FormDataController extends ActionController
      */
     protected $exporterFactory;
 
-    /**
-     * @Flow\Inject
-     * @var FieldKeyMappingProcessor
-     */
-    protected $fieldKeyMappingProcessor;
-
-    /**
-     * @Flow\Inject
-     * @var ValueFormattingProcessor
-     */
-    protected $valueFormattingProcessor;
-
     public function indexAction(): void
     {
         $formTypes = $this->formDataRepository->findAllUniqueForms();
@@ -93,11 +81,8 @@ class FormDataController extends ActionController
             $exportDefinition->getFileNamePattern()
         );
 
-        $formDataItems = array_map(function (FormData $formData) use ($exportDefinition) {
-            return $this->valueFormattingProcessor->convertFormData(
-                $this->fieldKeyMappingProcessor->convertFormData($formData->getFormData(), $exportDefinition->getDefinition()),
-                $exportDefinition->getDefinition()
-            );
+        $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
+            return $formData->getProcessedFormData($exportDefinition);
         }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
 
         $exporter->compileAndSend($formDataItems);
@@ -114,8 +99,8 @@ class FormDataController extends ActionController
             $this->forward('index');
         }
 
-        $formDataValues = array_map(function (FormData $formData) {
-            return $this->valueFormattingProcessor->convertFormData($formData->getFormData(), []);
+        $formDataValues = array_map(static function (FormData $formData) {
+            return $formData->getProcessedFormData();
         }, $formDataEntries->toArray());
 
         /** @var FormData $firstFormDataEntry */
