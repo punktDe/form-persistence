@@ -24,13 +24,14 @@ class ValueFormattingProcessor implements ProcessorInterface
             }
 
             if (is_array($fieldValue) && array_key_exists('date', $fieldValue)) {
-                $convertedData[] = (new \DateTime($fieldValue['date']))
+                $convertedData[$fieldIdentifier] = (new \DateTime($fieldValue['date']))
                     ->setTimezone(new \DateTimeZone($fieldValue['timezone']))
                     ->format('d.m.Y');
                 continue;
             }
 
             if (is_array($fieldValue)) {
+                $convertedData = array_merge($convertedData, $this->flattenArray($fieldValue, $fieldIdentifier));
                 continue;
             }
 
@@ -38,5 +39,19 @@ class ValueFormattingProcessor implements ProcessorInterface
         }
 
         return $convertedData;
+    }
+
+    protected function flattenArray(array $array, string $namespace = ''): array
+    {
+        $flattenedArray = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $this->flattenArray($value, $namespace . '.' . $key);
+            }
+
+            $flattenedArray[$namespace . '.' . $key] = $value;
+        }
+
+        return $flattenedArray;
     }
 }

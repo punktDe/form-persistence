@@ -106,6 +106,28 @@ class FormDataController extends ActionController
         die();
     }
 
+    public function previewAction(FormData $formDataEntry): void
+    {
+        $formDataEntries = $this->formDataRepository->findByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+
+        if ($formDataEntries->count() === 0) {
+            $this->forward('index');
+        }
+
+        $formDataValues = array_map(function (FormData $formData) {
+            return $this->valueFormattingProcessor->convertFormData($formData->getFormData(), []);
+        }, $formDataEntries->toArray());
+
+        /** @var FormData $firstFormDataEntry */
+        $firstFormDataEntry = $formDataEntries->getFirst();
+
+        $this->view->assignMultiple([
+            'formIdentifier' => $firstFormDataEntry->getFormIdentifier(),
+            'headerFields' => array_keys(current($formDataValues)),
+            'formDataValues' => $formDataValues,
+        ]);
+    }
+
     /**
      * @param FormData $formDataEntry
      * @throws \Doctrine\ORM\ORMException

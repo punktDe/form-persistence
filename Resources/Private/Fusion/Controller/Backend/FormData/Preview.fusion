@@ -1,0 +1,41 @@
+prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fusion:Component) {
+
+    backToFormDataLink = Neos.Fusion:UriBuilder {
+        package = 'PunktDe.Form.Persistence'
+        controller = 'Backend\\FormData'
+        action = 'index'
+    }
+
+    headerFields = Neos.Fusion:Loop {
+        items = ${headerFields}
+        itemRenderer = ${'<th>' + item + '</th>'}
+    }
+
+    tableRows = Neos.Fusion:Loop {
+        items = ${formDataValues}
+        itemName = 'row'
+        itemRenderer = Neos.Fusion:Loop {
+            items = ${row}
+            itemRenderer =  ${'<td>' + item + '</td>'}
+        }
+        @process.wrapRow = ${'<tr>' + value + '</tr>'}
+    }
+
+    renderer = afx`
+        <div class="neos-content neos-container-fluid">
+            <div class="neos-module-container">
+                <table class="neos-table">
+                    <thead>
+                    <tr>{props.headerFields}</tr>
+                    </thead>
+                    <tbody>
+                        {props.tableRows}
+                    </tbody>
+                </table>
+            </div>
+            <div class="neos-footer">
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back to Form data export</a>
+            </div>
+        </div>
+    `
+}
