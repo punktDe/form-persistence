@@ -50,7 +50,7 @@ class FormDataController extends RestController
                 ]
             ]
         ]);
-        $this->view->assign('value', $this->formDataRepository->findAll());
+        $this->view->assign('value', $this->formDataRepository->findAllUniqueForms());
     }
 
     public function showAction(): void

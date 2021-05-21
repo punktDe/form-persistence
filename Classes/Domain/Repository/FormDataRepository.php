@@ -36,7 +36,10 @@ class FormDataRepository extends Repository
             ->groupBy('form.formIdentifier')
             ->addGroupBy('form.hash')
             ->addSelect('count(form) AS entryCount');
-        return $queryBuilder->getQuery()->execute();
+
+        return array_map(static function ($entryGroup) {
+            return current($entryGroup);
+        }, $queryBuilder->getQuery()->execute());
     }
 
     /**
