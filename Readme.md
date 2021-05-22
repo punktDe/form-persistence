@@ -58,3 +58,24 @@ With that it is taken care, that if the form changes over time, a separate CSV f
 
 ![Example](Documentation/BackendModule.png)
 
+## Export Definition Editor
+
+### Working with the react app
+
+To start make changes to the export definition app go to the folder `PunktDe.Form.Persistence/Resources/Public/ExportDefinitionEditorApp`
+and run the command
+
+```
+yarn install
+```
+
+After all dependencies are installed, you can adjust the code of the react app. 
+The is created with the help of creat-react-app scaffolding tool and therefore uses its build configuration with some adjustments.
+To see changes, you need to build the app with the following command.
+
+```
+yarn build
+```
+
+The generated file `main.js` is located in the folder `build/static/js`.
+This file is loaded in the Neos Backend and is the editor you see.
