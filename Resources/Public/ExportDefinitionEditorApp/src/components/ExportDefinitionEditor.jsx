@@ -55,12 +55,12 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
             ]).then(([formData, exportDefinitionData, allExportDefinitionResponseData]) => {
                 const data = {
                     label: exportDefinitionData.label || '',
-                    types: unique(allExportDefinitionResponseData.map((item) => {
+                    types: allExportDefinitionResponseData.length > 0 ? unique(allExportDefinitionResponseData.map((item) => {
                         return {
                             label: item.exporter,
                             value: item.exporter
                         };
-                    }), 'label'),
+                    }), 'label') : [{label: 'csv', value: 'csv'}],
                     lines: Object.keys(exportDefinitionData?.definition || {}).map((item, index) => {
                         return {
                             id: `id-${index}`,
@@ -68,14 +68,14 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                             conversionValue: ''
                         };
                     }),
-                    keyStart: formData?.processedFormData.length || 0,
-                    formFields: Object.keys(formData.processedFormData).map((item) => {
+                    keyStart: formData?.length || 0,
+                    formFields: Object.keys(formData).map((item) => {
                         return {
                             id: item,
-                            label: item
+                            label: item.substring(item.indexOf('.') + 1)
                         };
                     }),
-                    selectedType: exportDefinitionData?.exporter || allExportDefinitionResponseData[0].exporter
+                    selectedType: exportDefinitionData?.exporter || allExportDefinitionResponseData[0]?.exporter || 'csv'
                 };
                 setState(data);
             })
