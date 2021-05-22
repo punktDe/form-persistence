@@ -72,7 +72,7 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                     formFields: Object.keys(formData).map((item) => {
                         return {
                             id: item,
-                            label: item.substring(item.indexOf('.') + 1)
+                            label: item
                         };
                     }),
                     selectedType: exportDefinitionData?.exporter || allExportDefinitionResponseData[0]?.exporter || 'csv'
