@@ -13,13 +13,10 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Fusion\View\FusionView;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
-use PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor;
-use PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
@@ -115,8 +112,6 @@ class FormDataController extends ActionController
 
     /**
      * @param FormData $formDataEntry
-     * @throws \Doctrine\ORM\ORMException
-     * @throws IllegalObjectTypeException
      */
     public function deleteAction(FormData $formDataEntry): void
     {

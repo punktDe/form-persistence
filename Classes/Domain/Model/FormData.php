@@ -50,6 +50,11 @@ class FormData
         return array_keys($this->formData);
     }
 
+    public function getProcessedFieldNames(): array
+    {
+        return array_keys($this->getProcessedFormData());
+    }
+
     /**
      * @return string
      */

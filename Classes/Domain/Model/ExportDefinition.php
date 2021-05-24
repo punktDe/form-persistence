@@ -52,7 +52,7 @@ class ExportDefinition implements ExportDefinitionInterface
             return false;
         }
 
-        return !empty(array_intersect(array_keys($this->definition), $formData->getFieldNames()));
+        return !empty(array_intersect(array_keys($this->definition), $formData->getProcessedFieldNames()));
     }
 
     public function getIdentifier(): string
