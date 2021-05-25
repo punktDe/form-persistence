@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import update from 'react-addons-update';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import flatten from 'arr-flatten';
+import unique  from 'array-unique'
 import InputLine from './InputLine';
+import { unique as uniqueHelper } from '../utility/Helper';
+import { isSuitable } from '../utility/Helper';
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -25,65 +29,90 @@ const InputLines = ({ lines, formFieldNameChanged, conversionFieldNameChanged, r
     ));
 };
 
-const unique = (array, propertyName) => {
-    return array.filter((e, i) => array.findIndex(a => a[propertyName] === e[propertyName]) === i);
+const generateFormFieldsForExportDefinition = (formsData, exportDefinitionFields = []) => {
+    if (exportDefinitionFields.length === 0 ) {
+        return unique(flatten(formsData.map((formData) => {
+            return formData.processedFieldNames
+        })));
+    }
+    return unique(flatten(formsData.map((formData) => {
+        if (isSuitable(formData.processedFieldNames, exportDefinitionFields)) {
+            return formData.processedFieldNames
+        }
+    })));
 }
 
-const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, apiFormData, apiExportDefinition, action }) => {
+const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiExportDefinition, action }) => {
 
+    let allFormsData = {};
     const initialState = {
         label: '',
         types: [],
         lines: [],
-        keyStart: 0,
-        formIdentifier: formIdentifier
+        keyStart: 0
     };
 
     const [state, setState] = useState(initialState);
     const [isLoading, setIsLoading] = useState(true);
+    const [list, setList] = useState([]);
+    const [formIdentifier, setSelectedFormIdentifier] = useState('')
 
-    useEffect(() => {
+    const fetchData = () => {
         Promise.all([
-            fetch(apiFormData + '/' + formIdentifier),
+            fetch(apiFormData),
             fetch(apiExportDefinition + '/' + definitionIdentifier),
             fetch(apiExportDefinition)
-        ]).then(([formDataResponse, exportDefinitionResponse, allExportDefinitionResponse]) =>
+        ]).then(([formsDataResponse, exportDefinitionResponse, allExportDefinitionResponse]) => {
             Promise.all([
-                formDataResponse.json(),
+                formsDataResponse.json(),
                 exportDefinitionResponse.json(),
                 allExportDefinitionResponse.json()
-            ]).then(([formData, exportDefinitionData, allExportDefinitionResponseData]) => {
+            ]).then(([formsData, exportDefinitionData, allExportDefinitionsData]) => {
+                allFormsData = formsData
+                const list = allFormsData.map((item) => {
+                    return {
+                        id: item.__identity,
+                        label: item.formIdentifier + '-' + item.hash.substring(0, 10)
+                    }
+                })
+                setList(list)
+                setSelectedFormIdentifier(allFormsData[0].__identity)
+                const uniqueFormFields = generateFormFieldsForExportDefinition(allFormsData, Object.keys(exportDefinitionData.definition))
                 const data = {
                     label: exportDefinitionData.label || '',
-                    types: allExportDefinitionResponseData.length > 0 ? unique(allExportDefinitionResponseData.map((item) => {
+                    types: allExportDefinitionsData.length > 0 ? uniqueHelper(allExportDefinitionsData.map((item) => {
                         return {
                             label: item.exporter,
                             value: item.exporter
                         };
-                    }), 'label') : [{label: 'csv', value: 'csv'}],
+                    }), 'label') : [{ label: 'csv', value: 'csv' }],
                     lines: Object.keys(exportDefinitionData?.definition || {}).map((item, index) => {
                         return {
                             id: `id-${index}`,
                             value: item,
-                            conversionValue: ''
+                            conversionValue: exportDefinitionData.definition[item].changeKey
                         };
                     }),
-                    keyStart: formData?.length || 0,
-                    formFields: Object.keys(formData).map((item) => {
+                    keyStart: Object.keys(exportDefinitionData?.definition || {}).length || 0,
+                    formFields:uniqueFormFields.map((item) => {
                         return {
                             id: item,
                             label: item
                         };
                     }),
-                    selectedType: exportDefinitionData?.exporter || allExportDefinitionResponseData[0]?.exporter || 'csv'
+                    selectedType: exportDefinitionData?.exporter || allExportDefinitionsData[0]?.exporter || 'csv'
                 };
                 setState(data);
             })
-        ).catch(error => {
+        }).catch(error => {
             console.error('An Error occurred:', error);
         }).finally(() => {
             setIsLoading(false);
         });
+    }
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     const addLine = () => {
@@ -96,6 +125,7 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
             },
             keyStart: { $set: state.keyStart + 1 }
         }));
+        updateFormSelectOptions()
     };
 
     const formFieldNameChanged = (event, index) => {
@@ -108,6 +138,7 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                 }
             }
         }));
+        updateFormSelectOptions();
     };
 
     const conversionFieldNameChanged = (event, index) => {
@@ -150,6 +181,7 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                 $splice: [[index, 1]]
             }
         }));
+        updateFormSelectOptions();
     };
 
     const sendData = () => {
@@ -177,11 +209,9 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                 if (!response.ok) {
                     throw response;
                 }
-                reset();
+                fetchData();
             }).catch(error => {
                 console.error('An Error occurred:', error);
-            }).finally(() => {
-                setIsLoading(false);
             })
         } else {
             fetch(apiExportDefinition + '/' + definitionIdentifier, {
@@ -194,8 +224,10 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                 if (!response.ok) {
                     throw response;
                 }
-                reset();
-            });
+                fetchData();
+            }).catch(error => {
+                console.error('An Error occurred:', error);
+            })
         }
     };
 
@@ -214,6 +246,26 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
             }
         }));
     };
+
+    const onFormSelected = (event) => {
+        setSelectedFormIdentifier(event.target.value);
+    }
+
+    const updateFormSelectOptions =() => {
+        const currentDefinitionFields = state.lines.map((line) => {
+            return line.value
+        });
+
+        const list = allFormsData.map((item) => {
+            if (isSuitable(item.processedFieldNames, currentDefinitionFields)) {
+                return {
+                    id: item.__identity,
+                    label: item.formIdentifier + '-' + item.hash.substring(0, 10)
+                }
+            }
+        })
+        setList(list)
+    }
 
     return (
         <>
@@ -242,6 +294,21 @@ const ExportDefinitionEditor = ({ reset, formIdentifier, definitionIdentifier, a
                                             })
                                         }
                                     </select>
+                                </div>
+                            </div>
+                            <div className={'neos-control-group'}>
+                                <label className={'neos-control-label'} htmlFor={'form-selection'}>Select a form</label>
+                                <div className={'neos-controls'}>
+                                    {list.length > 0 ?
+                                        <select className={'neos-span12'} onChange={onFormSelected} value={formIdentifier} id={'form-selection'}>
+                                            {
+                                                list.map(item => {
+                                                    return <option key={item.id} value={item.id}>{item.label}</option>
+                                                })
+                                            }
+                                        </select>
+                                        : <div className={'neos-span12 aCenter'}>Please create an export definition.</div>
+                                    }
                                 </div>
                             </div>
                             <DragDropContext onDragEnd={onDragEnd}>

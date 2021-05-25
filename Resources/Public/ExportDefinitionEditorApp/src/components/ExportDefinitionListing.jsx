@@ -1,35 +1,45 @@
 import { useState, useEffect } from "react";
+import { isSuitable } from '../utility/Helper';
 
-const ExportDefinitionListing = ({ setStep, setFormIdentifier, setDefinitionIdentifier , apiExportDefinition, setAction, reset}) => {
+const ExportDefinitionListing = ({ setStep, setDefinitionIdentifier, apiFormData , apiExportDefinition, setAction, reset}) => {
     const [list, setList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
     const fetchExportDefinitions = () => {
         setIsLoading(true);
-        fetch(apiExportDefinition)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw response
-                }
-            }).then(data => {
-            const list = data.map((item) => {
-                return {
-                    id: item.__identity,
-                    formIdentifier: '',
-                    label: item.label
-                }
+        Promise.all([
+            fetch(apiFormData),
+            fetch(apiExportDefinition)
+        ]).then(([formsDataResponse, exportDefinitionsResponse]) => {
+            Promise.all([
+                formsDataResponse.json(),
+                exportDefinitionsResponse.json()
+            ]).then(([formsData, exportDefinitions]) => {
+                const list = exportDefinitions.map((item) => {
+                    let editable = false;
+                    formsData.forEach((formData) => {
+                        editable = editable || isSuitable(formData.processedFieldNames, Object.keys(item.definition || {}) || []);
+                    })
+                    return {
+                        id: item.__identity,
+                        formIdentifier: '',
+                        label: item.label,
+                        isEditable: editable
+                    }
+                });
+                setList(list);
+            }).catch(error => {
+                console.error('An Error occurred:', error);
+            }).finally(() => {
+                setIsLoading(false);
             });
-            setList(list);
         }).catch(error => {
             console.error('An Error occurred:', error);
-        }).finally(() => {
             setIsLoading(false);
         })
     }
-
     useEffect(() => {
-        fetchExportDefinitions()
+        fetchExportDefinitions();
     }, []);
 
     const onDelete = (identifier) => {
@@ -71,8 +81,19 @@ const ExportDefinitionListing = ({ setStep, setFormIdentifier, setDefinitionIden
                                                         <td>{item.label}</td>
                                                         <td className={'neos-action'}>
                                                             <div className={'neos-pull-right'}>
-                                                                {/* TODO: add edit functionality <button className={'neos-button neos-button-primary'} onClick={() => { setFormIdentifier(item.formIdentifier); setDefinitionIdentifier(item.id); setStep('export-definition-editor'); setAction('update')}}><i className={'fas fa-pencil-alt icon-white'} /> Edit</button> */}
-                                                                <button className={'neos-button neos-button-danger'} onClick={(event ) => {onDelete(item.id)}}><i className={'fas fa-trash icon-white'} /> Delete</button>
+                                                                { item.isEditable ?
+                                                                    <button
+                                                                        className={'neos-button neos-button-primary'}
+                                                                        onClick={() => {setDefinitionIdentifier(item.id); setStep('export-definition-editor'); setAction('update')}}
+                                                                    >
+                                                                        <i className={'fas fa-pencil-alt icon-white'} /> Edit
+                                                                    </button> : '' }
+                                                                <button
+                                                                    className={'neos-button neos-button-danger'}
+                                                                    onClick={() => {onDelete(item.id)}}
+                                                                >
+                                                                    <i className={'fas fa-trash icon-white'} /> Delete
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -88,7 +109,7 @@ const ExportDefinitionListing = ({ setStep, setFormIdentifier, setDefinitionIden
             </div>
             <div className={'neos-row-fluid'}>
                 <div className={'neos-span4'}>
-                    <button onClick={() => {setStep('form-selection')}} className={'neos-button neos-button-primary'}><i className={'fas fa-plus icon-white'} /> create new Definition</button>
+                    <button onClick={() => {setStep('export-definition-editor')}} className={'neos-button neos-button-primary'}><i className={'fas fa-plus icon-white'} /> create new Definition</button>
                 </div>
             </div>
         </>
