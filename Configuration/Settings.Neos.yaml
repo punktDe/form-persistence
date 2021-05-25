@@ -20,7 +20,7 @@ Neos:
       autoInclude:
         'PunktDe.Form.Persistence': true
     modules:
-      administration:
+      management:
         submodules:
           formDataDownload:
             label: 'Form Data Download'
