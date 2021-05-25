@@ -47,7 +47,7 @@ class FormDataController extends RestController
             'value' => [
                 '_descendAll' => [
                     '_exposeObjectIdentifier' => true,
-                    '_only' => ['identifier', 'formIdentifier', 'hash']
+                    '_only' => ['formIdentifier', 'hash', 'processedFieldNames']
                 ]
             ]
         ]);
