@@ -11,3 +11,13 @@ PunktDe:
         csv:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
           options: []
+
+      processorChain:
+        # Convert form values to a an exportable representation. Eg. Uploaded data to its filename
+        valueFormatting:
+          class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
+
+        # Map data keys from form defined keys to output keys. Drop unmapped fields.
+        fieldKeyMapping:
+          class: 'PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor'
+          position: 'after valueFormatting'

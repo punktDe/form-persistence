@@ -49,7 +49,6 @@ class ExportDefinitionController extends RestController
     {
     }
 
-
     public function listAction(): void
     {
         $this->view->setConfiguration([
