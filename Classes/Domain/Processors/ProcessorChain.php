@@ -30,7 +30,7 @@ class ProcessorChain implements ProcessorInterface
     protected $processorChainConfiguration = [];
 
     /**
-     * @var ?ProcessorInterface[]
+     * @var ProcessorInterface[]
      */
     protected $processorChain = null;
 

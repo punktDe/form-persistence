@@ -61,8 +61,10 @@ class ExportDefinitionProviderTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
+        $this->exportDefinitionprovider->initializeObject();
         $suitableExportDefinitions = $this->exportDefinitionprovider->findSuitableExportDefinitionsForFormData($formData);
 
-        self::assertCount(2, $suitableExportDefinitions);
+        // expected 3, 2 dynamic, one static
+        self::assertCount(3, $suitableExportDefinitions);
     }
 }

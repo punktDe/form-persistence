@@ -51,8 +51,7 @@ class ExportDefinition implements ExportDefinitionInterface
         if ($formData === null) {
             return false;
         }
-
-        return !empty(array_intersect(array_keys($this->definition), $formData->getProcessedFieldNames()));
+        return count(array_intersect(array_keys($this->definition), $formData->getProcessedFieldNames())) === count($this->definition);
     }
 
     public function getIdentifier(): string
