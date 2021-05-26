@@ -17,8 +17,8 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
         itemRenderer = Neos.Fusion:Loop {
             items = ${row}
             itemRenderer =  ${'<td>' + item + '</td>'}
+            @process.wrapRow = ${'<tr>' + value + '</tr>'}
         }
-        @process.wrapRow = ${'<tr>' + value + '</tr>'}
     }
 
     renderer = afx`
