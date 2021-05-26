@@ -13,11 +13,17 @@ PunktDe:
           options: []
 
       processorChain:
-        # Convert form values to a an exportable representation. Eg. Uploaded data to its filename
-        valueFormatting:
-          class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
+        # Flatten nested fields into an array with namespaces
+        flattenArray:
+          class: 'PunktDe\Form\Persistence\Domain\Processors\FlattenArrayProcessor'
+          position: 'start'
 
         # Map data keys from form defined keys to output keys. Drop unmapped fields.
         fieldKeyMapping:
           class: 'PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor'
-          position: 'after valueFormatting'
+
+        # Convert form values to a an exportable representation. Eg. Uploaded data to its filename
+        valueFormatting:
+          class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
+
+

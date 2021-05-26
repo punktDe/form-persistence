@@ -16,7 +16,6 @@ use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
 class ProcessorChain implements ProcessorInterface
 {
-
     /**
      * @Flow\Inject
      * @var ObjectManager
@@ -36,13 +35,14 @@ class ProcessorChain implements ProcessorInterface
 
     public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
     {
-        if($this->processorChain === null) {
+        if ($this->processorChain === null) {
             $this->initializeProcessorChain();
         }
 
         foreach ($this->processorChain as $processorIdentifier => $processor) {
             $formData = $processor->convertFormData($formData, $exportDefinition);
         }
+
         return $formData;
     }
 
@@ -52,7 +52,6 @@ class ProcessorChain implements ProcessorInterface
     private function initializeProcessorChain(): void
     {
         $sortedProcessors = (new PositionalArraySorter($this->processorChainConfiguration))->toArray();
-
         foreach ($sortedProcessors as $processorIdentifier => $processorSetting) {
             if (!isset($processorSetting['class'])) {
                 throw new ConfigurationException(sprintf('No class is given for processor %s', $processorIdentifier), 1621947877);
