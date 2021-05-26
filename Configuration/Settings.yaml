@@ -1,6 +1,10 @@
 PunktDe:
   Form:
     Persistence:
+      finisher:
+        excludedFormTypes:
+          'Neos.Form:StaticText': true
+
       exportDefinitions:
         csv:
           label: Generic CSV
@@ -10,7 +14,7 @@ PunktDe:
       exporter:
         csv:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
-          options: []
+          options: [ ]
 
       processorChain:
         # Flatten nested fields into an array with namespaces

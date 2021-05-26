@@ -26,6 +26,12 @@ class SaveFormDataFinisher extends AbstractFinisher
     protected $formDataRepository;
 
     /**
+     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="finisher.excludedFormTypes")
+     * @var array
+     */
+    protected $excludedFormTypes = [];
+
+    /**
      * @throws IllegalObjectTypeException
      */
     protected function executeInternal(): void
@@ -35,13 +41,22 @@ class SaveFormDataFinisher extends AbstractFinisher
         $formFieldsData = [];
         $fieldIdentifiersString = '';
 
-        foreach ($fieldValues as $identifier => $fieldValue) {
-            if ($formRuntime->getFormDefinition()->getElementByIdentifier($identifier) instanceof AbstractFormElement) {
-                $formFieldsData[$identifier] = $fieldValue;
-                $fieldIdentifiersString .= $identifier;
-            }
-        }
+        $excludedFormTypes = array_keys(array_filter($this->excludedFormTypes));
 
+        foreach ($fieldValues as $identifier => $fieldValue) {
+
+            if (!$formRuntime->getFormDefinition()->getElementByIdentifier($identifier) instanceof AbstractFormElement) {
+                continue;
+            }
+
+            if (in_array($formRuntime->getFormDefinition()->getElementByIdentifier($identifier)->getType(), $excludedFormTypes, true)) {
+                continue;
+            }
+
+            $formFieldsData[$identifier] = $fieldValue;
+            $fieldIdentifiersString .= $identifier;
+        }
+        
         $formData = new FormData();
 
         $formData->setFormIdentifier($formRuntime->getIdentifier());
