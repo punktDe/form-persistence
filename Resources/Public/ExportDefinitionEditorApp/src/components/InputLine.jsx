@@ -10,6 +10,7 @@ const InputLine = ({ inputLine, index, formFields, formFieldNameChanged, convers
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                 >
+                    <i className={'fas fa-bars icon-white'} style={{width: '16px', margin: '0 16px'}}/>
                     <select className={'neos-span5 form-field-select'} onChange={(event) => { formFieldNameChanged(event, index) }} value={inputLine.value}>
                         {
                             formFields.map(item => {
@@ -20,7 +21,7 @@ const InputLine = ({ inputLine, index, formFields, formFieldNameChanged, convers
                     <i className={'fas fa-arrow-right icon-white'} style={{width: '16px', margin: '0 16px'}}/>
                     <input
                         type="text"
-                        placeholder="conversion to field name"
+                        placeholder="exporter field name"
                         value={inputLine.conversionValue}
                         onChange={(event) => { conversionFieldNameChanged(event, index) }}
                         className={'neos-span5'}

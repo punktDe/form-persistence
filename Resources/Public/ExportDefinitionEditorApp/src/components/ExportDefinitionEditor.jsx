@@ -110,6 +110,8 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                     allFormsData: formsData
                 };
                 setState(data);
+            }).catch(error => {
+                console.error('An Error occurred:', error);
             })
         }).catch(error => {
             console.error('An Error occurred:', error);
@@ -338,8 +340,11 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                                     </select>
                                 </div>
                             </div>
+                            <div className="neos-control-group">
+                                <div style={{paddingLeft: '50px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px'}}>Form field name</div><div style={{paddingLeft: '48px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px'}}>Exported field name</div>
+                            </div>
                             <DragDropContext onDragEnd={onDragEnd}>
-                                <Droppable droppableId="assosittive-fields">
+                                <Droppable droppableId="assosiative-fields">
                                     {provided => (
                                         <div ref={provided.innerRef} {...provided.droppableProps}>
                                             <InputLines
