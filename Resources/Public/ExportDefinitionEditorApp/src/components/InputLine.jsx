@@ -21,7 +21,7 @@ const InputLine = ({ inputLine, index, formFields, formFieldNameChanged, convers
                     <i className={'fas fa-arrow-right icon-white'} style={{width: '16px', margin: '0 16px'}}/>
                     <input
                         type="text"
-                        placeholder="exporter field name"
+                        placeholder="exported field name"
                         value={inputLine.conversionValue}
                         onChange={(event) => { conversionFieldNameChanged(event, index) }}
                         className={'neos-span5'}
