@@ -28,7 +28,11 @@ Neos:
             description: 'Download saved form data for the forms on this site'
             icon: 'fas fa-file-download'
             privilegeTarget: 'PunktDe.Form.Persistence:DownLoadFormData'
-
+    userInterface:
+      translation:
+        autoInclude:
+          'PunktDe.Form.Persistence':
+            - 'Modules/*'
   Fusion:
     defaultContext:
       PunktDe.FormExport.ExportDefinition: 'PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper'
