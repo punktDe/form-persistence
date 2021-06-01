@@ -97,7 +97,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
     renderer = afx`
         <div class="neos-content neos-container-fluid">
             <div class="neos-module-container">
-                <table class="neos-table">
+                <table class="neos-table" @if.savedFormData={props.tableRows}>
                     <thead>
                         <tr>
                             <th>
@@ -122,6 +122,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                         {props.tableRows}
                     </tbody>
                 </table>
+                <div @if.noSavedFormData={!props.tableRows}>There is no saved form data to display</div>
             </div>
             <div class="neos-footer">
                 <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Manage Export Definitions</a>
