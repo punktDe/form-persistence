@@ -5,9 +5,12 @@ Form Persistence Finisher with a backend module to download the form-data.
 [![Latest Stable Version](https://poser.pugx.org/punktDe/form-persistence/v/stable)](https://packagist.org/packages/punktDe/form-persistence) [![Total Downloads](https://poser.pugx.org/punktDe/form-persistence/downloads)](https://packagist.org/packages/punktDe/form-persistence) [![License](https://poser.pugx.org/punktDe/form-persistence/license)](https://packagist.org/packages/punktDe/form-persistence)
 
 This package adds a persistence finisher to persist form data into your database. 
-The saved form data can be downloaded as a csv file in the backend at any given time.
+
+It further provides a backend module to download the data in different formats. A n export definition editor let you define your custom export definitions.
 
 Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers.
+
+![Backend Module](Documentation/BackendModule.png)
 
 # Installation
 ```
@@ -32,6 +35,20 @@ The following variables ca be used:
 * currentDate
 * exportDefinitionIdentifier
 
+## Processor Chain
+
+Processing steps for processing the form data are defined in the `processorChain` configuration. This chain is currently used globally for all exports. You can add your own processors using the postionalArraySprtingSyntax for their positionin the chain.
+
+Example: 
+
+	PunktDe:
+	  Form:
+	    Persistence:
+	      processorChain:
+	        # My processor
+	        flattenArray:
+	          class: 'Vendor\FormProcessors\MyProccessor'
+	          position: 'end'
 
 # Usage
 ## Add the SaveFormDataFinisher
@@ -51,12 +68,22 @@ finishers:
 ### Using the Neos Form Builder
 Require the suggested package neos/form-builder and add the save form data finisher to your node based form in the neos backend.
 
-## Download the data using the backend module
+## Backend Module
+
+### Download form data
 
 A simple backend module is provided to download the form data as CSV. The form version specifies the used fields and their position. 
 With that it is taken care, that if the form changes over time, a separate CSV file with consistent headers and column position is generated. 
 
-![Example](Documentation/BackendModule.png)
+![Backend Module](Documentation/BackendModule.png)
+
+### Define Export Definitions
+
+The package brings a graphical editor for defining export definitions. With an export definition you can define the fields together whith the field names which are added to the export.
+
+![Backend Module](Documentation/ExportDefinitionEditor.png)
+
+# Developing the package
 
 ## Export Definition Editor
 
