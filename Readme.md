@@ -20,6 +20,18 @@ composer require punktde/form-persistence
 After the successful installation run `./flow doctrine:migrate` to initialize the database table.
 
 # Configuration
+
+## Exclude form types from saving
+
+Some form types are only fro structuring the form or to display static text and should not be available for export. These form types can now be excluded using extendable configuration:
+
+	PunktDe:
+	  Form:
+	    Persistence:
+	      finisher:
+	        excludedFormTypes:
+	          'Neos.Form:StaticText': true
+
 ## Export Definitions
 
 Static export definitions can be defined via settings.
@@ -49,6 +61,7 @@ Example:
 	        flattenArray:
 	          class: 'Vendor\FormProcessors\MyProccessor'
 	          position: 'end'
+	          
 
 # Usage
 ## Add the SaveFormDataFinisher
