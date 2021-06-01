@@ -242,6 +242,7 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                 fetchData();
             }).catch(error => {
                 console.error('An Error occurred:', error);
+                setIsLoading(false);
             })
         }
     };
@@ -341,32 +342,33 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                                 </div>
                             </div>
                             { state.lines.length > 0 ?
-                                <div className="neos-control-group">
-                                    <div style={{ paddingLeft: '50px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px' }}>Form field name</div>
-                                    <div style={{ paddingLeft: '48px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px' }}>Exported field name</div>
-                                </div>
-                                : ''
+                                <>
+                                    <div className="neos-control-group">
+                                        <div style={{ paddingLeft: '50px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px' }}>Form field name</div>
+                                        <div style={{ paddingLeft: '48px', width: '40%', fontSize: '18px', display: 'inline-block', height: '32px', marginTop: '16px' }}>Exported field name</div>
+                                    </div>
+                                    <DragDropContext onDragEnd={onDragEnd}>
+                                        <Droppable droppableId="assosiative-fields">
+                                            {provided => (
+                                                <div ref={provided.innerRef} {...provided.droppableProps}>
+                                                    <InputLines
+                                                        lines={state.lines}
+                                                        formFields={state.formFields}
+                                                        formFieldNameChanged={formFieldNameChanged}
+                                                        conversionFieldNameChanged={conversionFieldNameChanged}
+                                                        removeLine={removeLine}
+                                                    />
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </DragDropContext>
+                                </>
+                                : formIdentifier !== '' ? 'Please add a field association for the form to define the export definition' : ''
                             }
-                            <DragDropContext onDragEnd={onDragEnd}>
-                                <Droppable droppableId="assosiative-fields">
-                                    {provided => (
-                                        <div ref={provided.innerRef} {...provided.droppableProps}>
-                                            <InputLines
-                                                lines={state.lines}
-                                                formFields={state.formFields}
-                                                formFieldNameChanged={formFieldNameChanged}
-                                                conversionFieldNameChanged={conversionFieldNameChanged}
-                                                removeLine={removeLine}
-                                            />
-                                            {provided.placeholder}
-                                        </div>
-                                    )}
-                                </Droppable>
-                            </DragDropContext>
                             { formIdentifier !== '' ?
                                 <div className={'neos-pull-right'}>
                                     <button className={'neos-button neos-button-primary'} onClick={addLine}><i className={'fas fa-plus icon-white'}/> Add a field association</button>
-                                    <button className={'neos-button neos-button-primary'} onClick={sendData}><i className={'fas fa-save icon-white'}/> Save export definition</button>
                                 </div>
                                 : ''
                             }
@@ -375,8 +377,12 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                 </div>
             </div>
             <div className={'neos-row-fluid'}>
-                <div className={'neos-span4'}>
+                <div className={'neos-span5'}>
                     <button className={'neos-button neos-button-primary'} onClick={reset}><i className={'fas fa-chevron-left icon-white'}/> Back to export definition listing</button>
+                    { formIdentifier !== '' ?
+                        <button style={{marginLeft: '16px' }} className={'neos-button neos-button-primary'} onClick={sendData}><i className={'fas fa-save icon-white'}/> Save export definition</button>
+                        : ''
+                    }
                 </div>
             </div>
         </>
