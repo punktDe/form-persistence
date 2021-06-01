@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace PunktDe\Form\Persistence\Domain\Model;
@@ -11,6 +10,8 @@ namespace PunktDe\Form\Persistence\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
 
 /**
  * @Flow\Entity
@@ -36,7 +37,23 @@ class FormData
      * @ORM\Column(type="flow_json_array")
      * @var array
      */
-    protected $formData;
+    protected $formData = [];
+
+    /**
+     * @Flow\Inject
+     * @var ProcessorChain
+     */
+    protected $processorChain;
+
+    public function getFieldNames(): array
+    {
+        return array_keys($this->formData);
+    }
+
+    public function getProcessedFieldNames(): array
+    {
+        return array_keys($this->getProcessedFormData());
+    }
 
     /**
      * @return string
@@ -48,10 +65,12 @@ class FormData
 
     /**
      * @param string $formIdentifier
+     * @return FormData
      */
-    public function setFormIdentifier(string $formIdentifier): void
+    public function setFormIdentifier(string $formIdentifier): FormData
     {
         $this->formIdentifier = $formIdentifier;
+        return $this;
     }
 
     /**
@@ -64,26 +83,12 @@ class FormData
 
     /**
      * @param string $hash
+     * @return FormData
      */
-    public function setHash(string $hash): void
+    public function setHash(string $hash): FormData
     {
         $this->hash = $hash;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFormData(): array
-    {
-        return $this->formData;
-    }
-
-    /**
-     * @param array $formData
-     */
-    public function setFormData(array $formData): void
-    {
-        $this->formData = $formData;
+        return $this;
     }
 
     /**
@@ -96,9 +101,34 @@ class FormData
 
     /**
      * @param \DateTime $date
+     * @return FormData
      */
-    public function setDate(\DateTime $date): void
+    public function setDate(\DateTime $date): FormData
     {
         $this->date = $date;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormData(): array
+    {
+        return $this->formData;
+    }
+
+    public function getProcessedFormData(?ExportDefinitionInterface $exportDefinition = null): array
+    {
+        return $this->processorChain->convertFormData($this->formData, $exportDefinition);
+    }
+
+    /**
+     * @param array $formData
+     * @return FormData
+     */
+    public function setFormData(array $formData): FormData
+    {
+        $this->formData = $formData;
+        return $this;
     }
 }

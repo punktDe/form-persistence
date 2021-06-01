@@ -1,0 +1,37 @@
+-
+  name: 'Form Data Rest API'
+  uriPattern: 'api/formpersistence/formdata'
+  defaults:
+    '@package': 'PunktDe.Form.Persistence'
+    '@controller': 'Api\FormData'
+    '@format': 'json'
+    '@action': 'index'
+  httpMethods: ['GET', 'POST']
+-
+  name: 'Form Data Rest API'
+  uriPattern: 'api/formpersistence/formdata/{resource}'
+  defaults:
+    '@package': 'PunktDe.Form.Persistence'
+    '@controller': 'Api\FormData'
+    '@format': 'json'
+    '@action': 'index'
+  httpMethods: ['GET', 'PUT', 'DELETE']
+
+-
+  name: 'Export Definition Rest API'
+  uriPattern: 'api/formpersistence/exportdefinition'
+  defaults:
+    '@package': 'PunktDe.Form.Persistence'
+    '@controller': 'Api\ExportDefinition'
+    '@format': 'json'
+    '@action': 'index'
+  httpMethods: ['GET', 'POST']
+-
+  name: 'Export Definition Rest API'
+  uriPattern: 'api/formpersistence/exportdefinition/{resource}'
+  defaults:
+    '@package': 'PunktDe.Form.Persistence'
+    '@controller': 'Api\ExportDefinition'
+    '@format': 'json'
+    '@action': 'index'
+  httpMethods: ['GET', 'PUT', 'DELETE']

@@ -1,0 +1,132 @@
+prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusion:Component) {
+
+     exportDefinitionsLink = Neos.Fusion:UriBuilder {
+        package = 'PunktDe.Form.Persistence'
+        controller = 'Backend\\ExportDefinition'
+        action = 'index'
+        additionalParams {
+            formIdentifier = ${formType.formIdentifier}
+            hash = ${formType.hash}
+        }
+    }
+
+    tableRows = Neos.Fusion:Loop {
+        items = ${formTypes}
+        itemName = 'formType'
+        itemRenderer = Neos.Fusion:Component {
+
+            date = ${Date.format(formData.date, 'Y-m-d H:i:s')}
+            entryCount = ${formType.entryCount}
+            @context.formData = ${formType[0]}
+
+            options = Neos.Fusion:Loop {
+                items = ${PunktDe.FormExport.ExportDefinition.getSuitableExportDefinitions(formData)}
+                itemRenderer = Neos.Fusion.Form:Select.Option {
+                    option.value = ${item.identifier}
+                    content = ${item.label}
+                }
+            }
+
+            deleteButton = Neos.Fusion:Fragment {
+                renderer = afx`
+                    <button class="neos-button neos-button-danger" title={I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.tooltip')} data-toggle="modal" href={'#user-' + iterator.index} data-neos-toggle="tooltip">
+                        <i class="fas fa-trash-alt icon-white"></i>
+                    </button>
+                    <div class="neos-hide" id={'user-' + iterator.index}>
+                        <div class="neos-modal-centered">
+                            <div class="neos-modal-content">
+                                <div class="neos-modal-header">
+                                    <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                                    <div class="neos-header">
+                                        {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.title')}
+                                    </div>
+                                    <div>
+                                        <div class="neos-subheader">
+                                            <p>
+                                                {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.body')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="neos-modal-footer">
+                                    <a href="#" class="neos-button" data-dismiss="modal">
+                                        {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.cancel')}
+                                    </a>
+                                    <Neos.Fusion.Form:Form attributes.style="display: inline-block" form.target.action="delete" form.target.controller="Backend\\FormData" form.data.formDataEntry={formData}>
+                                        <Neos.Fusion.Form:Hidden field.name="formDataEntry[hash]"/>
+                                        <Neos.Fusion.Form:Button type="submit" attributes.class="neos-button neos-button-danger">
+                                            {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.confirm')}
+                                        </Neos.Fusion.Form:Button>
+                                    </Neos.Fusion.Form:Form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
+                    </div>
+                `
+            }
+
+            renderer = afx`
+                <tr>
+                    <td>{formData.formIdentifier}</td>
+                    <td>{String.crop(formData.hash,10)}</td>
+                    <td>{props.entryCount}</td>
+                    <td>{props.date}</td>
+                    <td>
+                        <Neos.Fusion.Form:Form form.target.action="download" form.target.controller="Backend\\FormData">
+                            <Neos.Fusion.Form:Select field.name="exportDefinitionIdentifier">{props.options}</Neos.Fusion.Form:Select>
+                            <Neos.Fusion.Form:Hidden field.name="formIdentifier" attributes.value={formData.formIdentifier}/>
+                            <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={formData.hash}/>
+                            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">Download</Neos.Fusion.Form:Button>
+                        </Neos.Fusion.Form:Form>
+                    </td>
+                    <td class="neos-action">
+                        <div class="neos-pull-right">
+                            <Neos.Fusion.Form:Form attributes.style="display: inline-block" form.target.action="preview" form.target.controller="Backend\\FormData" form.data.formDataEntry={formData}>
+                                <Neos.Fusion.Form:Hidden field.name="formDataEntry[hash]"/>
+                                <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary"><i class="fas fa-eye icon-white"></i></Neos.Fusion.Form:Button>
+                            </Neos.Fusion.Form:Form>
+                            {props.deleteButton}
+                        </div>
+                    </td>
+                </tr>
+            `
+        }
+    }
+
+    renderer = afx`
+        <div class="neos-content neos-container-fluid">
+            <div class="neos-module-container">
+                <table class="neos-table" @if.savedFormData={props.tableRows}>
+                    <thead>
+                        <tr>
+                            <th>
+                                Form Identifier
+                            </th>
+                            <th>
+                                Form Version
+                            </th>
+                            <th>
+                                Entry Count
+                            </th>
+                            <th>
+                                Latest Entry
+                            </th>
+                            <th>
+                                Export definition
+                            </th>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {props.tableRows}
+                    </tbody>
+                </table>
+                <div @if.noSavedFormData={!props.tableRows}>There is no saved form data to display</div>
+            </div>
+            <div class="neos-footer">
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Manage Export Definitions</a>
+            </div>
+        </div>
+    `
+}

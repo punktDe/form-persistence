@@ -6,7 +6,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 
-class Version20200605154402 extends AbstractMigration
+final class Version20200605154402 extends AbstractMigration
 {
 
     /**
@@ -20,7 +20,6 @@ class Version20200605154402 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws AbortMigrationException
      * @throws DBALException
      */
     public function up(Schema $schema): void
@@ -33,7 +32,6 @@ class Version20200605154402 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws AbortMigrationException
      * @throws DBALException
      */
     public function down(Schema $schema): void

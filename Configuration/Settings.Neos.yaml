@@ -1,10 +1,26 @@
 Neos:
+  Flow:
+    mvc:
+      routes:
+        'PunktDe.Form.Persistence':
+          position: start
+
+    security:
+      authentication:
+        providers:
+          'Neos.Neos:Backend':
+            requestPatterns:
+              'PunktDe.Form.Persistence':
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'PunktDe\Form\Persistence\Controller\.*'
+
   Neos:
     fusion:
       autoInclude:
         'PunktDe.Form.Persistence': true
     modules:
-      administration:
+      management:
         submodules:
           formDataDownload:
             label: 'Form Data Download'
@@ -12,6 +28,14 @@ Neos:
             description: 'Download saved form data for the forms on this site'
             icon: 'fas fa-file-download'
             privilegeTarget: 'PunktDe.Form.Persistence:DownLoadFormData'
+    userInterface:
+      translation:
+        autoInclude:
+          'PunktDe.Form.Persistence':
+            - 'Modules/*'
+  Fusion:
+    defaultContext:
+      PunktDe.FormExport.ExportDefinition: 'PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper'
 
   Form:
     presets:
@@ -24,3 +48,4 @@ Neos:
     FusionRenderer:
       fusionAutoInclude:
         'PunktDe.Form.Persistence': true
+

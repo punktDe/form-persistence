@@ -9,12 +9,29 @@ The saved form data can be downloaded as a csv file in the backend at any given 
 
 Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers.
 
-## Installation
+# Installation
 ```
 composer require punktde/form-persistence
 ```
 
 After the successful installation run `./flow doctrine:migrate` to initialize the database table.
+
+# Configuration
+## Export Definitions
+
+Static export definitions can be defined via settings.
+
+**fileNamePattern**: 
+
+Example: `Form-Export-{formIdentifier}-{currentDate}.csv`
+
+The following variables ca be used: 
+
+* formIdentifier
+* formVersionHash
+* currentDate
+* exportDefinitionIdentifier
+
 
 # Usage
 ## Add the SaveFormDataFinisher
@@ -41,3 +58,24 @@ With that it is taken care, that if the form changes over time, a separate CSV f
 
 ![Example](Documentation/BackendModule.png)
 
+## Export Definition Editor
+
+### Working with the react app
+
+To start make changes to the export definition app go to the folder `PunktDe.Form.Persistence/Resources/Public/ExportDefinitionEditorApp`
+and run the command
+
+```
+yarn install
+```
+
+After all dependencies are installed, you can adjust the code of the react app. 
+The is created with the help of creat-react-app scaffolding tool and therefore uses its build configuration with some adjustments.
+To see changes, you need to build the app with the following command.
+
+```
+yarn build
+```
+
+The generated file `main.js` is located in the folder `build/static/js`.
+This file is loaded in the Neos Backend and is the editor you see.

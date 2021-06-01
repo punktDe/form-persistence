@@ -8,15 +8,17 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
  *  All rights reserved.
  */
 
-use Exception;
-use League\Csv\CannotInsertRecord;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Fusion\View\FusionView;
-use PunktDe\Form\Persistence\Domain\Exporter\CsvExporter;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
+use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
+use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
 class FormDataController extends ActionController
 {
@@ -38,9 +40,15 @@ class FormDataController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var CsvExporter
+     * @var ExportDefinitionProvider
      */
-    protected $csvExporter;
+    protected $exportDefinitionProvider;
+
+    /**
+     * @Flow\Inject
+     * @var ExporterFactory
+     */
+    protected $exporterFactory;
 
     public function indexAction(): void
     {
@@ -49,22 +57,65 @@ class FormDataController extends ActionController
     }
 
     /**
-     * @throws CannotInsertRecord
-     * @throws NoSuchArgumentException
-     * @throws Exception
+     * @param string $formIdentifier
+     * @param string $hash
+     * @param string $exportDefinitionIdentifier
+     * @throws InvalidConfigurationTypeException
+     * @throws CannotBuildObjectException
+     * @throws UnknownObjectException
+     * @throws ConfigurationException
      */
-    public function downloadAction(): void
+    public function downloadAction(string $formIdentifier, string $hash, string $exportDefinitionIdentifier): void
     {
-        $formIdentifier = $this->request->getParentRequest()->getArgument('formIdentifier');
-        $hash = $this->request->getParentRequest()->getArgument('hash');
-
         /** @var FormData[] $formDataItems */
-        $formDataItems = $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray();
 
-        $fileName = sprintf('Form-Export-%s-%s.csv', $formIdentifier, (new \DateTime())->format('Y-m-d-H-i-s'));
+        $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($exportDefinitionIdentifier);
+        $exporter = $this->exporterFactory->makeExporterByExportDefinition($exportDefinition);
 
-        $this->csvExporter->compileAndSend($formDataItems, $fileName);
+        $fileName = str_replace(
+            ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
+            [$formIdentifier, date('Y-m-d_his'), $exportDefinition->getIdentifier(), $hash],
+            $exportDefinition->getFileNamePattern()
+        );
+
+        $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
+            return $formData->getProcessedFormData($exportDefinition);
+        }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
+
+        $exporter->compileAndSend($formDataItems);
+        $exporter->setFileName($fileName);
 
         die();
+    }
+
+    public function previewAction(FormData $formDataEntry): void
+    {
+        $formDataEntries = $this->formDataRepository->findByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+
+        if ($formDataEntries->count() === 0) {
+            $this->forward('index');
+        }
+
+        $formDataValues = array_map(static function (FormData $formData) {
+            return $formData->getProcessedFormData();
+        }, $formDataEntries->toArray());
+
+        /** @var FormData $firstFormDataEntry */
+        $firstFormDataEntry = $formDataEntries->getFirst();
+
+        $this->view->assignMultiple([
+            'formIdentifier' => $firstFormDataEntry->getFormIdentifier(),
+            'headerFields' => array_keys(current($formDataValues)),
+            'formDataValues' => $formDataValues,
+        ]);
+    }
+
+    /**
+     * @param FormData $formDataEntry
+     */
+    public function deleteAction(FormData $formDataEntry): void
+    {
+        $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $this->redirect('index');
     }
 }

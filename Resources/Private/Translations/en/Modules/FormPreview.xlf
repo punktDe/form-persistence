@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext">
+        <body>
+            <trans-unit id="entry.delete.tooltip">
+                <source>Delete Entry</source>
+            </trans-unit>
+            <trans-unit id="entry.delete.modal.title">
+                <source>Really Delete Entry?</source>
+            </trans-unit>
+            <trans-unit id="entry.delete.modal.body">
+                <source>This will delete the entry and all related form-data. This operation cannot be undone.</source>
+            </trans-unit>
+            <trans-unit id="entry.delete.modal.cancel">
+                <source>Cancel</source>
+            </trans-unit>
+            <trans-unit id="entry.delete.modal.confirm">
+                <source>Delete</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

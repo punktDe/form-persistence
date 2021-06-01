@@ -32,11 +32,11 @@ class FormDataRepository extends Repository
     public function findAllUniqueForms(): iterable
     {
         $queryBuilder = $this->createQueryBuilder('form');
-        $queryBuilder
+        return $queryBuilder
             ->groupBy('form.formIdentifier')
             ->addGroupBy('form.hash')
-            ->addSelect('count(form) AS entryCount');
-        return $queryBuilder->getQuery()->execute();
+            ->addSelect('count(form) AS entryCount')
+            ->getQuery()->execute();
     }
 
     /**
@@ -54,6 +54,13 @@ class FormDataRepository extends Repository
                 $query->equals('hash', $hash)
             )
         )->execute();
+    }
+
+    public function removeByFormIdentifierAndHash(string $formIdentifier, string $hash): void
+    {
+        foreach ($this->findByFormIdentifierAndHash($formIdentifier, $hash) as $formData) {
+            $this->remove($formData);
+        }
     }
 
     /**

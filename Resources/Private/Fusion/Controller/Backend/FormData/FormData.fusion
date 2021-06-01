@@ -1,0 +1,4 @@
+PunktDe.Form.Persistence.Backend.FormDataController {
+    index = PunktDe.Form.Persistence:Backend.FormData.Index
+    preview = PunktDe.Form.Persistence:Backend.FormData.Preview
+}
