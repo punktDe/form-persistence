@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PunktDe\Form\Persistence\Domain\Model;
 
 /*
- *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - https://punkt.de
+ *  (c) 2020-2021 punkt.de GmbH - Karlsruhe, Germany - https://punkt.de
  *  All rights reserved.
  */
 
@@ -32,6 +32,16 @@ class FormData
      * @var \DateTime
      */
     protected $date;
+
+    /**
+     * @var string
+     */
+    protected $siteName = '';
+
+    /**
+     * @var string
+     */
+    protected $contentDimension = '';
 
     /**
      * @ORM\Column(type="flow_json_array")
@@ -129,6 +139,42 @@ class FormData
     public function setFormData(array $formData): FormData
     {
         $this->formData = $formData;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSiteName(): string
+    {
+        return $this->siteName;
+    }
+
+    /**
+     * @param string $siteName
+     * @return FormData
+     */
+    public function setSiteName(string $siteName): FormData
+    {
+        $this->siteName = $siteName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentDimension(): string
+    {
+        return $this->contentDimension;
+    }
+
+    /**
+     * @param string $contentDimension
+     * @return FormData
+     */
+    public function setContentDimension(string $contentDimension): FormData
+    {
+        $this->contentDimension = $contentDimension;
         return $this;
     }
 }

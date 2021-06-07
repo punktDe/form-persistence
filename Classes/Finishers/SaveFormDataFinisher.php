@@ -37,6 +37,7 @@ class SaveFormDataFinisher extends AbstractFinisher
     protected function executeInternal(): void
     {
         $formRuntime = $this->finisherContext->getFormRuntime();
+
         $fieldValues = $this->finisherContext->getFormValues();
         $formFieldsData = [];
         $fieldIdentifiersString = '';
@@ -56,13 +57,15 @@ class SaveFormDataFinisher extends AbstractFinisher
             $formFieldsData[$identifier] = $fieldValue;
             $fieldIdentifiersString .= $identifier;
         }
-        
+
         $formData = new FormData();
 
         $formData->setFormIdentifier($formRuntime->getIdentifier());
         $formData->setHash(sha1($fieldIdentifiersString));
         $formData->setFormData($formFieldsData);
         $formData->setDate(new \DateTime());
+        $formData->setSiteName($this->options['siteName'] ?? '');
+        $formData->setContentDimension($this->options['contentDimension'] ?? '');
 
         $this->formDataRepository->add($formData);
     }

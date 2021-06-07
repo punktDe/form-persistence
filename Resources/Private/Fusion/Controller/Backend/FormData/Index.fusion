@@ -68,6 +68,8 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
 
             renderer = afx`
                 <tr>
+                    <td>{formData.siteName}</td>
+                    <td>{formData.contentDimension}</td>
                     <td>{formData.formIdentifier}</td>
                     <td>{String.crop(formData.hash,10)}</td>
                     <td>{props.entryCount}</td>
@@ -100,6 +102,12 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                 <table class="neos-table" @if.savedFormData={props.tableRows}>
                     <thead>
                         <tr>
+                            <th>
+                                Site
+                            </th>
+                            <th>
+                                Dimension
+                            </th>
                             <th>
                                 Form Identifier
                             </th>
