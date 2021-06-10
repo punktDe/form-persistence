@@ -7,16 +7,19 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
     }
 
     headerFields = Neos.Fusion:Loop {
-        items = ${headerFields}
+        items = ${Array.unshift(headerFields, 'Date')}
         itemRenderer = ${'<th>' + item + '</th>'}
     }
 
     tableRows = Neos.Fusion:Loop {
-        items = ${formDataValues}
+        items = ${formData}
         itemName = 'row'
         itemRenderer = Neos.Fusion:Loop {
-            items = ${row}
-            itemRenderer =  ${'<td>' + item + '</td>'}
+            items = ${Array.unshift(row.values, Date.format(row.date, 'Y-m-d H:i:s'))}
+            itemRenderer = Neos.Fusion:Value {
+                nowrap = ${String.length(item) < 40 ? ' nowrap' : ''}
+                value = ${'<td' + this.nowrap + '>' + item + '</td>'}
+            }
             @process.wrapRow = ${'<tr>' + value + '</tr>'}
         }
     }

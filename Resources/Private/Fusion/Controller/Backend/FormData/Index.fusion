@@ -15,9 +15,9 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
         itemName = 'formType'
         itemRenderer = Neos.Fusion:Component {
 
-            date = ${Date.format(formData.date, 'Y-m-d H:i:s')}
-            entryCount = ${formType.entryCount}
             @context.formData = ${formType[0]}
+            date = ${formType.latestDate}
+            entryCount = ${formType.entryCount}
 
             options = Neos.Fusion:Loop {
                 items = ${PunktDe.FormExport.ExportDefinition.getSuitableExportDefinitions(formData)}
@@ -66,8 +66,16 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                 `
             }
 
+            contentDimensions = Neos.Fusion:Map {
+                items = ${formData.contentDimensions}
+                itemRenderer = ${String.toUpperCase(Array.first(item))}
+                @process.join = ${Array.join(value, '_')}
+            }
+
             renderer = afx`
                 <tr>
+                    <td>{formData.siteName}</td>
+                    <td>{props.contentDimensions}</td>
                     <td>{formData.formIdentifier}</td>
                     <td>{String.crop(formData.hash,10)}</td>
                     <td>{props.entryCount}</td>
@@ -101,6 +109,12 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                     <thead>
                         <tr>
                             <th>
+                                Site
+                            </th>
+                            <th>
+                                Dimension
+                            </th>
+                            <th>
                                 Form Identifier
                             </th>
                             <th>
@@ -122,7 +136,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                         {props.tableRows}
                     </tbody>
                 </table>
-                <div @if.noSavedFormData={!props.tableRows}>There is no saved form data to display</div>
+                <div @if.noSavedFormData={!props.tableRows}>There is either no saved form data to display or your account is missing the required privileges.</div>
             </div>
             <div class="neos-footer">
                 <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Manage Export Definitions</a>

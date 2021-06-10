@@ -96,8 +96,11 @@ class FormDataController extends ActionController
             $this->forward('index');
         }
 
-        $formDataValues = array_map(static function (FormData $formData) {
-            return $formData->getProcessedFormData();
+        $formData = array_map(static function (FormData $formData) {
+            return [
+                'date' => $formData->getDate(),
+                'values' => $formData->getProcessedFormData(),
+            ];
         }, $formDataEntries->toArray());
 
         /** @var FormData $firstFormDataEntry */
@@ -105,8 +108,8 @@ class FormDataController extends ActionController
 
         $this->view->assignMultiple([
             'formIdentifier' => $firstFormDataEntry->getFormIdentifier(),
-            'headerFields' => array_keys(current($formDataValues)),
-            'formDataValues' => $formDataValues,
+            'headerFields' => array_keys(current($formData)['values']),
+            'formData' => $formData,
         ]);
     }
 

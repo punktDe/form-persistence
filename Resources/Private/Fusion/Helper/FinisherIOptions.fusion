@@ -1,0 +1,4 @@
+prototype(PunktDe.Form.Persistence:SaveFormDataFinisher.Options) < prototype(Neos.Fusion:DataStructure) {
+    siteName = ${site.name}
+    contentDimensions = ${site.dimensions}
+}
