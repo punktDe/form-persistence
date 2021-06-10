@@ -39,7 +39,7 @@ class FormDataRepository extends Repository
 
     public function initializeObject(): void
     {
-        $this->accessibleSites = $this->getAccessibleSites();
+        $this->accessibleSites = $this->initializeAccessibleSites();
     }
 
     /**
@@ -108,17 +108,29 @@ class FormDataRepository extends Repository
     public function createQueryBuilder($alias, $indexBy = null)
     {
         $queryBuilder = parent::createQueryBuilder($alias, $indexBy);
-        return $queryBuilder->andWhere($queryBuilder->expr()->in('form.siteName', $this->accessibleSites));
+        if (count($this->accessibleSites) > 0) {
+            return $queryBuilder->andWhere($queryBuilder->expr()->in('form.siteName', $this->accessibleSites));
+        }
+
+        return $queryBuilder->andWhere('2 = 1');
     }
 
-    public function getAccessibleSites(): array
+    /**
+     * @return string[]
+     */
+    public function getAccessibleSites(): ?array
     {
-        return $this->accessibleSites ?? array_filter(
-                $this->findAllUniqueSiteNames(),
-                function (string $site) {
-                    return $this->siteAccesibilityService->isSiteAccessible($site);
-                }
-            );
+        return $this->accessibleSites;
+    }
+
+    protected function initializeAccessibleSites(): array
+    {
+        return array_filter(
+            $this->findAllUniqueSiteNames(),
+            function (string $site) {
+                return $this->siteAccesibilityService->isSiteAccessible($site);
+            }
+        );
     }
 
     protected function findAllUniqueSiteNames(): array

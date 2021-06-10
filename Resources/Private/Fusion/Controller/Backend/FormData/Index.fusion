@@ -136,7 +136,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                         {props.tableRows}
                     </tbody>
                 </table>
-                <div @if.noSavedFormData={!props.tableRows}>There is no saved form data to display</div>
+                <div @if.noSavedFormData={!props.tableRows}>There is either no saved form data to display or your account is missing the required privileges.</div>
             </div>
             <div class="neos-footer">
                 <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Manage Export Definitions</a>
