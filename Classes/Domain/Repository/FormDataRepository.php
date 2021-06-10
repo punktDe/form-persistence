@@ -36,6 +36,8 @@ class FormDataRepository extends Repository
             ->groupBy('form.formIdentifier')
             ->addGroupBy('form.hash')
             ->addSelect('count(form) AS entryCount')
+            ->addSelect('MAX(form.date) as latestDate')
+            ->orderBy('latestDate', 'DESC')
             ->getQuery()->execute();
     }
 

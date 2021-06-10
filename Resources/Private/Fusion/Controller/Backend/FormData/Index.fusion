@@ -1,5 +1,11 @@
 prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusion:Component) {
 
+//    Neos.Fusion:Map {
+//        items = ${site.dimensions}
+//        itemRenderer = ${String.toUpperCase(Array.first(item))}
+//        @process.join = ${Array.join(value, '_')}
+//    }
+
      exportDefinitionsLink = Neos.Fusion:UriBuilder {
         package = 'PunktDe.Form.Persistence'
         controller = 'Backend\\ExportDefinition'
@@ -15,9 +21,9 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
         itemName = 'formType'
         itemRenderer = Neos.Fusion:Component {
 
-            date = ${Date.format(formData.date, 'Y-m-d H:i:s')}
-            entryCount = ${formType.entryCount}
             @context.formData = ${formType[0]}
+            date = ${formType.latestDate}
+            entryCount = ${formType.entryCount}
 
             options = Neos.Fusion:Loop {
                 items = ${PunktDe.FormExport.ExportDefinition.getSuitableExportDefinitions(formData)}
