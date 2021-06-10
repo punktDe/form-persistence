@@ -63,6 +63,26 @@ Example:
 	          position: 'end'
 	          
 
+## Privileges
+
+Form data may contain sensitive data. The package thus offers priviliges to give backend users individual access. 
+
+### Site Privilege
+
+In a multi-site environment you can restrict the accessibility to form data depending on the site using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add 
+
+	'PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege':
+	  'PunktDe.Form.Persistence:Sites.All':
+	    label: Access to form data of all sites
+	    matcher: '*'
+	    
+	  'PunktDe.Form.Persistence:Sites.MyFirstSite':
+  	    label: Access to form data of site my-site
+	    matcher: 'my-site'
+
+The matcher accepts, '*', a single name or a comma-separated list of site names.
+
+
 # Usage
 ## Add the SaveFormDataFinisher
 ### Using the flow form configuration
