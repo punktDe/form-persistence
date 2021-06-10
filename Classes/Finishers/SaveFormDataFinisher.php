@@ -65,7 +65,7 @@ class SaveFormDataFinisher extends AbstractFinisher
         $formData->setFormData($formFieldsData);
         $formData->setDate(new \DateTime());
         $formData->setSiteName($this->options['siteName'] ?? '');
-        $formData->setContentDimension($this->options['contentDimension'] ?? '');
+        $formData->setContentDimensions($this->options['contentDimensions'] ?? '');
 
         $this->formDataRepository->add($formData);
     }

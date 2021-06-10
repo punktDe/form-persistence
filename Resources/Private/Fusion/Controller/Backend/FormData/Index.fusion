@@ -1,11 +1,5 @@
 prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusion:Component) {
 
-//    Neos.Fusion:Map {
-//        items = ${site.dimensions}
-//        itemRenderer = ${String.toUpperCase(Array.first(item))}
-//        @process.join = ${Array.join(value, '_')}
-//    }
-
      exportDefinitionsLink = Neos.Fusion:UriBuilder {
         package = 'PunktDe.Form.Persistence'
         controller = 'Backend\\ExportDefinition'
@@ -72,10 +66,16 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                 `
             }
 
+            contentDimensions = Neos.Fusion:Map {
+                items = ${formData.contentDimensions}
+                itemRenderer = ${String.toUpperCase(Array.first(item))}
+                @process.join = ${Array.join(value, '_')}
+            }
+
             renderer = afx`
                 <tr>
                     <td>{formData.siteName}</td>
-                    <td>{formData.contentDimension}</td>
+                    <td>{props.contentDimensions}</td>
                     <td>{formData.formIdentifier}</td>
                     <td>{String.crop(formData.hash,10)}</td>
                     <td>{props.entryCount}</td>

@@ -1,8 +1,4 @@
 prototype(PunktDe.Form.Persistence:SaveFormDataFinisher.Options) < prototype(Neos.Fusion:DataStructure) {
     siteName = ${site.name}
-    contentDimension = Neos.Fusion:Map {
-        items = ${site.dimensions}
-        itemRenderer = ${String.toUpperCase(Array.first(item))}
-        @process.join = ${Array.join(value, '_')}
-    }
+    contentDimensions = ${site.dimensions}
 }

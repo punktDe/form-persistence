@@ -39,9 +39,10 @@ class FormData
     protected $siteName = '';
 
     /**
-     * @var string
+     * @ORM\Column(type="flow_json_array")
+     * @var array
      */
-    protected $contentDimension = '';
+    protected $contentDimensions = [];
 
     /**
      * @ORM\Column(type="flow_json_array")
@@ -163,18 +164,18 @@ class FormData
     /**
      * @return string
      */
-    public function getContentDimension(): string
+    public function getContentDimensions(): array
     {
-        return $this->contentDimension;
+        return $this->contentDimensions;
     }
 
     /**
-     * @param string $contentDimension
+     * @param string $contentDimensions
      * @return FormData
      */
-    public function setContentDimension(string $contentDimension): FormData
+    public function setContentDimensions(string $contentDimensions): FormData
     {
-        $this->contentDimension = $contentDimension;
+        $this->contentDimensions = $contentDimensions;
         return $this;
     }
 }
