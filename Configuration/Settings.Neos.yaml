@@ -10,7 +10,7 @@ Neos:
         providers:
           'Neos.Neos:Backend':
             requestPatterns:
-              'PunktDe.Form.Persistence':
+              'PunktDe.Form.Persistence:BackendController':
                 pattern: ControllerObjectName
                 patternOptions:
                   controllerObjectNamePattern: 'PunktDe\Form\Persistence\Controller\.*'
