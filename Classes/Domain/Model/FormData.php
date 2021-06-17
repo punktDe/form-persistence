@@ -162,7 +162,7 @@ class FormData
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getContentDimensions(): array
     {
@@ -170,10 +170,10 @@ class FormData
     }
 
     /**
-     * @param string $contentDimensions
+     * @param array $contentDimensions
      * @return FormData
      */
-    public function setContentDimensions(string $contentDimensions): FormData
+    public function setContentDimensions(array $contentDimensions): FormData
     {
         $this->contentDimensions = $contentDimensions;
         return $this;
