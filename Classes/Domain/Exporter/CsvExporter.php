@@ -9,7 +9,6 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
  */
 
 use League\Csv\Writer;
-use Neos\Flow\ResourceManagement\PersistentResource;
 
 class CsvExporter implements FormDataExporterInterface
 {
@@ -25,7 +24,7 @@ class CsvExporter implements FormDataExporterInterface
 
     public function setFileName(string $fileName): void
     {
-        $this->$fileName = $fileName;
+        $this->fileName = $fileName;
     }
 
     public function setOptions(array $options): void
