@@ -8,8 +8,10 @@ namespace PunktDe\Form\Persistence\Domain\Model;
  *  All rights reserved.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
- * @Flow\Entitiy
+ * @Flow\Entity
  */
 class ScheduledExport
 {
@@ -27,7 +29,7 @@ class ScheduledExport
     /**
      * @var string
      */
-    protected $exportIdentifier;
+    protected $exportDefinitionIdentifier;
 
     /**
      * @return string
@@ -68,18 +70,18 @@ class ScheduledExport
     /**
      * @return string
      */
-    public function getExportIdentifier(): string
+    public function getExportDefinitionIdentifier(): string
     {
-        return $this->exportIdentifier;
+        return $this->exportDefinitionIdentifier;
     }
 
     /**
-     * @param string $exportIdentifier
+     * @param string $exportDefinitionIdentifier
      * @return ScheduledExport
      */
-    public function setExportIdentifier(string $exportIdentifier): ScheduledExport
+    public function setExportDefinitionIdentifier(string $exportDefinitionIdentifier): ScheduledExport
     {
-        $this->exportIdentifier = $exportIdentifier;
+        $this->exportDefinitionIdentifier = $exportDefinitionIdentifier;
         return $this;
     }
 }

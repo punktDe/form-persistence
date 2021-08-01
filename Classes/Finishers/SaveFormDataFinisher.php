@@ -14,9 +14,7 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Form\Core\Model\AbstractFinisher;
 use Neos\Form\Core\Model\AbstractFormElement;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
-use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
-use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
 
 class SaveFormDataFinisher extends AbstractFinisher
 {
@@ -28,12 +26,6 @@ class SaveFormDataFinisher extends AbstractFinisher
     protected $formDataRepository;
 
     /**
-     * @Flow\Inject
-     * @var ScheduledExportRepository
-     */
-    protected $scheduledExportRepository;
-
-    /**
      * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="finisher.excludedFormTypes")
      * @var array
      */
@@ -41,23 +33,11 @@ class SaveFormDataFinisher extends AbstractFinisher
 
     /**
      * @throws IllegalObjectTypeException
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function executeInternal(): void
     {
         $this->saveFormData();
-        $this->saveScheduledExport();
-    }
-
-    protected function saveScheduledExport(): void
-    {
-        $formRuntime = $this->finisherContext->getFormRuntime();
-
-        $scheduledExport = $this->scheduledExportRepository->findByFormIdentifier($formRuntime->getIdentifier());
-
-        if ($scheduledExport instanceof ScheduledExport) {
-            $scheduledExport = new ScheduledExport();
-        }
-
     }
 
     /**

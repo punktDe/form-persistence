@@ -8,8 +8,14 @@ namespace PunktDe\Form\Persistence\Domain\Repository;
  *  All rights reserved.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 
+/**
+ * @Flow\Scope("singleton")
+ *
+ * @method findOneByFormIdentifier(string $formIdentifier): \PunktDe\Form\Persistence\Domain\Model\ScheduledExport
+ */
 class ScheduledExportRepository extends Repository
 {
 

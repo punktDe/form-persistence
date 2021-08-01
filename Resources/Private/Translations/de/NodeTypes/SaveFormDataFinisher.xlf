@@ -6,7 +6,7 @@
                 <source>Scheduled Form Data Recipient</source>
                 <target>Adressat für periodischen Datenversand</target>
             </trans-unit>
-            <trans-unit id="properties.exportDefiniton" xml:space="preserve">
+            <trans-unit id="properties.exportDefinition" xml:space="preserve">
                 <source>Export Definition</source>
                 <target>Export Definition</target>
             </trans-unit>
