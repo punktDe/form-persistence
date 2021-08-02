@@ -22,14 +22,16 @@ class CsvExporter implements FormDataExporterInterface
      */
     protected $fileName = 'FormData.csv';
 
-    public function setFileName(string $fileName): void
+    public function setFileName(string $fileName): FormDataExporterInterface
     {
         $this->fileName = $fileName;
+        return $this;
     }
 
-    public function setOptions(array $options): void
+    public function setOptions(array $options): FormDataExporterInterface
     {
         $this->options = $options;
+        return $this;
     }
 
     /**
@@ -42,11 +44,11 @@ class CsvExporter implements FormDataExporterInterface
         $this->compileCsv($formDataItems)->output($this->fileName);
     }
 
-    public function compileToTemporaryFile(iterable $formDataItems)
+    public function compileAndSave(iterable $formDataItems, string $filePath): void
     {
-        $file = tmpfile();
-
-        $this->compileCsv($formDataItems)->toString();
+        if (!file_put_contents($filePath, $this->compileCsv($formDataItems)->toString())) {
+            throw new \RuntimeException(sprintf('Unable to write form data export to file path "%s" - the file is not writable', $filePath), 1627881922);
+        }
     }
 
     /**

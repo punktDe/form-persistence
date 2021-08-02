@@ -35,7 +35,7 @@ class FormDataRepository extends Repository
     /**
      * @var string[]
      */
-    protected $accessibleSites = null;
+    protected $accessibleSites = [];
 
     public function initializeObject(): void
     {
@@ -53,7 +53,7 @@ class FormDataRepository extends Repository
             ->addGroupBy('form.hash')
             ->addSelect('count(form) AS entryCount')
             ->addSelect('MAX(form.date) as latestDate')
-            ->orderBy('latestDate', 'DESC')
+            ->orderBy('latestDate', QueryInterface::ORDER_DESCENDING)
             ->getQuery()->execute();
     }
 
@@ -74,6 +74,15 @@ class FormDataRepository extends Repository
                 $query->in('siteName', $this->accessibleSites)
             )
         )->execute();
+    }
+
+    public function findLatestVersionOfForm(string $formIdentifier): ?FormData
+    {
+        $query = $this->createQuery();
+        return $query->matching(
+            $query->equals('formIdentifier', $formIdentifier)
+        )->setOrderings(['date' => QueryInterface::ORDER_DESCENDING])
+            ->execute()->getFirst();
     }
 
     public function removeByFormIdentifierAndHash(string $formIdentifier, string $hash): void
@@ -131,6 +140,11 @@ class FormDataRepository extends Repository
                 return $this->siteAccesibilityService->isSiteAccessible($site);
             }
         );
+    }
+
+    public function grantAccessToAllSites(): void
+    {
+        $this->accessibleSites = $this->findAllUniqueSiteNames();
     }
 
     protected function findAllUniqueSiteNames(): array

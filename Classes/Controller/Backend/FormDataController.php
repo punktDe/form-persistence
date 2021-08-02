@@ -11,6 +11,7 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Fusion\View\FusionView;
@@ -79,9 +80,7 @@ class FormDataController extends ActionController
             return $formData->getProcessedFormData($exportDefinition);
         }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
 
-        $exporter->compileAndSend($formDataItems);
-        $exporter->setFileName($fileName);
-
+        $exporter->setFileName($fileName)->compileAndSend($formDataItems);
         die();
     }
 
@@ -112,6 +111,7 @@ class FormDataController extends ActionController
 
     /**
      * @param FormData $formDataEntry
+     * @throws StopActionException
      */
     public function deleteAction(FormData $formDataEntry): void
     {

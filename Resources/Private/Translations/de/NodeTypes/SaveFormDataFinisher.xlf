@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext">
+    <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext" target-language="de">
         <body>
             <trans-unit id="properties.scheduledFormDataExportRecipient" xml:space="preserve">
                 <source>Scheduled Form Data Recipient</source>

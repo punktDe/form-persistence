@@ -11,9 +11,9 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
 interface FormDataExporterInterface
 {
 
-    public function setFileName(string $fileName): void;
+    public function setFileName(string $fileName): FormDataExporterInterface;
 
-    public function setOptions(array $options): void;
+    public function setOptions(array $options): FormDataExporterInterface;
 
     /**
      * @param iterable $formDataItems
@@ -22,8 +22,8 @@ interface FormDataExporterInterface
 
     /**
      * @param iterable $formDataItems
-     * @return string The path to the temporary file
+     * @param string $filePath
      */
-    public function compileToTemporaryFile(iterable $formDataItems);
+    public function compileAndSave(iterable $formDataItems, string $filePath): void;
 
 }

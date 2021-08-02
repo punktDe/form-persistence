@@ -16,7 +16,7 @@ class TemplateStringService
     public static function processTemplate(string $pattern, string $formIdentifier, string $formVersionHash, ExportDefinitionInterface $exportDefinition): string
     {
         return str_replace(
-            ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
+            ['{formIdentifier}', '{currentDate}', '{exportDefinitionIdentifier}', '{formVersionHash}'],
             [$formIdentifier, date('Y-m-d_his'), $exportDefinition->getIdentifier(), $formVersionHash],
             $pattern
         );
