@@ -47,14 +47,26 @@ class FormDataRepository extends Repository
      */
     public function findAllUniqueForms(): iterable
     {
-        $queryBuilder = $this->createQueryBuilder('form');
-        return $queryBuilder
+
+        $subSelectQb = $this->createQueryBuilder('form')
+            ->select('form.Persistence_Object_Identifier')
             ->groupBy('form.formIdentifier')
-            ->addGroupBy('form.hash')
+            ->addGroupBy('form.hash');
+
+        $queryBuilder = $this->createQueryBuilder('form');
+
+
+        $query = $queryBuilder
             ->addSelect('count(form) AS entryCount')
             ->addSelect('MAX(form.date) as latestDate')
+            ->andWhere(
+                $queryBuilder->expr()->in('form.Persistence_Object_Identifier', $subSelectQb->getQuery()->getSQL())
+            )
             ->orderBy('latestDate', 'DESC')
-            ->getQuery()->execute();
+            ->getQuery();
+
+        \Neos\Flow\var_dump($query->getSQL(), __METHOD__ . ':' . __LINE__);
+        die();
     }
 
     /**
