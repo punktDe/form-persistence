@@ -39,10 +39,27 @@ class CsvExporter implements FormDataExporterInterface
      */
     public function compileAndSend(iterable $formDataItems): void
     {
+        $this->compileCsv($formDataItems)->output($this->fileName);
+    }
+
+    public function compileToTemporaryFile(iterable $formDataItems)
+    {
+        $file = tmpfile();
+
+        $this->compileCsv($formDataItems)->toString();
+    }
+
+    /**
+     * @param iterable $formDataItems
+     * @return Writer
+     * @throws \League\Csv\CannotInsertRecord
+     */
+    protected function compileCsv(iterable $formDataItems): Writer
+    {
         $csv = Writer::createFromString('');
         $headerSet = false;
 
-        foreach ($formDataItems as $key => $formDataItem) {
+        foreach ($formDataItems as $formDataItem) {
 
             if (!$headerSet) {
                 $header = array_keys($formDataItem);
@@ -53,6 +70,6 @@ class CsvExporter implements FormDataExporterInterface
             $csv->insertOne($formDataItem);
         }
 
-        $csv->output($this->fileName);
+        return $csv;
     }
 }

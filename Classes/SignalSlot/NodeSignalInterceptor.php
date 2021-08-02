@@ -12,8 +12,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Core\Bootstrap;
+use PunktDe\Form\Persistence\Domain\ScheduledExport\ScheduledExportService;
 use PunktDe\Form\Persistence\FormPersistenceNodeTypeInterface;
-use PunktDe\Form\Persistence\Service\ScheduledExportService;
 
 class NodeSignalInterceptor
 {

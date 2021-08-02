@@ -19,4 +19,11 @@ interface FormDataExporterInterface
      * @param iterable $formDataItems
      */
     public function compileAndSend(iterable $formDataItems): void;
+
+    /**
+     * @param iterable $formDataItems
+     * @return string The path to the temporary file
+     */
+    public function compileToTemporaryFile(iterable $formDataItems);
+
 }

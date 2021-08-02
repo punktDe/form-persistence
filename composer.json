@@ -8,7 +8,8 @@
         "neos/neos": "^5.0 || ^7.0",
         "neos/form": "*",
         "neos/fusion": "*",
-        "league/csv":"^9.0"
+        "league/csv": "^9.0",
+        "neos/swiftmailer": ">=7.0"
     },
     "suggest": {
         "neos/form-builder": "Adds a builder for the Flow Form Framework to the Neos CMS backend."

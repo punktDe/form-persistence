@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PunktDe\Form\Persistence\Service;
+namespace PunktDe\Form\Persistence\Domain\ScheduledExport;
 
 /*
  *  (c) 2021 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
@@ -65,9 +65,6 @@ class ScheduledExportService
         $this->logger->info(sprintf('Scheduled Export Definition for form %s was removed by user %s', $formIdentifier, $this->getCurrentBackendUser()), LogEnvironment::fromMethodName(__METHOD__));
     }
 
-    /**
-     * @return string
-     */
     protected function getCurrentBackendUser(): string
     {
         return $this->securityContext->getAccount() instanceof Account ? $this->securityContext->getAccount()->getAccountIdentifier() : 'unknown';

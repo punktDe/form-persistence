@@ -19,6 +19,7 @@ use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 use PunktDe\Form\Persistence\Exception\ConfigurationException;
+use PunktDe\Form\Persistence\Service\TemplateStringService;
 
 class FormDataController extends ActionController
 {
@@ -72,11 +73,7 @@ class FormDataController extends ActionController
         $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($exportDefinitionIdentifier);
         $exporter = $this->exporterFactory->makeExporterByExportDefinition($exportDefinition);
 
-        $fileName = str_replace(
-            ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
-            [$formIdentifier, date('Y-m-d_his'), $exportDefinition->getIdentifier(), $hash],
-            $exportDefinition->getFileNamePattern()
-        );
+        $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formIdentifier, $hash, $exportDefinition);
 
         $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
             return $formData->getProcessedFormData($exportDefinition);
