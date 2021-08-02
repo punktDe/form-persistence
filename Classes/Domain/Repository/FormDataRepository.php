@@ -15,7 +15,6 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use PunktDe\Form\Persistence\Authorization\Service\SiteAccessibilityService;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @Flow\Scope("singleton")
@@ -48,26 +47,14 @@ class FormDataRepository extends Repository
      */
     public function findAllUniqueForms(): iterable
     {
-
-        $subSelectQb = $this->createQueryBuilder('form')
-            ->select('form.Persistence_Object_Identifier')
-            ->groupBy('form.formIdentifier')
-            ->addGroupBy('form.hash');
-
         $queryBuilder = $this->createQueryBuilder('form');
-
-
-        $query = $queryBuilder
+        return $queryBuilder
+            ->groupBy('form.formIdentifier')
+            ->addGroupBy('form.hash')
             ->addSelect('count(form) AS entryCount')
             ->addSelect('MAX(form.date) as latestDate')
-            ->andWhere(
-                $queryBuilder->expr()->in('form.Persistence_Object_Identifier', $subSelectQb->getQuery()->getSQL())
-            )
             ->orderBy('latestDate', 'DESC')
-            ->getQuery();
-
-        \Neos\Flow\var_dump($query->getSQL(), __METHOD__ . ':' . __LINE__);
-        die();
+            ->getQuery()->execute();
     }
 
     /**
