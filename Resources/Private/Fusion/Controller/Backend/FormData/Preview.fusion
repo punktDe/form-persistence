@@ -24,21 +24,35 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
         }
     }
 
+    scheduledExportInfo = Neos.Fusion:Component {
+        renderer = afx`
+            <div class="neos-module-container">
+                <br />
+                <h2>Data of this form is automatically exported and sent via mail to {scheduledExport.email}.</h2>
+                <br />
+            </div>
+        `
+
+        @if.hasScheduledExportDefine = ${Type.instance(scheduledExport, 'PunktDe\Form\Persistence\Domain\Model\ScheduledExport')}
+    }
+
     renderer = afx`
         <legend>{formIdentifier}</legend>
         <div class="neos-content neos-container-fluid">
+            {props.scheduledExportInfo}
             <div class="neos-module-container">
                 <table class="neos-table">
                     <thead>
                     <tr>{props.headerFields}</tr>
                     </thead>
                     <tbody>
-                        {props.tableRows}
+                    {props.tableRows}
                     </tbody>
                 </table>
             </div>
             <div class="neos-footer">
-                <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back to Form data export</a>
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back
+                    to Form data export</a>
             </div>
         </div>
     `

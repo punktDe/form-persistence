@@ -1,10 +1,39 @@
 'PunktDe.Form.Persistence:SaveFormDataFinisher':
   superTypes:
-    'Neos.Form.Builder:AbstractFinisher': TRUE
+    'Neos.Form.Builder:AbstractFinisher': true
   ui:
     label: 'Save Form Data Finisher'
     icon: 'fas fa-save'
     inspector:
+      tabs:
+        default:
+          label: i18n
+          position: 10
+          icon: 'fas fa-pencil-alt'
       groups:
-        'finisher':
-          icon: 'fas fa-save'
+        dataMail:
+          tab: default
+          label: i18n
+          icon: 'fas fa-mail-bulk'
+          position: 1
+
+
+  properties:
+    scheduledExportRecipient:
+      type: string
+      ui:
+        label: i18n
+        inspector:
+          group: dataMail
+      validation:
+        'Neos.Neos/Validation/EmailAddressValidator': []
+
+    exportDefinition:
+      type: string
+      ui:
+        label: i18n
+        inspector:
+          group: dataMail
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            dataSourceIdentifier: 'punktde-form-persistence-export-definition'

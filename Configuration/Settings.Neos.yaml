@@ -33,6 +33,8 @@ Neos:
         autoInclude:
           'PunktDe.Form.Persistence':
             - 'Modules/*'
+            - 'NodeTypes/*'
+
   Fusion:
     defaultContext:
       PunktDe.FormExport.ExportDefinition: 'PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper'

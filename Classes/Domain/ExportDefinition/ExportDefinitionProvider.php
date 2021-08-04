@@ -43,6 +43,21 @@ class ExportDefinitionProvider
         }
     }
 
+    public function findExportDefinitions(): array
+    {
+        $exportDefinitions = $this->dynamicExportDefinitions;
+
+        foreach ($this->staticExportDefinitions as $key => $staticExportDefinition) {
+            $exportDefinitions[$key] = $this->buildStaticExportDefinition($key, $staticExportDefinition);
+        }
+
+        usort($exportDefinitions, static function (ExportDefinitionInterface $a, ExportDefinitionInterface $b) {
+            return strcmp($a->getLabel(), $b->getLabel());
+        });
+
+        return $exportDefinitions;
+    }
+
     /**
      * @param FormData $formData
      * @return ExportDefinitionInterface[]

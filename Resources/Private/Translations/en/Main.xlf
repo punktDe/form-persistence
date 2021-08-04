@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit id="mailBody.successfulExport" xml:space="preserve" approved="yes">
+        <source>
+            Attached you find the latest export of type {exportDefinitionIdentifier} for form {formIdentifier}.
+
+            Entry Count: {entryCount}
+            Latest Entry: {latestEntryDate}
+        </source>
+      </trans-unit>
+      <trans-unit id="mailBody.exportDefinitionNotSuitable" xml:space="preserve" approved="yes">
+        <source>
+Latest form data could not be exported!
+
+The scheduled export for form {formIdentifier} was configured to use the export definition "{exportDefinitionIdentifier}", although the current form version ({formVersion}) is not suitable to that export definition.
+
+Please make sure, all required fields are present in the form.
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

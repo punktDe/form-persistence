@@ -30,4 +30,7 @@ PunktDe:
         valueFormatting:
           class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
 
-
+      scheduledExport:
+        senderName: Scheduled Form Data Export
+        senderMailAddress: noreply@localhost
+        subject: "Latest data of form {formIdentifier}"

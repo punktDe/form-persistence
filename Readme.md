@@ -101,6 +101,11 @@ finishers:
 ### Using the Neos Form Builder
 Require the suggested package neos/form-builder and add the save form data finisher to your node based form in the neos backend.
 
+## Scheduled Exports
+
+Exports of your form data can be sent to a specific eMail Address on a regular basis. eMail address and export definition can be configured directly at the finisher.
+To trigger the export, the command `formPersistence:sendExport` needs to be called.
+
 ## Backend Module
 
 ### Download form data

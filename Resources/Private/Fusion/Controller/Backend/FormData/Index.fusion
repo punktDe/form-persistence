@@ -72,6 +72,8 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                 @process.join = ${Array.join(value, '_')}
             }
 
+            scheduledExport = ${Type.instance(formType.scheduledExport, 'PunktDe\Form\Persistence\Domain\Model\ScheduledExport') ? '<i class="fas fa-envelope icon-white"></i>' : '-'}
+
             renderer = afx`
                 <tr>
                     <td>{formData.siteName}</td>
@@ -80,6 +82,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                     <td>{String.crop(formData.hash,10)}</td>
                     <td>{props.entryCount}</td>
                     <td>{props.date}</td>
+                    <td>{props.scheduledExport}</td>
                     <td>
                         <Neos.Fusion.Form:Form form.target.action="download" form.target.controller="Backend\\FormData">
                             <Neos.Fusion.Form:Select field.name="exportDefinitionIdentifier">{props.options}</Neos.Fusion.Form:Select>
@@ -118,13 +121,16 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                                 Form Identifier
                             </th>
                             <th>
-                                Form Version
+                                Version
                             </th>
                             <th>
-                                Entry Count
+                                Count
                             </th>
                             <th>
-                                Latest Entry
+                                Latest
+                            </th>
+                            <th>
+                                Scheduled
                             </th>
                             <th>
                                 Export definition

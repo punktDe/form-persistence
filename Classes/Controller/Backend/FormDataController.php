@@ -11,6 +11,7 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Fusion\View\FusionView;
@@ -18,7 +19,9 @@ use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
+use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
 use PunktDe\Form\Persistence\Exception\ConfigurationException;
+use PunktDe\Form\Persistence\Service\TemplateStringService;
 
 class FormDataController extends ActionController
 {
@@ -50,9 +53,22 @@ class FormDataController extends ActionController
      */
     protected $exporterFactory;
 
+    /**
+     * @Flow\Inject
+     * @var ScheduledExportRepository
+     */
+    protected $scheduledExportRepository;
+
     public function indexAction(): void
     {
-        $formTypes = $this->formDataRepository->findAllUniqueForms();
+        $formTypes = array_map(function ($formData) {
+            /** @var FormData $formDataObject */
+            $formDataObject = $formData[0];
+            $formData['scheduledExport'] = $this->scheduledExportRepository->findOneByFormIdentifier($formDataObject->getFormIdentifier());
+            return $formData;
+        }, $this->formDataRepository->findAllUniqueForms());
+
+
         $this->view->assign('formTypes', $formTypes);
     }
 
@@ -72,25 +88,20 @@ class FormDataController extends ActionController
         $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($exportDefinitionIdentifier);
         $exporter = $this->exporterFactory->makeExporterByExportDefinition($exportDefinition);
 
-        $fileName = str_replace(
-            ['formIdentifier', 'currentDate', 'exportDefinitionIdentifier', 'formVersionHash'],
-            [$formIdentifier, date('Y-m-d_his'), $exportDefinition->getIdentifier(), $hash],
-            $exportDefinition->getFileNamePattern()
-        );
+        $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formIdentifier, $hash, $exportDefinition);
 
         $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
             return $formData->getProcessedFormData($exportDefinition);
         }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
 
-        $exporter->compileAndSend($formDataItems);
-        $exporter->setFileName($fileName);
-
+        $exporter->setFileName($fileName)->compileAndSend($formDataItems);
         die();
     }
 
     public function previewAction(FormData $formDataEntry): void
     {
         $formDataEntries = $this->formDataRepository->findByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $scheduledExport = $this->scheduledExportRepository->findOneByFormIdentifier($formDataEntry->getFormIdentifier());
 
         if ($formDataEntries->count() === 0) {
             $this->forward('index');
@@ -109,12 +120,14 @@ class FormDataController extends ActionController
         $this->view->assignMultiple([
             'formIdentifier' => $firstFormDataEntry->getFormIdentifier(),
             'headerFields' => array_keys(current($formData)['values']),
+            'scheduledExport' => $scheduledExport,
             'formData' => $formData,
         ]);
     }
 
     /**
      * @param FormData $formDataEntry
+     * @throws StopActionException
      */
     public function deleteAction(FormData $formDataEntry): void
     {

@@ -33,12 +33,24 @@ class SaveFormDataFinisher extends AbstractFinisher
 
     /**
      * @throws IllegalObjectTypeException
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function executeInternal(): void
     {
-        $formRuntime = $this->finisherContext->getFormRuntime();
+        $this->saveFormData();
+    }
 
+    /**
+     * @param array $fieldValues
+     * @param \Neos\Form\Core\Runtime\FormRuntime $formRuntime
+     * @throws IllegalObjectTypeException
+     * @throws \Doctrine\ORM\ORMException
+     */
+    protected function saveFormData(): void
+    {
+        $formRuntime = $this->finisherContext->getFormRuntime();
         $fieldValues = $this->finisherContext->getFormValues();
+
         $formFieldsData = [];
         $fieldIdentifiersString = '';
 

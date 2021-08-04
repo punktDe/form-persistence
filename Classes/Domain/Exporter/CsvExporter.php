@@ -9,7 +9,6 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
  */
 
 use League\Csv\Writer;
-use Neos\Flow\ResourceManagement\PersistentResource;
 
 class CsvExporter implements FormDataExporterInterface
 {
@@ -23,14 +22,16 @@ class CsvExporter implements FormDataExporterInterface
      */
     protected $fileName = 'FormData.csv';
 
-    public function setFileName(string $fileName): void
+    public function setFileName(string $fileName): FormDataExporterInterface
     {
-        $this->$fileName = $fileName;
+        $this->fileName = $fileName;
+        return $this;
     }
 
-    public function setOptions(array $options): void
+    public function setOptions(array $options): FormDataExporterInterface
     {
         $this->options = $options;
+        return $this;
     }
 
     /**
@@ -40,10 +41,27 @@ class CsvExporter implements FormDataExporterInterface
      */
     public function compileAndSend(iterable $formDataItems): void
     {
+        $this->compileCsv($formDataItems)->output($this->fileName);
+    }
+
+    public function compileAndSave(iterable $formDataItems, string $filePath): void
+    {
+        if (!file_put_contents($filePath, $this->compileCsv($formDataItems)->toString())) {
+            throw new \RuntimeException(sprintf('Unable to write form data export to file path "%s" - the file is not writable', $filePath), 1627881922);
+        }
+    }
+
+    /**
+     * @param iterable $formDataItems
+     * @return Writer
+     * @throws \League\Csv\CannotInsertRecord
+     */
+    protected function compileCsv(iterable $formDataItems): Writer
+    {
         $csv = Writer::createFromString('');
         $headerSet = false;
 
-        foreach ($formDataItems as $key => $formDataItem) {
+        foreach ($formDataItems as $formDataItem) {
 
             if (!$headerSet) {
                 $header = array_keys($formDataItem);
@@ -54,6 +72,6 @@ class CsvExporter implements FormDataExporterInterface
             $csv->insertOne($formDataItem);
         }
 
-        $csv->output($this->fileName);
+        return $csv;
     }
 }
