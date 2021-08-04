@@ -9,12 +9,12 @@
         default:
           label: i18n
           position: 10
-          icon: 'icon-pencil'
+          icon: 'fas fa-pencil-alt'
       groups:
         dataMail:
           tab: default
           label: i18n
-          icon: mail-bulk
+          icon: 'fas fa-mail-bulk'
           position: 1
 
 

@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="mailBody.exportDefinitionNotSuitable" xml:space="preserve" approved="yes">
         <source>
-Latest form cata could not be exported!
+Latest form data could not be exported!
 
 The scheduled export for form {formIdentifier} was configured to use the export definition "{exportDefinitionIdentifier}", although the current form version ({formVersion}) is not suitable to that export definition.
 
