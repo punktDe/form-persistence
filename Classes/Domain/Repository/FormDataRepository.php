@@ -163,4 +163,15 @@ class FormDataRepository extends Repository
 
         return $sites;
     }
+
+    /**
+     * @throws InvalidQueryException
+     */
+    public function findAllOlderThan(\DateTime $date): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        return $query->matching(
+            $query->lessThan('date', $date)
+        )->execute();
+    }
 }
