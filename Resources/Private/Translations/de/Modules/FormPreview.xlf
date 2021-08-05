@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="entry.delete.modal.title">
                 <source>Really Delete Entry?</source>
-                <target>Eintrag wirklisch löschen?</target>
+                <target>Eintrag wirklich löschen?</target>
             </trans-unit>
             <trans-unit id="entry.delete.modal.body">
                 <source>This will delete the entry and all related form-data. This operation cannot be undone.</source>
@@ -21,6 +21,18 @@
             <trans-unit id="entry.delete.modal.confirm">
                 <source>Delete</source>
                 <target>Löschen</target>
+            </trans-unit>
+            <trans-unit id="formdata.delete.tooltip">
+                <source>Delete From Data</source>
+                <target>Formular-Daten löschen</target>
+            </trans-unit>
+            <trans-unit id="formdata.delete.modal.title">
+                <source>Really Delete Form Data?</source>
+                <target>Formular-Daten wirklich löschen?</target>
+            </trans-unit>
+            <trans-unit id="formdata.delete.modal.body">
+                <source>This will delete the form-data. This operation cannot be undone.</source>
+                <target>Diese Formular-Daten werden gelöscht. Die Operation kann nicht rückgängig gemacht werden.</target>
             </trans-unit>
         </body>
     </file>

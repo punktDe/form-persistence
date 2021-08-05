@@ -8,12 +8,16 @@ namespace PunktDe\Form\Persistence\Controller\Backend;
  *  All rights reserved.
  */
 
+use Doctrine\ORM\ORMException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Fusion\View\FusionView;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
@@ -66,7 +70,7 @@ class FormDataController extends ActionController
             $formDataObject = $formData[0];
             $formData['scheduledExport'] = $this->scheduledExportRepository->findOneByFormIdentifier($formDataObject->getFormIdentifier());
             return $formData;
-        }, $this->formDataRepository->findAllUniqueForms());
+        }, (array)$this->formDataRepository->findAllUniqueForms());
 
 
         $this->view->assign('formTypes', $formTypes);
@@ -80,6 +84,7 @@ class FormDataController extends ActionController
      * @throws CannotBuildObjectException
      * @throws UnknownObjectException
      * @throws ConfigurationException
+     * @throws InvalidQueryException
      */
     public function downloadAction(string $formIdentifier, string $hash, string $exportDefinitionIdentifier): void
     {
@@ -98,6 +103,11 @@ class FormDataController extends ActionController
         die();
     }
 
+    /**
+     * @param FormData $formDataEntry
+     * @throws ForwardException
+     * @throws InvalidQueryException
+     */
     public function previewAction(FormData $formDataEntry): void
     {
         $formDataEntries = $this->formDataRepository->findByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
@@ -107,21 +117,14 @@ class FormDataController extends ActionController
             $this->forward('index');
         }
 
-        $formData = array_map(static function (FormData $formData) {
-            return [
-                'date' => $formData->getDate(),
-                'values' => $formData->getProcessedFormData(),
-            ];
-        }, $formDataEntries->toArray());
-
         /** @var FormData $firstFormDataEntry */
         $firstFormDataEntry = $formDataEntries->getFirst();
 
         $this->view->assignMultiple([
             'formIdentifier' => $firstFormDataEntry->getFormIdentifier(),
-            'headerFields' => array_keys(current($formData)['values']),
+            'headerFields' => $firstFormDataEntry->getProcessedFieldNames(),
             'scheduledExport' => $scheduledExport,
-            'formData' => $formData,
+            'formDataEntries' => $formDataEntries,
         ]);
     }
 
@@ -132,6 +135,18 @@ class FormDataController extends ActionController
     public function deleteAction(FormData $formDataEntry): void
     {
         $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $this->redirect('index');
+    }
+
+    /**
+     * @param FormData $formDataEntry
+     * @throws StopActionException
+     * @throws ORMException
+     * @throws IllegalObjectTypeException
+     */
+    public function deleteSingleFormDataEntryAction(FormData $formDataEntry): void
+    {
+        $this->formDataRepository->remove($formDataEntry);
         $this->redirect('index');
     }
 }
