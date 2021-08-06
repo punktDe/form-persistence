@@ -25,27 +25,18 @@ class FormDataCleanupService
     protected $formDatarepsoitroy;
 
     /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="deleteFormData.dateInterval")
+     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="formDataCleanup.retentionPeriod")
      * @var string
      */
     protected $dateInterval;
 
     /**
-     * @throws IllegalObjectTypeException
-     * @throws InvalidQueryException
      * @throws ORMException
      * @throws \Exception
      */
     public function cleanupOldFormData(): int
     {
         $date = (new \DateTime())->sub(new \DateInterval($this->dateInterval));
-        $oldFormDataEntries = $this->formDatarepsoitroy->findAllOlderThan($date);
-        $count = 0;
-        foreach ($oldFormDataEntries as $formDataEntry) {
-            /** @var FormData $formDataEntry */
-            $this->formDatarepsoitroy->remove($formDataEntry);
-            $count++;
-        }
-        return $count;
+        return $this->formDatarepsoitroy->deleteAllOlderThan($date);
     }
 }

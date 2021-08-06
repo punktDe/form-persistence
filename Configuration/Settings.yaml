@@ -35,5 +35,5 @@ PunktDe:
         senderMailAddress: noreply@localhost
         subject: "Latest data of form {formIdentifier}"
 
-      deleteFormData:
-        dateInterval: 'P30D'
+      formDataCleanup:
+        retentionPeriod: 'P30D'

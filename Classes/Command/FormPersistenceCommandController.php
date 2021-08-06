@@ -43,6 +43,6 @@ class FormPersistenceCommandController extends CommandController
     public function cleanUpFormDataCommand(): void
     {
         $count = $this->formDataCleanupService->cleanupOldFormData();
-        $this->$this->outputLine(sprintf('Removed %d fom data entries', $count));
+        $this->outputLine(sprintf('Removed %d form data entries', $count));
     }
 }
