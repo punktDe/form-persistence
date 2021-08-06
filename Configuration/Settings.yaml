@@ -34,3 +34,6 @@ PunktDe:
         senderName: Scheduled Form Data Export
         senderMailAddress: noreply@localhost
         subject: "Latest data of form {formIdentifier}"
+
+      formDataCleanup:
+        retentionPeriod: 'P30D'

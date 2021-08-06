@@ -121,6 +121,20 @@ The package brings a graphical editor for defining export definitions. With an e
 
 ![Backend Module](Documentation/ExportDefinitionEditor.png)
 
+## Clean up old form data
+To clean up old form data entries manually or on a regular basis, one needs to configure the retention period and call the command `formpersistence:cleanupformdata`. 
+In the following example a retention period of 30 days is configured and therefore every form data entry older than 30 days ist deleted upon calling the command.
+
+```
+PunktDe:
+  Form:
+    Persistence:
+      formDataCleanup:
+        retentionPeriod: 'P30D'
+```
+
+The whole functionality is encapsulated in a service to allow a better integration into different approaches for regular execution of this functionality for example with a scheduler or queuing work flow.
+
 # Developing the package
 
 ## Export Definition Editor

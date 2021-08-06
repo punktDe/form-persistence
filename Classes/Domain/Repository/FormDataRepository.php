@@ -8,6 +8,9 @@ namespace PunktDe\Form\Persistence\Domain\Repository;
  *  All rights reserved.
  */
 
+use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
@@ -162,5 +165,19 @@ class FormDataRepository extends Repository
         }
 
         return $sites;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function deleteAllOlderThan(DateTime $date): int
+    {
+        return $this->createQueryBuilder('formData')
+            ->delete()
+            ->where('formData.date < :date')
+            ->setParameter(':date', $date)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
