@@ -27,43 +27,11 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                 }
             }
 
-            deleteButton = Neos.Fusion:Fragment {
-                renderer = afx`
-                    <button class="neos-button neos-button-danger" title={I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.tooltip')} data-toggle="modal" href={'#user-' + iterator.index} data-neos-toggle="tooltip">
-                        <i class="fas fa-trash-alt icon-white"></i>
-                    </button>
-                    <div class="neos-hide" id={'user-' + iterator.index}>
-                        <div class="neos-modal-centered">
-                            <div class="neos-modal-content">
-                                <div class="neos-modal-header">
-                                    <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                                    <div class="neos-header">
-                                        {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.title')}
-                                    </div>
-                                    <div>
-                                        <div class="neos-subheader">
-                                            <p>
-                                                {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.body')}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="neos-modal-footer">
-                                    <a href="#" class="neos-button" data-dismiss="modal">
-                                        {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.cancel')}
-                                    </a>
-                                    <Neos.Fusion.Form:Form attributes.style="display: inline-block" form.target.action="delete" form.target.controller="Backend\\FormData" form.data.formDataEntry={formData}>
-                                        <Neos.Fusion.Form:Hidden field.name="formDataEntry[hash]"/>
-                                        <Neos.Fusion.Form:Button type="submit" attributes.class="neos-button neos-button-danger">
-                                            {I18n.translate('PunktDe.Form.Persistence:Modules.FormPreview:entry.delete.modal.confirm')}
-                                        </Neos.Fusion.Form:Button>
-                                    </Neos.Fusion.Form:Form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="neos-modal-backdrop neos-in"></div>
-                    </div>
-                `
+            deleteButton = PunktDe.Form.Persistence:Component.Atom.DeleteButtonWithConfirmation {
+                action = 'delete'
+                index = ${iterator.index}
+                fromObject = ${formData}
+                fieldName = 'formDataEntry[hash]'
             }
 
             contentDimensions = Neos.Fusion:Map {

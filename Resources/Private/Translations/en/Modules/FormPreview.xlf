@@ -17,6 +17,15 @@
             <trans-unit id="entry.delete.modal.confirm">
                 <source>Delete</source>
             </trans-unit>
+            <trans-unit id="formdata.delete.tooltip">
+                <source>Delete From Data</source>
+            </trans-unit>
+            <trans-unit id="formdata.delete.modal.title">
+                <source>Really Delete Form Data?</source>
+            </trans-unit>
+            <trans-unit id="formdata.delete.modal.body">
+                <source>This will delete the form-data. This operation cannot be undone.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

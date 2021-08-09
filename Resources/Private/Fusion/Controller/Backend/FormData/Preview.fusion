@@ -12,15 +12,30 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
     }
 
     tableRows = Neos.Fusion:Loop {
-        items = ${formData}
-        itemName = 'row'
-        itemRenderer = Neos.Fusion:Loop {
-            items = ${Array.unshift(row.values, Date.format(row.date, 'Y-m-d H:i:s'))}
-            itemRenderer = Neos.Fusion:Value {
-                nowrap = ${String.length(item) < 40 ? ' nowrap' : ''}
-                value = ${'<td' + this.nowrap + '>' + item + '</td>'}
+        items = ${formDataEntries}
+        itemName = 'fromDataEntry'
+        itemRenderer = Neos.Fusion:Fragment {
+            formValues = Neos.Fusion:Loop {
+                items = ${Array.unshift(fromDataEntry.processedFormData, Date.format(fromDataEntry.date, 'Y-m-d H:i:s'))}
+                itemRenderer = Neos.Fusion:Value {
+                    nowrap = ${String.length(item) < 40 ? ' nowrap' : ''}
+                    value = ${'<td' + this.nowrap + '>' + item + '</td>'}
+                }
             }
-            @process.wrapRow = ${'<tr>' + value + '</tr>'}
+
+            deleteButton = PunktDe.Form.Persistence:Component.Atom.DeleteButtonWithConfirmation {
+                action = 'deleteSingleFormDataEntry'
+                index = ${iterator.index}
+                fromObject = ${fromDataEntry}
+                fieldName = 'formDataEntry[hash]'
+            }
+
+            renderer = afx`
+                <tr>
+                    {props.formValues}
+                    <td>{props.deleteButton}</td>
+                </tr>
+            `
         }
     }
 
