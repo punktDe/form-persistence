@@ -43,7 +43,12 @@ class NodeSignalInterceptor
 
         $formIdentifier = $form->getProperty('identifier');
 
-        if (trim($node->getProperty('scheduledExportRecipient')) === '' || trim($node->getProperty('exportDefinition')) === '') {
+        if ($node->isRemoved()) {
+            $scheduledExportService->removeScheduledExportDefinitionIfExists($formIdentifier);
+            return;
+        }
+
+        if (trim((string)$node->getProperty('scheduledExportRecipient')) === '' || trim((string)$node->getProperty('exportDefinition')) === '') {
             $scheduledExportService->removeScheduledExportDefinitionIfExists($formIdentifier);
             return;
         }
