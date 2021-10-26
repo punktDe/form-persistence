@@ -11,7 +11,7 @@ final class Version20211026121823 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Introduce the form data hash';
     }
 
     /**

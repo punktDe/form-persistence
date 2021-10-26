@@ -16,6 +16,14 @@ use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
 
 /**
  * @Flow\Entity
+ *
+ * @ORM\Table(
+ *    indexes={
+ *      @ORM\Index(name="formdatasample",columns={"formIdentifier","hash"}),
+ *      @ORM\Index(name="dimensionshash",columns={"dimensionshash"}),
+ *      @ORM\Index(name="sitename",columns={"sitename"})
+ *    }
+ * )
  */
 class FormData
 {
