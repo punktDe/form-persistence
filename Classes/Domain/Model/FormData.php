@@ -9,6 +9,7 @@ namespace PunktDe\Form\Persistence\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
@@ -43,6 +44,15 @@ class FormData
      * @var array
      */
     protected $contentDimensions = [];
+
+    /**
+     * MD5 hash of the content dimensions
+     * The hash is generated in buildDimensionValues().
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     */
+    protected $dimensionsHash;
 
     /**
      * @ORM\Column(type="flow_json_array")
@@ -163,20 +173,13 @@ class FormData
     }
 
     /**
-     * @return array
-     */
-    public function getContentDimensions(): array
-    {
-        return $this->contentDimensions;
-    }
-
-    /**
      * @param array $contentDimensions
      * @return FormData
      */
     public function setContentDimensions(array $contentDimensions): FormData
     {
         $this->contentDimensions = $contentDimensions;
+        $this->dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($contentDimensions);
         return $this;
     }
 }
