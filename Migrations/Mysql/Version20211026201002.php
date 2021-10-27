@@ -15,7 +15,6 @@ final class Version20211026201002 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE INDEX formdatasample ON punktde_form_persistence_domain_model_formdata (formIdentifier, hash)');
@@ -25,7 +24,6 @@ final class Version20211026201002 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP INDEX formdatasample ON punktde_form_persistence_domain_model_formdata');
