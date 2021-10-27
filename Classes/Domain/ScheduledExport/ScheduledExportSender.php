@@ -87,7 +87,7 @@ class ScheduledExportSender
 
     public function initializeObject(): void
     {
-        $this->formDataRepository->grantAccessToAllSites();
+        $this->formDataRepository->deactivateSecurityChecks();
     }
 
     public function sendScheduledExports(): void
@@ -118,7 +118,7 @@ class ScheduledExportSender
         $formDataRepresentative = $this->formDataRepository->findLatestVersionOfForm($scheduledExport->getFormIdentifier());
 
         if (!$formDataRepresentative instanceof FormData) {
-            $this->logger->info(sprintf('Form with identifier "%s" has no data - export was skiped', $scheduledExport->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->info(sprintf('Form with identifier "%s" has no data - export was skipped', $scheduledExport->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 

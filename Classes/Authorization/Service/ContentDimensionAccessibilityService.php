@@ -8,8 +8,8 @@ namespace PunktDe\Form\Persistence\Authorization\Service;
  *  All rights reserved.
  */
 
-use PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege;
-use PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilegeTarget;
+use PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilege;
+use PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilegeTarget;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -17,7 +17,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 /**
  * @Flow\Scope("singleton")
  */
-class SiteAccessibilityService
+class ContentDimensionAccessibilityService
 {
 
     /**
@@ -32,12 +32,12 @@ class SiteAccessibilityService
      */
     protected $securityContext;
 
-    public function isSiteAccessible(string $site): bool
+    public function isDimensionCombinationAccessible(array $dimensionCombination): bool
     {
         if (!$this->securityContext->canBeInitialized()) {
             return false;
         }
 
-        return $this->privilegeManager->isGranted(SitePrivilege::class, new SitePrivilegeTarget($site));
+        return $this->privilegeManager->isGranted(ContentDimensionPrivilege::class, new ContentDimensionPrivilegeTarget($dimensionCombination));
     }
 }

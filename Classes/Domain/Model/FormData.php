@@ -190,4 +190,20 @@ class FormData
         $this->dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($contentDimensions);
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getContentDimensions(): array
+    {
+        return $this->contentDimensions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsHash(): string
+    {
+        return $this->dimensionsHash;
+    }
 }
