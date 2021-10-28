@@ -19,6 +19,16 @@ The scheduled export for form {formIdentifier} was configured to use the export 
 Please make sure, all required fields are present in the form.
         </source>
       </trans-unit>
+      <trans-unit id="mailBody.errorWhileExport" xml:space="preserve" approved="yes">
+        <source>
+An error occurred while exporting data for form "{formIdentifier}" with version "{formVersion}".
+
+Error code: {errorCode}
+Error message: {errorMessage}
+
+Please fix the problem or contact an administrator.
+        </source>
+       </trans-unit>
     </body>
   </file>
 </xliff>

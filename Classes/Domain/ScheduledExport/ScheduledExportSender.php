@@ -24,6 +24,7 @@ use Neos\SwiftMailer\Message;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
 use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
@@ -103,87 +104,46 @@ class ScheduledExportSender
 
     /**
      * @param ScheduledExport $scheduledExport
-     * @throws InvalidConfigurationTypeException
-     * @throws IndexOutOfBoundsException
-     * @throws InvalidFormatPlaceholderException
-     * @throws CannotBuildObjectException
-     * @throws UnknownObjectException
-     * @throws InvalidQueryException
-     * @throws \Neos\Flow\Utility\Exception
      * @throws FilesException
-     * @throws ConfigurationException
+     * @throws \Neos\Flow\Utility\Exception
      */
     protected function sendScheduledExport(ScheduledExport $scheduledExport): void
     {
         $formDataRepresentative = $this->formDataRepository->findLatestVersionOfForm($scheduledExport->getFormIdentifier());
+        $exportFilePath = $this->buildTemporaryFilePath();
 
         if (!$formDataRepresentative instanceof FormData) {
-            $this->logger->info(sprintf('Form with identifier "%s" has no data - export was skiped', $scheduledExport->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->info(sprintf('Form with identifier "%s" has no data - export was skipped', $scheduledExport->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 
-        $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
-        $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
-        $exportFilePath = $this->buildTemporaryFilePath();
-        $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
-
         $mail = (new Message())
             ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
-            ->setTo([$scheduledExport->getEmail() => $scheduledExport->getEmail()])
-            ->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
+            ->setTo([$scheduledExport->getEmail() => $scheduledExport->getEmail()]);
 
-        if (!$isSuitable) {
-            $mail->setBody(
-                $this->translator->translateById(
-                    'mailBody.exportDefinitionNotSuitable',
-                    [
-                        'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
-                        'formVersion' => $formDataRepresentative->getHash(),
-                        'exportDefinitionIdentifier' => $exportDefinition->getLabel()
-                    ],
-                    null,
-                    null,
-                    'Main',
-                    'PunktDe.Form.Persistence'
-                )
-            );
+        try {
+            $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
+            $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
+            $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
 
-            $this->logger->warning(sprintf('Scheduled Export failed, as the exportDefinition "%s" was not suitable for version "%s" of form "%s"', $exportDefinition->getIdentifier(), $formDataRepresentative->getHash(), $formDataRepresentative->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+            $mail->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
 
-        } else {
-            $formDataCollection = $this->formDataRepository->findByFormIdentifierAndHash($formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash());
+            if ($isSuitable) {
+                $this->prepareExportMail($formDataRepresentative, $exportDefinition, $exportFilePath, $fileName, $mail);
+            } else {
+                $this->prepareExportDefinitionNotSuitableMail($mail, $formDataRepresentative, $exportDefinition);
+            }
+        } catch (\Exception $exception) {
+            $mail->setSubject('An error occured while exporting latest data from ' . $formDataRepresentative->getFormIdentifier());
+            $this->prepareErrorOnExportMail($mail, $formDataRepresentative, $exception);
+        } finally {
 
-            $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
-                return $formData->getProcessedFormData($exportDefinition);
-            }, $formDataCollection->toArray());
 
-            $this->exporterFactory->makeExporterByExportDefinition($exportDefinition)->compileAndSave($formDataItems, $exportFilePath);
-            $attachment = Swift_Attachment::fromPath($exportFilePath)->setFilename($fileName);
-            $mail->attach($attachment);
+            $mail->send();
 
-            $mail->setBody(
-                $this->translator->translateById(
-                    'mailBody.successfulExport',
-                    [
-                        'entryCount' => $formDataCollection->count(),
-                        'latestEntryDate' => $formDataRepresentative->getDate()->format('Y-m-d H:i:s'),
-                        'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
-                        'exportDefinitionIdentifier' => $exportDefinition->getLabel()
-                    ],
-                    null,
-                    null,
-                    'Main',
-                    'PunktDe.Form.Persistence'
-                )
-            );
-
-            $this->logger->info(sprintf('Successfully sent scheduled export %s with %s items', $scheduledExport->getFormIdentifier(), $formDataCollection->count()), LogEnvironment::fromMethodName(__METHOD__));
-        }
-
-        $mail->send();
-
-        if (file_exists($exportFilePath)) {
-            unlink($exportFilePath);
+            if (file_exists($exportFilePath)) {
+                unlink($exportFilePath);
+            }
         }
     }
 
@@ -196,5 +156,97 @@ class ScheduledExportSender
     protected function buildTemporaryFilePath(): string
     {
         return Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'PunktDe_Form_Persistence_Export_' . Algorithms::generateRandomString(13)]);
+    }
+
+    /**
+     * @param Message $mail
+     * @param FormData $formDataRepresentative
+     * @param ExportDefinitionInterface $exportDefinition
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidFormatPlaceholderException
+     */
+    protected function prepareExportDefinitionNotSuitableMail(Message $mail, FormData $formDataRepresentative, ExportDefinitionInterface $exportDefinition): void
+    {
+        $mail->setBody(
+            $this->translator->translateById(
+                'mailBody.exportDefinitionNotSuitable',
+                [
+                    'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
+                    'formVersion' => $formDataRepresentative->getHash(),
+                    'exportDefinitionIdentifier' => $exportDefinition->getLabel()
+                ],
+                null,
+                null,
+                'Main',
+                'PunktDe.Form.Persistence'
+            )
+        );
+
+        $this->logger->warning(sprintf('Scheduled Export failed, as the exportDefinition "%s" was not suitable for version "%s" of form "%s"', $exportDefinition->getIdentifier(), $formDataRepresentative->getHash(), $formDataRepresentative->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+    }
+
+    /**
+     * @param FormData $formDataRepresentative
+     * @param ExportDefinitionInterface $exportDefinition
+     * @param string $exportFilePath
+     * @param string $fileName
+     * @param Message $mail
+     * @throws CannotBuildObjectException
+     * @throws ConfigurationException
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidConfigurationTypeException
+     * @throws InvalidFormatPlaceholderException
+     * @throws InvalidQueryException
+     * @throws UnknownObjectException
+     */
+    protected function prepareExportMail(FormData $formDataRepresentative, ExportDefinitionInterface $exportDefinition, string $exportFilePath, string $fileName, Message $mail): void
+    {
+        $formDataCollection = $this->formDataRepository->findByFormIdentifierAndHash($formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash());
+
+        $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
+            return $formData->getProcessedFormData($exportDefinition);
+        }, $formDataCollection->toArray());
+
+        $this->exporterFactory->makeExporterByExportDefinition($exportDefinition)->compileAndSave($formDataItems, $exportFilePath);
+        $attachment = Swift_Attachment::fromPath($exportFilePath)->setFilename($fileName);
+        $mail->attach($attachment);
+
+        $mail->setBody(
+            $this->translator->translateById(
+                'mailBody.successfulExport',
+                [
+                    'entryCount' => $formDataCollection->count(),
+                    'latestEntryDate' => $formDataRepresentative->getDate()->format('Y-m-d H:i:s'),
+                    'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
+                    'exportDefinitionIdentifier' => $exportDefinition->getLabel()
+                ],
+                null,
+                null,
+                'Main',
+                'PunktDe.Form.Persistence'
+            )
+        );
+
+        $this->logger->info(sprintf('Successfully sent scheduled export %s with %s items', $formDataRepresentative->getFormIdentifier(), $formDataCollection->count()), LogEnvironment::fromMethodName(__METHOD__));
+    }
+
+    private function prepareErrorOnExportMail(Message $mail, FormData $formDataRepresentative, \Exception $exception): void
+    {
+        $mail->setBody(
+            $this->translator->translateById(
+                'mailBody.errorWhileExport',
+                [
+                    'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
+                    'formVersion' => $formDataRepresentative->getHash(),
+
+                ],
+                null,
+                null,
+                'Main',
+                'PunktDe.Form.Persistence'
+            )
+        );
+
+        $this->logger->error(sprintf('Scheduled Export failed for form identifier %s with code %s, with exception %s (%s)', $formDataRepresentative->getHash(), $formDataRepresentative->getFormIdentifier(), $exception->getMessage(), $exception->getCode()), LogEnvironment::fromMethodName(__METHOD__));
     }
 }
