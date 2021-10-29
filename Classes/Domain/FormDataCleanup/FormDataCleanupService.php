@@ -10,9 +10,6 @@ namespace PunktDe\Form\Persistence\Domain\FormDataCleanup;
 
 use Doctrine\ORM\ORMException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
-use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 
 class FormDataCleanupService
@@ -37,6 +34,6 @@ class FormDataCleanupService
     public function cleanupOldFormData(): int
     {
         $date = (new \DateTime())->sub(new \DateInterval($this->dateInterval));
-        return $this->formDatarepsoitroy->deleteAllOlderThan($date);
+        return $this->formDatarepsoitroy->deactivateSecurityChecks()->deleteAllOlderThan($date);
     }
 }

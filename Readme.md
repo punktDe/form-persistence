@@ -1,14 +1,18 @@
 # PunktDe.Form.Persistence
 
-Form Persistence Finisher with a backend module to download the form-data.
-
 [![Latest Stable Version](https://poser.pugx.org/punktDe/form-persistence/v/stable)](https://packagist.org/packages/punktDe/form-persistence) [![Total Downloads](https://poser.pugx.org/punktDe/form-persistence/downloads)](https://packagist.org/packages/punktDe/form-persistence) [![License](https://poser.pugx.org/punktDe/form-persistence/license)](https://packagist.org/packages/punktDe/form-persistence)
 
-This package adds a persistence finisher to persist form data into your database. 
+## Features
 
-It further provides a backend module to download the data in different formats. A n export definition editor let you define your custom export definitions.
+* **Persistence finisher** to persist form data into your database. 
+* It further provides a **backend module to download** the data in different formats. 
+* An **export definition editor** lets you define your custom export definitions.
+* Data can be sent in **aggregated via email** regularly
+* A **retention policy** can be configured to respect data privacy policies
+* **Access to data can be restricted** by sites or content dimension
+* Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers to **avoid conflicts when forms change**.
 
-Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers.
+
 
 ![Backend Module](Documentation/BackendModule.png)
 
@@ -82,6 +86,20 @@ In a multi-site environment you can restrict the accessibility to form data depe
 
 The matcher accepts, '*', a single name or a comma-separated list of site names.
 
+### Dimension Privilege
+
+In a multi-dimension environment you can restrict the accessibility to form data depending on the content dimension combination using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add
+
+	'PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilege':
+	  'PunktDe.Form.Persistence:Dimensions.All':
+	    label: Access to form data of all content dimensions
+	    matcher: '*'
+	    
+	  'PunktDe.Form.Persistence:Dimensions.Germany':
+  	    label: Access to form data of all langues in the german country
+	    matcher: '{"country": ["deu"]}'
+
+The matcher accepts, '*', or a json definition of the dimensions. See `ContentDimensionPrivilegeTargetTest.php` for details.
 
 # Usage
 ## Add the SaveFormDataFinisher

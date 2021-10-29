@@ -88,7 +88,7 @@ class ScheduledExportSender
 
     public function initializeObject(): void
     {
-        $this->formDataRepository->grantAccessToAllSites();
+        $this->formDataRepository->deactivateSecurityChecks();
     }
 
     public function sendScheduledExports(): void

@@ -16,6 +16,7 @@ use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
+use PunktDe\Form\Persistence\Authorization\Service\ContentDimensionAccessibilityService;
 use PunktDe\Form\Persistence\Authorization\Service\SiteAccessibilityService;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 
@@ -31,6 +32,12 @@ class FormDataRepository extends Repository
      */
     protected $siteAccesibilityService;
 
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionAccessibilityService
+     */
+    protected $dimensionAccesibilityService;
+
     protected $defaultOrderings = [
         'date' => QueryInterface::ORDER_DESCENDING,
     ];
@@ -40,9 +47,15 @@ class FormDataRepository extends Repository
      */
     protected $accessibleSites = [];
 
+    /**
+     * @var string[]
+     */
+    protected $accessibleDimensions = [];
+
     public function initializeObject(): void
     {
         $this->accessibleSites = $this->initializeAccessibleSites();
+        $this->accessibleDimensions = $this->initializeAccessibleDimensions();
     }
 
     /**
@@ -121,10 +134,18 @@ class FormDataRepository extends Repository
     {
         $queryBuilder = parent::createQueryBuilder($alias, $indexBy);
         if (count($this->accessibleSites) > 0) {
-            return $queryBuilder->andWhere($queryBuilder->expr()->in('form.siteName', $this->accessibleSites));
+            $queryBuilder->andWhere($queryBuilder->expr()->in('form.siteName', $this->accessibleSites));
+        } else {
+            $queryBuilder->andWhere('2 = 1');
         }
 
-        return $queryBuilder->andWhere('2 = 1');
+        if (count($this->accessibleDimensions) > 0) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('form.dimensionsHash', $this->accessibleDimensions));
+        } else {
+            $queryBuilder->andWhere('2 = 1');
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -135,36 +156,18 @@ class FormDataRepository extends Repository
         return $this->accessibleSites;
     }
 
-    protected function initializeAccessibleSites(): array
+
+    public function deactivateSecurityChecks(): self
     {
-        return array_filter(
-            $this->findAllUniqueSiteNames(),
-            function (string $site) {
-                return $this->siteAccesibilityService->isSiteAccessible($site);
-            }
-        );
-    }
+        $this->accessibleSites = array_map(static function (FormData $formDataSample) {
+            return $formDataSample->getSiteName();
+        }, $this->findAllUnique('form.siteName'));
 
-    public function grantAccessToAllSites(): void
-    {
-        $this->accessibleSites = $this->findAllUniqueSiteNames();
-    }
+        $this->accessibleDimensions = array_map(static function (FormData $formDataSample) {
+            return $formDataSample->getContentDimensions();
+        }, $this->findAllUnique('form.dimensionsHash'));
 
-    protected function findAllUniqueSiteNames(): array
-    {
-        $queryBuilder = parent::createQueryBuilder('form');
-        $formDataGroupedBySite = $queryBuilder
-            ->groupBy('form.siteName')
-            ->getQuery()->execute();
-
-        $sites = [];
-
-        /** @var FormData $formData */
-        foreach ($formDataGroupedBySite as $formData) {
-            $sites[] = $formData->getSiteName();
-        }
-
-        return $sites;
+        return $this;
     }
 
     /**
@@ -179,5 +182,42 @@ class FormDataRepository extends Repository
             ->setParameter(':date', $date)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    protected function initializeAccessibleSites(): array
+    {
+        return array_filter(array_map(
+            function (FormData $formDataSample) {
+                return $this->siteAccesibilityService->isSiteAccessible($formDataSample->getSiteName()) ? $formDataSample->getSiteName() : null;
+            },
+            $this->findAllUnique('form.siteName')
+        ));
+    }
+
+    protected function initializeAccessibleDimensions(): array
+    {
+        return array_filter(array_map(
+            function (FormData $formDataSample) {
+                return $this->dimensionAccesibilityService->isDimensionCombinationAccessible($formDataSample->getContentDimensions()) ? $formDataSample->getDimensionsHash() : null;
+            },
+            $this->findAllUnique('form.dimensionsHash')
+        ));
+    }
+
+    protected function findAllUnique(string $groupField): array
+    {
+        $queryBuilder = parent::createQueryBuilder('form');
+        $formDataGroupedBySite = $queryBuilder
+            ->groupBy($groupField)
+            ->getQuery()->execute();
+
+        $formDataSample = [];
+
+        /** @var FormData $formData */
+        foreach ($formDataGroupedBySite as $formData) {
+            $formDataSample[] = $formData;
+        }
+
+        return $formDataSample;
     }
 }
