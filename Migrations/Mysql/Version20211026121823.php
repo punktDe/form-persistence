@@ -40,15 +40,23 @@ final class Version20211026121823 extends AbstractMigration
     {
         $rows = $this->connection->fetchAllAssociative('SELECT `contentdimensions` FROM punktde_form_persistence_domain_model_formdata GROUP BY contentdimensions');
         foreach ($rows as $row) {
-            $contentDimensions = json_decode($row['contentdimensions'], true, 512, JSON_THROW_ON_ERROR);
-            $contentDimensionHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($contentDimensions);
-            $this->addSql(
-                'UPDATE punktde_form_persistence_domain_model_formdata SET `dimensionshash` = :contentDimensionHash WHERE `contentdimensions` = :contentDimensions',
-                [
-                    'contentDimensions' => $row['contentdimensions'],
-                    'contentDimensionHash' => $contentDimensionHash,
-                ]
-            );
+            if (trim($row['contentdimensions'] ?? '') === '') {
+                continue;
+            }
+
+            try {
+                $contentDimensions = json_decode($row['contentdimensions'], true, 512, JSON_THROW_ON_ERROR);
+                $contentDimensionHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($contentDimensions);
+                $this->addSql(
+                    'UPDATE punktde_form_persistence_domain_model_formdata SET `dimensionshash` = :contentDimensionHash WHERE `contentdimensions` = :contentDimensions',
+                    [
+                        'contentDimensions' => $row['contentdimensions'],
+                        'contentDimensionHash' => $contentDimensionHash,
+                    ]
+                );
+            } catch (\Exception $e) {
+                continue;
+            }
         }
     }
 }
