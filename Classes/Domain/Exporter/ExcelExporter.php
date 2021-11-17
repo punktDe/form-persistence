@@ -8,15 +8,11 @@ namespace PunktDe\Form\Persistence\Domain\Exporter;
  *  All rights reserved.
  */
 
-use phpoffice\Excel\CannotInsertRecord;
-use Wegmeister\DatabaseStorage\Domain\Model\DatabaseStorage;
-use Wegmeister\DatabaseStorage\Domain\Repository\DatabaseStorageRepository;
-
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Exception as WriterException;
-
 
 class ExcelExporter implements FormDataExporterInterface
 {
@@ -30,10 +26,6 @@ class ExcelExporter implements FormDataExporterInterface
      * @var string
      */
     protected $fileName = 'FormData.xlsx';
-
-
-
-
 
     public function setFileName(string $fileName): FormDataExporterInterface
     {
@@ -50,21 +42,44 @@ class ExcelExporter implements FormDataExporterInterface
     /**
      * @param iterable $formDataItems
      * @return void
-     * @throws CannotInsertRecord
+     * @throws WriterException|Exception
      */
     public function compileAndSend(iterable $formDataItems): void
     {
-        $this->compileXLS($formDataItems)->output($this->fileName);
+        header("Pragma: public"); // required
+        header("Expires: 0");
+        header('Cache-Control: max-age=0');
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private", false); // required for certain browsers
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header(
+            sprintf(
+                'Content-Disposition: attachment; filename="%s"',
+                $this->fileName
+
+            )
+        );
+        header("Content-Transfer-Encoding: binary");
+
+        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 
+    /**
+     * @throws Exception
+     * @throws WriterException
+     */
     public function compileAndSave(iterable $formDataItems, string $filePath): void
     {
-        if (!file_put_contents($filePath, $this->compileXLS($formDataItems)->toString())) {
-            throw new \RuntimeException(sprintf('Unable to write form data export to file path "%s" - the file is not writable', $filePath), 1627881922);
-        }
+        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), 'Xlsx');
+        $writer->save($filePath);
     }
 
-    protected function compileXLS(iterable $formDataItems)
+    /**
+     * @throws Exception
+     */
+    protected function compileXLS(iterable $formDataItems) :Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
 
@@ -93,27 +108,7 @@ class ExcelExporter implements FormDataExporterInterface
         }
 
         $spreadsheet->setActiveSheetIndex(0);
-        $spreadsheet->getActiveSheet()->setTitle('test1');
         $spreadsheet->getActiveSheet()->fromArray($formDataItems);
-
-        header("Pragma: public"); // required
-        header("Expires: 0");
-        header('Cache-Control: max-age=0');
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: private", false); // required for certain browsers
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header(
-            sprintf(
-                'Content-Disposition: attachment; filename="%s"',
-                $this->fileName
-
-            )
-        );
-        header("Content-Transfer-Encoding: binary");
-
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $writer->save('php://output');
-        exit;
-
+        return $spreadsheet;
     }
 }
