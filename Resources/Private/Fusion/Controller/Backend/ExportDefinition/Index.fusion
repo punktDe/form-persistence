@@ -9,9 +9,8 @@ prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(N
     exportDefinitionEditorApp = Neos.Fusion:ResourceUri {
         path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'
     }
-    config = ${Configuration.setting('PunktDe.Form.Persistence.exporter')}
-    keys = ${Array.keys(this.config)}
-    exporterTypes = ${Json.stringify(this.keys)}
+    exporterTypes =${Json.stringify(Array.keys(Configuration.setting('PunktDe.Form.Persistence.exporter')))}
+
 
     renderer = afx`
 
