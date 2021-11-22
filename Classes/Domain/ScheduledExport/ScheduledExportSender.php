@@ -238,7 +238,8 @@ class ScheduledExportSender
                 [
                     'formIdentifier' => $formDataRepresentative->getFormIdentifier(),
                     'formVersion' => $formDataRepresentative->getHash(),
-
+                    'errorCode' => $exception->getCode(),
+                    'errorMessage' => $exception->getMessage(),
                 ],
                 null,
                 null,

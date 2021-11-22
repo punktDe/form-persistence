@@ -11,10 +11,21 @@ PunktDe:
           exporter: csv
           fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.csv"
 
+        excel:
+          label: Generic Xlsx
+          exporter: xlsx
+          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.xlsx"
+
+
+
       exporter:
         csv:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
           options: [ ]
+        xlsx:
+          className: PunktDe\Form\Persistence\Domain\Exporter\ExcelExporter #phpofficeexporter
+          options: [ ]
+            #Writertype:
 
       processorChain:
         # Flatten nested fields into an array with namespaces
