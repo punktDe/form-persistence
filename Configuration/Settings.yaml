@@ -23,9 +23,12 @@ PunktDe:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
           options: [ ]
         xlsx:
-          className: PunktDe\Form\Persistence\Domain\Exporter\ExcelExporter #phpofficeexporter
-          options: [ ]
-            #Writertype:
+          className: PunktDe\Form\Persistence\Domain\Exporter\SpreadSheetExporter
+          options:
+            writerType: 'Xlsx'
+            title: ''
+            creator: ''
+
 
       processorChain:
         # Flatten nested fields into an array with namespaces
@@ -37,7 +40,7 @@ PunktDe:
         fieldKeyMapping:
           class: 'PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor'
 
-        # Convert form values to a an exportable representation. Eg. Uploaded data to its filename
+        # Convert form values to an exportable representation. Eg. Uploaded data to its filename
         valueFormatting:
           class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
 

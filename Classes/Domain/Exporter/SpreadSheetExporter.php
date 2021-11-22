@@ -13,8 +13,11 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Exception as WriterException;
+use Neos\Utility\MediaTypes ;
+use Neos\Flow\Annotations as Flow;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 
-class ExcelExporter implements FormDataExporterInterface
+class SpreadSheetExporter implements FormDataExporterInterface
 {
 
     /**
@@ -39,6 +42,7 @@ class ExcelExporter implements FormDataExporterInterface
         return $this;
     }
 
+
     /**
      * @param iterable $formDataItems
      * @return void
@@ -51,7 +55,7 @@ class ExcelExporter implements FormDataExporterInterface
         header('Cache-Control: max-age=0');
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: private", false); // required for certain browsers
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Type: ' . MediaTypes::getMediaTypeFromFilename($this->fileName));
         header(
             sprintf(
                 'Content-Disposition: attachment; filename="%s"',
@@ -61,10 +65,11 @@ class ExcelExporter implements FormDataExporterInterface
         );
         header("Content-Transfer-Encoding: binary");
 
-        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), 'Xlsx');
+        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), $this->options['writerType']);
         $writer->save('php://output');
         exit;
     }
+
 
     /**
      * @throws Exception
@@ -72,7 +77,7 @@ class ExcelExporter implements FormDataExporterInterface
      */
     public function compileAndSave(iterable $formDataItems, string $filePath): void
     {
-        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), 'Xlsx');
+        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), $this->options['writerType']);
         $writer->save($filePath);
     }
 
@@ -84,9 +89,9 @@ class ExcelExporter implements FormDataExporterInterface
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getProperties()
-            ->setCreator('creator')
-            ->setTitle('title')
-            ->setSubject('subject');
+            ->setCreator($this->options['creator']??'')
+            ->setTitle($this->options['title']??'');
+
         $headerColumns = array_keys($formDataItems[0]);
         array_unshift($formDataItems ,$headerColumns );
 
