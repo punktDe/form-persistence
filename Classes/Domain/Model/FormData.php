@@ -60,7 +60,7 @@ class FormData
      * @var string
      * @ORM\Column(length=32)
      */
-    protected $dimensionsHash;
+    protected $dimensionsHash = '';
 
     /**
      * @ORM\Column(type="flow_json_array")
