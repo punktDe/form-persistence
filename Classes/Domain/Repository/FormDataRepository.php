@@ -191,7 +191,9 @@ class FormDataRepository extends Repository
                 return $this->siteAccesibilityService->isSiteAccessible($formDataSample->getSiteName()) ? $formDataSample->getSiteName() : null;
             },
             $this->findAllUnique('form.siteName')
-        ));
+        ), function (?string $value) {
+            return $value !== null;
+        });
     }
 
     protected function initializeAccessibleDimensions(): array
@@ -201,7 +203,9 @@ class FormDataRepository extends Repository
                 return $this->dimensionAccesibilityService->isDimensionCombinationAccessible($formDataSample->getContentDimensions()) ? $formDataSample->getDimensionsHash() : null;
             },
             $this->findAllUnique('form.dimensionsHash')
-        ));
+        ), function (?string $value) {
+            return $value !== null;
+        });
     }
 
     protected function findAllUnique(string $groupField): array
