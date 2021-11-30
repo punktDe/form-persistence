@@ -17,7 +17,8 @@
 ![Backend Module](Documentation/BackendModule.png)
 
 # Installation
-```
+
+```bash
 composer require punktde/form-persistence
 ```
 
@@ -29,12 +30,14 @@ After the successful installation run `./flow doctrine:migrate` to initialize th
 
 Some form types are only fro structuring the form or to display static text and should not be available for export. These form types can now be excluded using extendable configuration:
 
-	PunktDe:
-	  Form:
-	    Persistence:
-	      finisher:
-	        excludedFormTypes:
-	          'Neos.Form:StaticText': true
+```yaml
+PunktDe:
+  Form:
+    Persistence:
+      finisher:
+        excludedFormTypes:
+          'Neos.Form:StaticText': true
+```		  
 
 ## Export Definitions
 
@@ -55,17 +58,18 @@ The following variables ca be used:
 
 Processing steps for processing the form data are defined in the `processorChain` configuration. This chain is currently used globally for all exports. You can add your own processors using the postionalArraySprtingSyntax for their positionin the chain.
 
-Example: 
+Example:
 
-	PunktDe:
-	  Form:
-	    Persistence:
-	      processorChain:
-	        # My processor
-	        flattenArray:
-	          class: 'Vendor\FormProcessors\MyProccessor'
-	          position: 'end'
-	          
+```yaml
+PunktDe:
+  Form:
+    Persistence:
+      processorChain:
+        # My processor
+        flattenArray:
+          class: 'Vendor\FormProcessors\MyProcessor'
+          position: end
+```		  	          
 
 ## Privileges
 
@@ -75,14 +79,16 @@ Form data may contain sensitive data. The package thus offers priviliges to give
 
 In a multi-site environment you can restrict the accessibility to form data depending on the site using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add 
 
-	'PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege':
-	  'PunktDe.Form.Persistence:Sites.All':
-	    label: Access to form data of all sites
-	    matcher: '*'
+```yaml
+'PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege':
+	'PunktDe.Form.Persistence:Sites.All':
+	 label: Access to form data of all sites
+	 matcher: '*'
 	    
-	  'PunktDe.Form.Persistence:Sites.MyFirstSite':
-  	    label: Access to form data of site my-site
-	    matcher: 'my-site'
+'PunktDe.Form.Persistence:Sites.MyFirstSite':
+  	label: Access to form data of site my-site
+	matcher: 'my-site'
+```
 
 The matcher accepts, '*', a single name or a comma-separated list of site names.
 
@@ -90,14 +96,16 @@ The matcher accepts, '*', a single name or a comma-separated list of site names.
 
 In a multi-dimension environment you can restrict the accessibility to form data depending on the content dimension combination using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add
 
-	'PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilege':
-	  'PunktDe.Form.Persistence:Dimensions.All':
-	    label: Access to form data of all content dimensions
-	    matcher: '*'
+```yaml
+'PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilege':
+	'PunktDe.Form.Persistence:Dimensions.All':
+		label: Access to form data of all content dimensions
+		matcher: '*'
 	    
-	  'PunktDe.Form.Persistence:Dimensions.Germany':
-  	    label: Access to form data of all langues in the german country
-	    matcher: '{"country": ["deu"]}'
+'PunktDe.Form.Persistence:Dimensions.Germany':
+	label: Access to form data of all langues in the german country
+	matcher: '{"country": ["deu"]}'
+```
 
 The matcher accepts, '*', or a json definition of the dimensions. See `ContentDimensionPrivilegeTargetTest.php` for details.
 
@@ -105,7 +113,7 @@ The matcher accepts, '*', or a json definition of the dimensions. See `ContentDi
 ## Add the SaveFormDataFinisher
 ### Using the flow form configuration
 
-```
+```yaml
 type: 'Neos.Form:Form'
 identifier: 'my-form'
 renderables:
@@ -143,7 +151,7 @@ The package brings a graphical editor for defining export definitions. With an e
 To clean up old form data entries manually or on a regular basis, one needs to configure the retention period and call the command `formpersistence:cleanupformdata`. 
 In the following example a retention period of 30 days is configured and therefore every form data entry older than 30 days ist deleted upon calling the command.
 
-```
+```yaml
 PunktDe:
   Form:
     Persistence:
@@ -162,7 +170,7 @@ The whole functionality is encapsulated in a service to allow a better integrati
 To start make changes to the export definition app go to the folder `PunktDe.Form.Persistence/Resources/Public/ExportDefinitionEditorApp`
 and run the command
 
-```
+```bash
 yarn install
 ```
 
@@ -170,7 +178,7 @@ After all dependencies are installed, you can adjust the code of the react app.
 The is created with the help of creat-react-app scaffolding tool and therefore uses its build configuration with some adjustments.
 To see changes, you need to build the app with the following command.
 
-```
+```bash
 yarn build
 ```
 
