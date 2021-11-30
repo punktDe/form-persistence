@@ -91,7 +91,7 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                             label: item.exporter,
                             value: item.exporter
                         };
-                    }), 'label') : [{ label: 'csv', value: 'csv' }],
+                    }), 'label') : [{ label: 'csv', value: 'csv' }, { label: 'excel', value: 'excel' }],
                     lines: Object.keys(exportDefinitionData?.definition || {}).map((item, index) => {
                         return {
                             id: `id-${index}`,

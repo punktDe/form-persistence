@@ -28,7 +28,7 @@ After the successful installation run `./flow doctrine:migrate` to initialize th
 
 ## Exclude form types from saving
 
-Some form types are only fro structuring the form or to display static text and should not be available for export. These form types can now be excluded using extendable configuration:
+Some form types are only for structuring the form or to display static text and should not be available for export. These form types can now be excluded using extendable configuration:
 
 ```yaml
 PunktDe:
@@ -136,8 +136,8 @@ To trigger the export, the command `formPersistence:sendExport` needs to be call
 
 ### Download form data
 
-A simple backend module is provided to download the form data as CSV. The form version specifies the used fields and their position. 
-With that it is taken care, that if the form changes over time, a separate CSV file with consistent headers and column position is generated. 
+A simple backend module is provided to download the form data as multiple formats like CSV,Excel and Html here`s a list of possible formats https://phpspreadsheet.readthedocs.io/en/latest/. The form version specifies the used fields and their position. 
+With that it is taken care, that if the form changes over time, a separate CSV or Excel file with consistent headers and column position is generated.
 
 ![Backend Module](Documentation/BackendModule.png)
 

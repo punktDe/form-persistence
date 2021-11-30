@@ -9,11 +9,14 @@ prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(N
     exportDefinitionEditorApp = Neos.Fusion:ResourceUri {
         path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'
     }
+    exporterTypes =${Json.stringify(Array.keys(Configuration.setting('PunktDe.Form.Persistence.exporter')))}
+
 
     renderer = afx`
+
         <div class="neos-content neos-container-fluid">
             <div class="neos-module-container">
-                <div id="app" data-api-formdata={apiEndpoint.formData} data-api-exportdefinition={apiEndpoint.exportDefinition}></div>
+                <div id="app" data-api-formdata={apiEndpoint.formData} data-api-exportdefinition={apiEndpoint.exportDefinition} data-exporter-types={props.exporterTypes}></div>
             </div>
             <div class="neos-footer">
                 <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back to Form data export</a>
