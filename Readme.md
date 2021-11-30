@@ -81,13 +81,13 @@ In a multi-site environment you can restrict the accessibility to form data depe
 
 ```yaml
 'PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege':
-	'PunktDe.Form.Persistence:Sites.All':
-	 label: Access to form data of all sites
-	 matcher: '*'
-	    
+  'PunktDe.Form.Persistence:Sites.All':
+    label: Access to form data of all sites
+    matcher: '*'
+
 'PunktDe.Form.Persistence:Sites.MyFirstSite':
-  	label: Access to form data of site my-site
-	matcher: 'my-site'
+  label: Access to form data of site my-site
+  matcher: 'my-site'
 ```
 
 The matcher accepts, '*', a single name or a comma-separated list of site names.
@@ -98,13 +98,13 @@ In a multi-dimension environment you can restrict the accessibility to form data
 
 ```yaml
 'PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilege':
-	'PunktDe.Form.Persistence:Dimensions.All':
-		label: Access to form data of all content dimensions
-		matcher: '*'
-	    
+  'PunktDe.Form.Persistence:Dimensions.All':
+    label: Access to form data of all content dimensions
+    matcher: '*'
+
 'PunktDe.Form.Persistence:Dimensions.Germany':
-	label: Access to form data of all langues in the german country
-	matcher: '{"country": ["deu"]}'
+  label: Access to form data of all langues in the german country
+  matcher: '{"country": ["deu"]}'
 ```
 
 The matcher accepts, '*', or a json definition of the dimensions. See `ContentDimensionPrivilegeTargetTest.php` for details.
