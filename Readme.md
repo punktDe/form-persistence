@@ -196,5 +196,5 @@ vendor/bin/phpstan analyse
 **Analyse a specific file:**
 
 ```bash
-vendor/bin/phpstan analyse Classets/Path/To/File.php
+vendor/bin/phpstan analyse Classes/Path/To/File.php
 ```
