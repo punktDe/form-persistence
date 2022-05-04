@@ -5,7 +5,7 @@
     "name": "punktde/form-persistence",
     "license": "MIT",
     "require": {
-        "neos/neos": "^5.0 || ^7.0",
+        "neos/neos": "^5.0 || ^7.0 || ^8.0",
         "neos/form": "*",
         "neos/fusion": "*",
         "league/csv": "^9.0",
