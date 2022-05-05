@@ -79,6 +79,8 @@ class FormDataController extends ActionController
     /**
      * @param string $formIdentifier
      * @param string $hash
+     * @param string $siteName
+     * @param string $dimensionsHash
      * @param string $exportDefinitionIdentifier
      * @throws InvalidConfigurationTypeException
      * @throws CannotBuildObjectException
@@ -86,7 +88,7 @@ class FormDataController extends ActionController
      * @throws ConfigurationException
      * @throws InvalidQueryException
      */
-    public function downloadAction(string $formIdentifier, string $hash, string $exportDefinitionIdentifier): void
+    public function downloadAction(string $formIdentifier, string $hash, string $siteName, string $dimensionsHash, string $exportDefinitionIdentifier): void
     {
         /** @var FormData[] $formDataItems */
 
@@ -97,7 +99,7 @@ class FormDataController extends ActionController
 
         $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
             return $formData->getProcessedFormData($exportDefinition);
-        }, $this->formDataRepository->findByFormIdentifierAndHash($formIdentifier, $hash)->toArray());
+        }, $this->formDataRepository->findByFormProperties($formIdentifier, $hash, $siteName, $dimensionsHash)->toArray());
 
         $exporter->setFileName($fileName)->compileAndSend($formDataItems);
         die();
@@ -110,7 +112,7 @@ class FormDataController extends ActionController
      */
     public function previewAction(FormData $formDataEntry): void
     {
-        $formDataEntries = $this->formDataRepository->findByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $formDataEntries = $this->formDataRepository->findByFormProperties($formDataEntry->getFormIdentifier(), $formDataEntry->getHash(), $formDataEntry->getSiteName(), $formDataEntry->getDimensionsHash());
         $scheduledExport = $this->scheduledExportRepository->findOneByFormIdentifier($formDataEntry->getFormIdentifier());
 
         if ($formDataEntries->count() === 0) {
@@ -134,7 +136,7 @@ class FormDataController extends ActionController
      */
     public function deleteAction(FormData $formDataEntry): void
     {
-        $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash());
+        $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash(), $formDataEntry->getSitename(), $formDataEntry->getDimensionsHash());
         $this->redirect('index');
     }
 

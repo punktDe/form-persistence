@@ -56,6 +56,9 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                             <Neos.Fusion.Form:Select field.name="exportDefinitionIdentifier">{props.options}</Neos.Fusion.Form:Select>
                             <Neos.Fusion.Form:Hidden field.name="formIdentifier" attributes.value={formData.formIdentifier}/>
                             <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={formData.hash}/>
+                            <Neos.Fusion.Form:Hidden field.name="siteName" attributes.value={formData.siteName}/>
+                            <Neos.Fusion.Form:Hidden field.name="dimensionsHash" attributes.value={formData.dimensionsHash}/>
+                            <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={formData.hash}/>
                             <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">Download</Neos.Fusion.Form:Button>
                         </Neos.Fusion.Form:Form>
                     </td>
