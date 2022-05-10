@@ -184,3 +184,17 @@ yarn build
 
 The generated file `main.js` is located in the folder `build/static/js`.
 This file is loaded in the Neos Backend and is the editor you see.
+
+## Run tests with PHPStan
+
+**Analyse the full project:**
+
+```bash
+vendor/bin/phpstan analyse -c phpstan.neon
+```
+
+**Analyse a specific file:**
+
+```bash
+vendor/bin/phpstan analyse Classes/Path/To/File.php
+```
