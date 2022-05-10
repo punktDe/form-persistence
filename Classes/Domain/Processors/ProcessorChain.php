@@ -12,9 +12,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Utility\PositionalArraySorter;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
-class ProcessorChain implements ProcessorInterface
+class ProcessorChain
 {
     /**
      * @Flow\Inject
@@ -31,19 +32,26 @@ class ProcessorChain implements ProcessorInterface
     /**
      * @var ProcessorInterface[]
      */
-    protected $processorChain = null;
+    protected ?array $processorChain = null;
 
-    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
+    /**
+     * @param FormData $formData
+     * @param array $formValues
+     * @param ExportDefinitionInterface|null $exportDefinition
+     * @return array
+     * @throws ConfigurationException
+     */
+    public function convertFormData(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array
     {
         if ($this->processorChain === null) {
             $this->initializeProcessorChain();
         }
 
-        foreach ($this->processorChain as $processorIdentifier => $processor) {
-            $formData = $processor->convertFormData($formData, $exportDefinition);
+        foreach ($this->processorChain as $processor) {
+            $formValues = $processor->process($formData, $formValues, $exportDefinition);
         }
 
-        return $formData;
+        return $formValues;
     }
 
     /**
@@ -64,6 +72,10 @@ class ProcessorChain implements ProcessorInterface
             $processor = new $processorSetting['class']();
             if (!$processor instanceof ProcessorInterface) {
                 throw new ConfigurationException(sprintf('The processor of class %s does not implement interface %s', $processorSetting['class'], ProcessorInterface::class), 1621947879);
+            }
+
+            if (isset($processorSetting['options']) && is_array($processorSetting['options'])) {
+                $processor->setOptions($processorSetting['options']);
             }
 
             $this->processorChain[$processorIdentifier] = $processor;

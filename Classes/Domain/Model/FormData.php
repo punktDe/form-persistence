@@ -149,7 +149,7 @@ class FormData
 
     public function getProcessedFormData(?ExportDefinitionInterface $exportDefinition = null): array
     {
-        return $this->processorChain->convertFormData($this->formData, $exportDefinition);
+        return $this->processorChain->convertFormData($this, $this->formData, $exportDefinition);
     }
 
     /**

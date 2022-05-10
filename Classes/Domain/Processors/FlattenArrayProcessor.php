@@ -10,15 +10,16 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
 
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Service\ArrayFlattenService;
 
-class FlattenArrayProcessor implements ProcessorInterface
+class FlattenArrayProcessor extends AbstractFormDataProcessor implements ProcessorInterface
 {
 
-    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
+    public function process(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array
     {
         $convertedData = [];
-        foreach ($formData as $fieldIdentifier => $fieldValue) {
+        foreach ($formValues as $fieldIdentifier => $fieldValue) {
 
             if (is_array($fieldValue)) {
                 $convertedData = array_merge($convertedData, ArrayFlattenService::flattenArray($fieldValue, $fieldIdentifier));
