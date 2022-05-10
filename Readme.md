@@ -190,7 +190,7 @@ This file is loaded in the Neos Backend and is the editor you see.
 **Analyse the full project:**
 
 ```bash
-vendor/bin/phpstan analyse
+vendor/bin/phpstan analyse -c phpstan.neon
 ```
 
 **Analyse a specific file:**
