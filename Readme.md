@@ -66,7 +66,7 @@ PunktDe:
     Persistence:
       processorChain:
         # My processor
-        flattenArray:
+        myProcessor:
           class: 'Vendor\FormProcessors\MyProcessor'
           position: end
 ```		  	          
