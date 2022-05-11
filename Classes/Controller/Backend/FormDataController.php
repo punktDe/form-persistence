@@ -136,7 +136,7 @@ class FormDataController extends ActionController
      */
     public function deleteAction(FormData $formDataEntry): void
     {
-        $this->formDataRepository->removeByFormIdentifierAndHash($formDataEntry->getFormIdentifier(), $formDataEntry->getHash(), $formDataEntry->getSitename(), $formDataEntry->getDimensionsHash());
+        $this->formDataRepository->removeByFormProperties($formDataEntry->getFormIdentifier(), $formDataEntry->getHash(), $formDataEntry->getSitename(), $formDataEntry->getDimensionsHash());
         $this->redirect('index');
     }
 

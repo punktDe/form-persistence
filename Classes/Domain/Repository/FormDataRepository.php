@@ -107,7 +107,7 @@ class FormDataRepository extends Repository
             ->execute()->getFirst();
     }
 
-    public function removeByFormIdentifierAndHash(string $formIdentifier, string $hash, string $siteName, string $dimensionsHash): void
+    public function removeByFormProperties(string $formIdentifier, string $hash, string $siteName, string $dimensionsHash): void
     {
         foreach ($this->findByFormProperties($formIdentifier, $hash, $siteName, $dimensionsHash) as $formData) {
             $this->remove($formData);
