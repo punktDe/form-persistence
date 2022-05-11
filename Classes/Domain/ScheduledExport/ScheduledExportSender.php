@@ -201,7 +201,7 @@ class ScheduledExportSender
      */
     protected function prepareExportMail(FormData $formDataRepresentative, ExportDefinitionInterface $exportDefinition, string $exportFilePath, string $fileName, Message $mail): void
     {
-        $formDataCollection = $this->formDataRepository->findByFormIdentifierAndHash($formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash());
+        $formDataCollection = $this->formDataRepository->findByFormProperties($formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $formDataRepresentative->getSiteName(), $formDataRepresentative->getDimensionsHash());
 
         $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
             return $formData->getProcessedFormData($exportDefinition);

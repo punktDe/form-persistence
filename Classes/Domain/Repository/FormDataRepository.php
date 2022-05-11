@@ -65,8 +65,10 @@ class FormDataRepository extends Repository
     {
         $queryBuilder = $this->createQueryBuilder('form');
         return $queryBuilder
-            ->groupBy('form.formIdentifier')
+            ->groupBy('form.siteName')
+            ->addgroupBy('form.formIdentifier')
             ->addGroupBy('form.hash')
+            ->addGroupBy('form.dimensionsHash')
             ->addSelect('count(form) AS entryCount')
             ->addSelect('MAX(form.date) as latestDate')
             ->orderBy('latestDate', QueryInterface::ORDER_DESCENDING)
@@ -76,10 +78,12 @@ class FormDataRepository extends Repository
     /**
      * @param string $formIdentifier
      * @param string $hash
+     * @param string $siteName
+     * @param string $dimensionsHash
      * @return QueryResultInterface
      * @throws InvalidQueryException
      */
-    public function findByFormIdentifierAndHash(string $formIdentifier, string $hash): QueryResultInterface
+    public function findByFormProperties(string $formIdentifier, string $hash, string $siteName, string $dimensionsHash): QueryResultInterface
     {
         $query = $this->createQuery();
 
@@ -87,6 +91,8 @@ class FormDataRepository extends Repository
             $query->logicalAnd(
                 $query->equals('formIdentifier', $formIdentifier),
                 $query->equals('hash', $hash),
+                $query->equals('siteName', $siteName),
+                $query->equals('dimensionsHash', $dimensionsHash),
                 $query->in('siteName', $this->accessibleSites)
             )
         )->execute();
@@ -101,9 +107,9 @@ class FormDataRepository extends Repository
             ->execute()->getFirst();
     }
 
-    public function removeByFormIdentifierAndHash(string $formIdentifier, string $hash): void
+    public function removeByFormProperties(string $formIdentifier, string $hash, string $siteName, string $dimensionsHash): void
     {
-        foreach ($this->findByFormIdentifierAndHash($formIdentifier, $hash) as $formData) {
+        foreach ($this->findByFormProperties($formIdentifier, $hash, $siteName, $dimensionsHash) as $formData) {
             $this->remove($formData);
         }
     }
