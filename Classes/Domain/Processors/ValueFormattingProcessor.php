@@ -10,17 +10,23 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
 
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Service\ArrayFlattenService;
 
-class ValueFormattingProcessor implements ProcessorInterface
+class ValueFormattingProcessor extends AbstractFormDataProcessor implements ProcessorInterface
 {
 
-    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
+    public function process(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array
     {
         $convertedData = [];
-        foreach ($formData as $fieldIdentifier => $fieldValue) {
+        foreach ($formValues as $fieldIdentifier => $fieldValue) {
             if ($fieldValue instanceof PersistentResource) {
                 $convertedData[$fieldIdentifier] = $fieldValue->getFilename();
+                continue;
+            }
+
+            if ($fieldValue instanceof \DateTime) {
+                $convertedData[$fieldIdentifier] = $fieldValue->format('d.m.Y H:i:s');
                 continue;
             }
 

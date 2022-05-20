@@ -9,30 +9,31 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
  */
 
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Exception\ProcessingException;
 
-class FieldKeyMappingProcessor implements ProcessorInterface
+class FieldKeyMappingProcessor extends AbstractFormDataProcessor implements ProcessorInterface
 {
 
-    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array
+    public function process(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array
     {
         if (!$exportDefinition instanceof ExportDefinitionInterface) {
-            return $formData;
+            return $formValues;
         }
 
         if (empty($exportDefinition->getDefinition())) {
-            return $formData;
+            return $formValues;
         }
 
         $convertedData = [];
         foreach ($exportDefinition->getDefinition() as $formKey => $configuration) {
 
-            if (!array_key_exists($formKey, $formData)) {
-                throw new ProcessingException(sprintf('Could not find field %s in formData, available are "%s"', $formKey, implode(', ', array_keys($formData))), 1622033828);
+            if (!array_key_exists($formKey, $formValues)) {
+                throw new ProcessingException(sprintf('Could not find field %s in formData, available are "%s"', $formKey, implode(', ', array_keys($formValues))), 1622033828);
             }
 
             $newKey = $configuration['changeKey'] ?? $formKey;
-            $convertedData[$newKey] = $formData[$formKey];
+            $convertedData[$newKey] = $formValues[$formKey];
         }
 
         return $convertedData;

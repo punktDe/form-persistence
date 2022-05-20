@@ -10,8 +10,11 @@ namespace PunktDe\Form\Persistence\Domain\Processors;
 
 
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 
 interface ProcessorInterface
 {
-    public function convertFormData(array $formData, ?ExportDefinitionInterface $exportDefinition): array;
+    public function setOptions(array $options): void;
+
+    public function process(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array;
 }
