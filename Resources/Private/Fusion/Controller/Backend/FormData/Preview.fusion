@@ -43,7 +43,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
         renderer = afx`
             <div class="neos-module-container">
                 <br />
-                <h2>Data of this form is automatically exported and sent via mail to {scheduledExport.email}.</h2>
+                <h2>{I18n.translate('PunktDe.Form.Persistence:Backend.FormData:preview.scheduledExport.email.text')} {scheduledExport.email}.</h2>
                 <br />
             </div>
         `
@@ -66,8 +66,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Preview) < prototype(Neos.Fu
                 </table>
             </div>
             <div class="neos-footer">
-                <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>Back
-                    to Form data export</a>
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.backToFormDataLink}>{I18n.translate('PunktDe.Form.Persistence:Backend.ExportDefinition:back.to.formdata.export')}</a>
             </div>
         </div>
     `

@@ -59,7 +59,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                             <Neos.Fusion.Form:Hidden field.name="siteName" attributes.value={formData.siteName}/>
                             <Neos.Fusion.Form:Hidden field.name="dimensionsHash" attributes.value={formData.dimensionsHash}/>
                             <Neos.Fusion.Form:Hidden field.name="hash" attributes.value={formData.hash}/>
-                            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">Download</Neos.Fusion.Form:Button>
+                            <Neos.Fusion.Form:Button attributes.class="neos-button neos-button-primary">{I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.download')}</Neos.Fusion.Form:Button>
                         </Neos.Fusion.Form:Form>
                     </td>
                     <td class="neos-action">
@@ -79,32 +79,32 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
     renderer = afx`
         <div class="neos-content neos-container-fluid">
             <div class="neos-module-container">
-                <table class="neos-table" @if.savedFormData={props.tableRows}>
+                <table class="neos-table" @if.hasSavedFormData={props.tableRows}>
                     <thead>
                         <tr>
                             <th>
-                                Site
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.site')}
                             </th>
                             <th>
-                                Dimension
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.dimension')}
                             </th>
                             <th>
-                                Form Identifier
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.form.identifier')}
                             </th>
                             <th>
-                                Version
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.version')}
                             </th>
                             <th>
-                                Count
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.count')}
                             </th>
                             <th>
-                                Latest
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.latest')}
                             </th>
                             <th>
-                                Scheduled
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.scheduled')}
                             </th>
                             <th>
-                                Export definition
+                                {I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.export.definition')}
                             </th>
                             <th/>
                         </tr>
@@ -113,10 +113,10 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
                         {props.tableRows}
                     </tbody>
                 </table>
-                <div @if.noSavedFormData={!props.tableRows}>There is either no saved form data to display or your account is missing the required privileges.</div>
+                <div @if.hasNoSavedFormData={!props.tableRows}>{I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.no.saved.form.data')}</div>
             </div>
             <div class="neos-footer">
-                <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>Manage Export Definitions</a>
+                <a class="neos-button neos-button-primary" title="Export definitions" href={props.exportDefinitionsLink}>{I18n.translate('PunktDe.Form.Persistence:Backend.FormData:index.manage.export.definitions')}</a>
             </div>
         </div>
     `

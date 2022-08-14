@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext" target-language="de">
+        <body>
+            <trans-unit id="preview.scheduledExport.email.text">
+                <source>Data of this form is automatically exported and sent via mail to</source>
+                <target>Die Daten dieses Formulars werden automatisch exportiert und per E-Mail gesendet an</target>
+            </trans-unit>
+            <trans-unit id="index.site">
+                <source>Site</source>
+                <target>Seite</target>
+            </trans-unit>
+            <trans-unit id="index.dimension">
+                <source>Dimension</source>
+                <target>Dimension</target>
+            </trans-unit>
+            <trans-unit id="index.form.identifier">
+                <source>Form Identifier</source>
+                <target>Formular Kennung</target>
+            </trans-unit>
+            <trans-unit id="index.version">
+                <source>Version</source>
+                <target>Version</target>
+            </trans-unit>
+            <trans-unit id="index.count">
+                <source>Count</source>
+                <target>Anzahl</target>
+            </trans-unit>
+            <trans-unit id="index.latest">
+                <source>Latest</source>
+                <target>Aktuellste</target>
+            </trans-unit>
+            <trans-unit id="index.scheduled">
+                <source>Scheduled</source>
+                <target>Planmäßig</target>
+            </trans-unit>
+            <trans-unit id="index.export.definition">
+                <source>Export definition</source>
+                <target>Export variante</target>
+            </trans-unit>
+            <trans-unit id="index.no.saved.form.data">
+                <source>There is either no saved form data to display or your account is missing the required privileges.</source>
+                <target>Es gibt entweder keine gespeicherten Formulardaten, die angezeigt werden können, oder Dein Konto verfügt nicht über die erforderlichen Berechtigungen.</target>
+            </trans-unit>
+            <trans-unit id="index.manage.export.definitions">
+                <source>Manage Export Definitions</source>
+                <target>Export Definitionen verwalten</target>
+            </trans-unit>
+            <trans-unit id="index.download">
+                <source>Download</source>
+                <target>Herunterladen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
