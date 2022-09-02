@@ -117,34 +117,39 @@ class ScheduledExportSender
             return;
         }
 
-        $mail = (new Message())
+        $recipients = explode(',', preg_replace('/\s+/','', $scheduledExport->getEmail()));
+
+        foreach ($recipients as $recipient) {
+            $mail = (new Message())
             ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
-            ->setTo([$scheduledExport->getEmail() => $scheduledExport->getEmail()]);
+            ->setTo([$recipient => $recipient]);
 
-        try {
-            $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
-            $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
-            $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
+            try {
+                $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
+                $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
+                $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
 
-            $mail->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
+                $mail->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
 
-            if ($isSuitable) {
-                $this->prepareExportMail($formDataRepresentative, $exportDefinition, $exportFilePath, $fileName, $mail);
-            } else {
-                $this->prepareExportDefinitionNotSuitableMail($mail, $formDataRepresentative, $exportDefinition);
-            }
-        } catch (\Exception $exception) {
-            $mail->setSubject('An error occured while exporting latest data from ' . $formDataRepresentative->getFormIdentifier());
-            $this->prepareErrorOnExportMail($mail, $formDataRepresentative, $exception);
-        } finally {
+                if ($isSuitable) {
+                    $this->prepareExportMail($formDataRepresentative, $exportDefinition, $exportFilePath, $fileName, $mail);
+                } else {
+                    $this->prepareExportDefinitionNotSuitableMail($mail, $formDataRepresentative, $exportDefinition);
+                }
+            } catch (\Exception $exception) {
+                $mail->setSubject('An error occured while exporting latest data from ' . $formDataRepresentative->getFormIdentifier());
+                $this->prepareErrorOnExportMail($mail, $formDataRepresentative, $exception);
+            } finally {
 
 
-            $mail->send();
+                $mail->send();
 
-            if (file_exists($exportFilePath)) {
-                unlink($exportFilePath);
+                if (file_exists($exportFilePath)) {
+                    unlink($exportFilePath);
+                }
             }
         }
+
     }
 
     /**
