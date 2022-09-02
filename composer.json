@@ -8,6 +8,7 @@
         "neos/neos": "^5.0 || ^7.0 || ^8.0",
         "neos/form": "*",
         "neos/fusion": "*",
+        "neos/utility-arrays": "*",
         "league/csv": "^9.0",
         "neos/swiftmailer": ">=7.0",
         "phpoffice/phpspreadsheet": "^1.18"

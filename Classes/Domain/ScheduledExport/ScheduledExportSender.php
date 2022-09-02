@@ -9,31 +9,32 @@ namespace PunktDe\Form\Persistence\Domain\ScheduledExport;
  */
 
 use Exception;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
-use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
-use Neos\Flow\I18n\Translator;
-use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
-use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
-use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Utility\Environment;
-use Neos\SwiftMailer\Message;
-use Neos\Utility\Exception\FilesException;
-use Neos\Utility\Files;
-use Psr\Log\LoggerInterface;
-use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
-use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
-use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
-use PunktDe\Form\Persistence\Domain\Model\FormData;
-use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
-use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
-use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
-use PunktDe\Form\Persistence\Exception\ConfigurationException;
-use PunktDe\Form\Persistence\Service\TemplateStringService;
 use Swift_Attachment;
+use Neos\Utility\Files;
+use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
+use Neos\SwiftMailer\Message;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Environment;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Utility\Exception\FilesException;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
+use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
+use PunktDe\Form\Persistence\Service\TemplateStringService;
+use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
+use PunktDe\Form\Persistence\Exception\ConfigurationException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 
 class ScheduledExportSender
 {
@@ -117,36 +118,34 @@ class ScheduledExportSender
             return;
         }
 
-        $recipients = explode(',', preg_replace('/\s+/','', $scheduledExport->getEmail()));
+        $recipients = Arrays::trimExplode(',', $scheduledExport->getEmail());
 
-        foreach ($recipients as $recipient) {
-            $mail = (new Message())
-            ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
-            ->setTo([$recipient => $recipient]);
+        $mail = (new Message())
+        ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
+        ->setTo($recipients);
 
-            try {
-                $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
-                $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
-                $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
+        try {
+            $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
+            $isSuitable = $exportDefinition->isSuitableFor($formDataRepresentative);
+            $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition);
 
-                $mail->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
+            $mail->setSubject(TemplateStringService::processTemplate($this->scheduledExportConfiguration['subject'], $formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $exportDefinition));
 
-                if ($isSuitable) {
-                    $this->prepareExportMail($formDataRepresentative, $exportDefinition, $exportFilePath, $fileName, $mail);
-                } else {
-                    $this->prepareExportDefinitionNotSuitableMail($mail, $formDataRepresentative, $exportDefinition);
-                }
-            } catch (\Exception $exception) {
-                $mail->setSubject('An error occured while exporting latest data from ' . $formDataRepresentative->getFormIdentifier());
-                $this->prepareErrorOnExportMail($mail, $formDataRepresentative, $exception);
-            } finally {
+            if ($isSuitable) {
+                $this->prepareExportMail($formDataRepresentative, $exportDefinition, $exportFilePath, $fileName, $mail);
+            } else {
+                $this->prepareExportDefinitionNotSuitableMail($mail, $formDataRepresentative, $exportDefinition);
+            }
+        } catch (\Exception $exception) {
+            $mail->setSubject('An error occured while exporting latest data from ' . $formDataRepresentative->getFormIdentifier());
+            $this->prepareErrorOnExportMail($mail, $formDataRepresentative, $exception);
+        } finally {
 
 
-                $mail->send();
+            $mail->send();
 
-                if (file_exists($exportFilePath)) {
-                    unlink($exportFilePath);
-                }
+            if (file_exists($exportFilePath)) {
+                unlink($exportFilePath);
             }
         }
 
