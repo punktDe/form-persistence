@@ -36,7 +36,7 @@
             </trans-unit>
             <trans-unit id="index.export.definition">
                 <source>Export definition</source>
-                <target>Export variante</target>
+                <target>Export Definition</target>
             </trans-unit>
             <trans-unit id="index.no.saved.form.data">
                 <source>There is either no saved form data to display or your account is missing the required privileges.</source>
