@@ -9,31 +9,32 @@ namespace PunktDe\Form\Persistence\Domain\ScheduledExport;
  */
 
 use Exception;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
-use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
-use Neos\Flow\I18n\Translator;
-use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
-use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
-use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Utility\Environment;
-use Neos\SwiftMailer\Message;
-use Neos\Utility\Exception\FilesException;
-use Neos\Utility\Files;
-use Psr\Log\LoggerInterface;
-use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
-use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
-use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
-use PunktDe\Form\Persistence\Domain\Model\FormData;
-use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
-use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
-use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
-use PunktDe\Form\Persistence\Exception\ConfigurationException;
-use PunktDe\Form\Persistence\Service\TemplateStringService;
 use Swift_Attachment;
+use Neos\Utility\Files;
+use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
+use Neos\SwiftMailer\Message;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Environment;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Utility\Exception\FilesException;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
+use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
+use PunktDe\Form\Persistence\Service\TemplateStringService;
+use PunktDe\Form\Persistence\Domain\Exporter\ExporterFactory;
+use PunktDe\Form\Persistence\Exception\ConfigurationException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 
 class ScheduledExportSender
 {
@@ -117,9 +118,11 @@ class ScheduledExportSender
             return;
         }
 
+        $recipients = Arrays::trimExplode(',', $scheduledExport->getEmail());
+
         $mail = (new Message())
-            ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
-            ->setTo([$scheduledExport->getEmail() => $scheduledExport->getEmail()]);
+        ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
+        ->setTo($recipients);
 
         try {
             $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());
@@ -145,6 +148,7 @@ class ScheduledExportSender
                 unlink($exportFilePath);
             }
         }
+
     }
 
     /**
