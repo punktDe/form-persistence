@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file original="" product-name="PunktDe.Form.Persistence" source-language="en" datatype="plaintext">
+        <body>
+            <trans-unit id="preview.scheduledExport.email.text">
+                <source>Data of this form is automatically exported and sent via mail to</source>
+            </trans-unit>
+            <trans-unit id="index.site">
+                <source>Site</source>
+            </trans-unit>
+            <trans-unit id="index.dimension">
+                <source>Dimension</source>
+            </trans-unit>
+            <trans-unit id="index.form.identifier">
+                <source>Form Identifier</source>
+            </trans-unit>
+            <trans-unit id="index.version">
+                <source>Version</source>
+            </trans-unit>
+            <trans-unit id="index.count">
+                <source>Count</source>
+            </trans-unit>
+            <trans-unit id="index.latest">
+                <source>Latest</source>
+            </trans-unit>
+            <trans-unit id="index.scheduled">
+                <source>Scheduled</source>
+            </trans-unit>
+            <trans-unit id="index.export.definition">
+                <source>Export definition</source>
+            </trans-unit>
+            <trans-unit id="index.no.saved.form.data">
+                <source>There is either no saved form data to display or your account is missing the required privileges.</source>
+            </trans-unit>
+            <trans-unit id="index.manage.export.definitions">
+                <source>Manage Export Definitions</source>
+            </trans-unit>
+            <trans-unit id="index.download">
+                <source>Download</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
