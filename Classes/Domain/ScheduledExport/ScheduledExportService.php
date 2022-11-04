@@ -67,6 +67,6 @@ class ScheduledExportService
 
     protected function getCurrentBackendUser(): string
     {
-        return $this->securityContext->getAccount() instanceof Account ? $this->securityContext->getAccount()->getAccountIdentifier() : 'unknown';
+        return $this->securityContext->canBeInitialized() && $this->securityContext->getAccount() instanceof Account ? $this->securityContext->getAccount()->getAccountIdentifier() : 'unknown';
     }
 }
