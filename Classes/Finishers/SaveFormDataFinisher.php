@@ -24,6 +24,12 @@ class SaveFormDataFinisher extends AbstractFinisher
      * @var FormDataRepository
      */
     protected $formDataRepository;
+    
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
     /**
      * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="finisher.excludedFormTypes")
@@ -66,7 +72,13 @@ class SaveFormDataFinisher extends AbstractFinisher
                 continue;
             }
 
-            $formFieldsData[$identifier] = $fieldValue;
+            if ($fieldValue instanceof \Neos\Media\Domain\Model\Image) {
+                $formFieldsData[$identifier] = $this->resourceManager->getPublicPersistentResourceUri($fieldValue->getResource());
+            } elseif ($fieldValue instanceof \Neos\Flow\ResourceManagement\PersistentResource) {
+                $formFieldsData[$identifier] = $this->resourceManager->getPublicPersistentResourceUri($fieldValue);
+            } else {
+                $formFieldsData[$identifier] = $fieldValue;
+            }
             $fieldIdentifiersString .= $identifier;
         }
 
