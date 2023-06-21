@@ -58,7 +58,7 @@ class SaveFormDataFinisher extends AbstractFinisher
         $excludedFormTypes = array_keys(array_filter($this->excludedFormTypes));
 
         foreach ($formRuntime->getPages() as $page) {
-            foreach ( $page->getElementsRecursively() as $renderable) {
+            foreach ($page->getElementsRecursively() as $renderable) {
                 $formFieldIdentifiers[] = $renderable->getIdentifier();
             }
         }
