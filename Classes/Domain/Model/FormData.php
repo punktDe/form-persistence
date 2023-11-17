@@ -20,7 +20,7 @@ use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
  * @ORM\Table(
  *    indexes={
  *      @ORM\Index(name="formdatasample",columns={"formIdentifier","hash"}),
- *      @ORM\Index(name="dimensionshash",columns={"dimensionshash"}),
+ *      @ORM\Index(name="dimensions_hash",columns={"dimensionshash"}),
  *      @ORM\Index(name="sitename",columns={"sitename"})
  *    }
  * )
