@@ -52,11 +52,18 @@ class SaveFormDataFinisher extends AbstractFinisher
         $fieldValues = $this->finisherContext->getFormValues();
 
         $formFieldsData = [];
+        $formFieldIdentifiers = [];
         $fieldIdentifiersString = '';
 
         $excludedFormTypes = array_keys(array_filter($this->excludedFormTypes));
 
-        foreach ($fieldValues as $identifier => $fieldValue) {
+        foreach ($formRuntime->getPages() as $page) {
+            foreach ($page->getElementsRecursively() as $renderable) {
+                $formFieldIdentifiers[] = $renderable->getIdentifier();
+            }
+        }
+
+        foreach ($formFieldIdentifiers as $identifier) {
 
             if (!$formRuntime->getFormDefinition()->getElementByIdentifier($identifier) instanceof AbstractFormElement) {
                 continue;
@@ -66,7 +73,7 @@ class SaveFormDataFinisher extends AbstractFinisher
                 continue;
             }
 
-            $formFieldsData[$identifier] = $fieldValue;
+            $formFieldsData[$identifier] = $fieldValues[$identifier] ?? '';
             $fieldIdentifiersString .= $identifier;
         }
 
