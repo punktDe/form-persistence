@@ -12,6 +12,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Log\LoggerInterface;
 use PunktDe\Form\Persistence\Domain\ScheduledExport\ScheduledExportService;
 use PunktDe\Form\Persistence\FormPersistenceNodeTypeInterface;
 
@@ -25,7 +27,6 @@ class NodeSignalInterceptor
      */
     public static function nodePublished(NodeInterface $node, Workspace $targetWorkspace): void
     {
-
         if (!$targetWorkspace->isPublicWorkspace()) {
             return;
         }
@@ -38,7 +39,9 @@ class NodeSignalInterceptor
         $form = (new FlowQuery([$node]))->closest('[instanceof Neos.Form.Builder:NodeBasedForm]')->get(0);
 
         if (!$form instanceof NodeInterface) {
-            throw new \Exception('Error while saving the scheduled export definition. No form node could be determined', 1627803571);
+            $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
+            $logger->error(sprintf('Error while saving the scheduled export definition for form data finisher with identifier %s. No form node could be determined', $node->getIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+            return;
         }
 
         $formIdentifier = $form->getProperty('identifier');
