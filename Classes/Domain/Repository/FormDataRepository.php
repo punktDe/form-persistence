@@ -182,7 +182,7 @@ class FormDataRepository extends Repository
      */
     public function deleteAllOlderThan(DateTime $date): int
     {
-        return $this->createQueryBuilder('formData')
+        return parent::createQueryBuilder('formData')
             ->delete()
             ->where('formData.date < :date')
             ->setParameter(':date', $date)

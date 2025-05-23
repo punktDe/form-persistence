@@ -14,18 +14,11 @@ use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 
 class FormDataCleanupService
 {
+    #[Flow\Inject]
+    protected FormDataRepository $formDataRepository;
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDatarepsoitroy;
-
-    /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="formDataCleanup.retentionPeriod")
-     * @var string
-     */
-    protected $dateInterval;
+    #[Flow\InjectConfiguration(path: 'formDataCleanup.retentionPeriod', package: 'PunktDe.Form.Persistence')]
+    protected string $dateInterval;
 
     /**
      * @throws ORMException
@@ -34,6 +27,6 @@ class FormDataCleanupService
     public function cleanupOldFormData(): int
     {
         $date = (new \DateTime())->sub(new \DateInterval($this->dateInterval));
-        return $this->formDatarepsoitroy->deactivateSecurityChecks()->deleteAllOlderThan($date);
+        return $this->formDataRepository->deactivateSecurityChecks()->deleteAllOlderThan($date);
     }
 }
