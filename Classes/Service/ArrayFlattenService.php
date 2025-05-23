@@ -10,6 +10,12 @@ namespace PunktDe\Form\Persistence\Service;
 
 class ArrayFlattenService
 {
+
+    /**
+     * @param string[] $array
+     * @param string $namespace
+     * @return string[]
+     */
     public static function flattenArray(array $array, string $namespace = ''): array
     {
         $flattenedArray = [];

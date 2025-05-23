@@ -18,24 +18,14 @@ use PunktDe\Form\Persistence\Domain\Repository\ScheduledExportRepository;
 
 class ScheduledExportService
 {
+    #[Flow\Inject]
+    protected ScheduledExportRepository $scheduledExportRepository;
 
-    /**
-     * @Flow\Inject
-     * @var ScheduledExportRepository
-     */
-    protected $scheduledExportRepository;
+    #[Flow\Inject]
+    protected SecurityContext $securityContext;
 
-    /**
-     * @Flow\Inject
-     * @var SecurityContext
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
+    #[Flow\Inject]
+    protected LoggerInterface $logger;
 
     public function saveScheduledExportDefinition(string $formIdentifier, string $recipientEmail, string $exportDefinitionIdentifier): void
     {

@@ -39,53 +39,29 @@ use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 class ScheduledExportSender
 {
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDataRepository;
+    #[Flow\Inject]
+    protected FormDataRepository $formDataRepository;
 
-    /**
-     * @Flow\Inject
-     * @var ScheduledExportRepository
-     */
-    protected $scheduledExportRepository;
+    #[Flow\Inject]
+    protected ScheduledExportRepository $scheduledExportRepository;
 
-    /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="scheduledExport")
-     * @var array
-     */
-    protected $scheduledExportConfiguration;
+    #[Flow\InjectConfiguration(path: 'scheduledExport', package: 'PunktDe.Form.Persistence')]
+    protected array $scheduledExportConfiguration;
 
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionProvider
-     */
-    protected $exportDefinitionProvider;
+    #[Flow\Inject]
+    protected ExportDefinitionProvider $exportDefinitionProvider;
 
-    /**
-     * @Flow\Inject
-     * @var ExporterFactory
-     */
-    protected $exporterFactory;
+    #[Flow\Inject]
+    protected ExporterFactory $exporterFactory;
 
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
+    #[Flow\Inject]
+    protected Translator $translator;
 
-    /**
-     * @Flow\Inject
-     * @var Environment
-     */
-    protected $environment;
+    #[Flow\Inject]
+    protected Environment $environment;
 
-    /**
-     * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
+    #[Flow\Inject]
+    protected LoggerInterface $logger;
 
     public function initializeObject(): void
     {
@@ -121,8 +97,8 @@ class ScheduledExportSender
         $recipients = Arrays::trimExplode(',', $scheduledExport->getEmail());
 
         $mail = (new Message())
-        ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
-        ->setTo($recipients);
+            ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
+            ->setTo($recipients);
 
         try {
             $exportDefinition = $this->exportDefinitionProvider->getExportDefinitionByIdentifier($scheduledExport->getExportDefinitionIdentifier());

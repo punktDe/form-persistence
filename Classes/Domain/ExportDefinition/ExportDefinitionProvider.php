@@ -18,22 +18,16 @@ use PunktDe\Form\Persistence\Domain\Repository\ExportDefinitionRepository;
  */
 class ExportDefinitionProvider
 {
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionRepository
-     */
-    protected $exportDefinitionRepository;
+    #[Flow\Inject]
+    protected ExportDefinitionRepository $exportDefinitionRepository;
 
     /**
      * @var ExportDefinition[]
      */
-    protected $dynamicExportDefinitions = [];
+    protected array $dynamicExportDefinitions = [];
 
-    /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="exportDefinitions")
-     * @var array
-     */
-    protected $staticExportDefinitions;
+    #[Flow\InjectConfiguration(path: 'exportDefinitions', package: 'PunktDe.Form.Persistence')]
+    protected array $staticExportDefinitions;
 
     public function initializeObject(): void
     {

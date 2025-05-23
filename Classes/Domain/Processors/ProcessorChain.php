@@ -17,17 +17,11 @@ use PunktDe\Form\Persistence\Exception\ConfigurationException;
 
 class ProcessorChain
 {
-    /**
-     * @Flow\Inject
-     * @var ObjectManager
-     */
-    protected $objectManager;
+    #[Flow\Inject]
+    protected ObjectManager $objectManager;
 
-    /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="processorChain")
-     * @var array
-     */
-    protected $processorChainConfiguration = [];
+    #[Flow\InjectConfiguration(path: 'processorChain', package: 'PunktDe.Form.Persistence')]
+    protected array $processorChainConfiguration = [];
 
     /**
      * @var ProcessorInterface[]
@@ -36,9 +30,9 @@ class ProcessorChain
 
     /**
      * @param FormData $formData
-     * @param array $formValues
+     * @param string[] $formValues
      * @param ExportDefinitionInterface|null $exportDefinition
-     * @return array
+     * @return string[]
      * @throws ConfigurationException
      */
     public function convertFormData(FormData $formData, array $formValues, ?ExportDefinitionInterface $exportDefinition): array

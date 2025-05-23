@@ -19,18 +19,11 @@ use Neos\Flow\Security\Context as SecurityContext;
  */
 class ContentDimensionAccessibilityService
 {
+    #[Flow\Inject]
+    protected PrivilegeManagerInterface $privilegeManager;
 
-    /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
-     * @var SecurityContext
-     */
-    protected $securityContext;
+    #[Flow\Inject]
+    protected SecurityContext $securityContext;
 
     public function isDimensionCombinationAccessible(array $dimensionCombination): bool
     {

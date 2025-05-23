@@ -26,24 +26,21 @@ class ExportDefinitionController extends RestController
     protected $view = null;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $supportedMediaTypes = [
         'application/json',
     ];
 
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionRepository
-     */
-    protected $exportDefinitionRepository;
+    #[Flow\Inject]
+    protected ExportDefinitionRepository $exportDefinitionRepository;
 
     protected function initializeCreateAction()
     {

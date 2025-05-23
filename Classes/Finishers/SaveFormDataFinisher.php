@@ -19,17 +19,10 @@ use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 class SaveFormDataFinisher extends AbstractFinisher
 {
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDataRepository;
-
-    /**
-     * @Flow\InjectConfiguration(package="PunktDe.Form.Persistence", path="finisher.excludedFormTypes")
-     * @var array
-     */
-    protected $excludedFormTypes = [];
+    #[Flow\Inject]
+    protected FormDataRepository $formDataRepository;
+    #[Flow\InjectConfiguration(path: 'finisher.excludedFormTypes', package: 'PunktDe.Form.Persistence')]
+    protected array $excludedFormTypes = [];
 
     /**
      * @throws IllegalObjectTypeException
@@ -41,8 +34,6 @@ class SaveFormDataFinisher extends AbstractFinisher
     }
 
     /**
-     * @param array $fieldValues
-     * @param \Neos\Form\Core\Runtime\FormRuntime $formRuntime
      * @throws IllegalObjectTypeException
      * @throws \Doctrine\ORM\ORMException
      */

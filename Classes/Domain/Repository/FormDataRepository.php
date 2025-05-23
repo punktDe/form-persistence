@@ -25,19 +25,15 @@ use PunktDe\Form\Persistence\Domain\Model\FormData;
  */
 class FormDataRepository extends Repository
 {
+    #[Flow\Inject]
+    protected SiteAccessibilityService $siteAccesibilityService;
+
+    #[Flow\Inject]
+    protected ContentDimensionAccessibilityService $dimensionAccesibilityService;
 
     /**
-     * @Flow\Inject
-     * @var SiteAccessibilityService
+     * @var string[]
      */
-    protected $siteAccesibilityService;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionAccessibilityService
-     */
-    protected $dimensionAccesibilityService;
-
     protected $defaultOrderings = [
         'date' => QueryInterface::ORDER_DESCENDING,
     ];
@@ -45,12 +41,12 @@ class FormDataRepository extends Repository
     /**
      * @var string[]
      */
-    protected $accessibleSites = [];
+    protected array $accessibleSites = [];
 
     /**
      * @var string[]
      */
-    protected $accessibleDimensions = [];
+    protected array $accessibleDimensions = [];
 
     public function initializeObject(): void
     {

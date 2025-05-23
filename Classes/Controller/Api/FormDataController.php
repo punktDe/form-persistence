@@ -22,24 +22,21 @@ class FormDataController extends RestController
     protected $view = null;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $supportedMediaTypes = [
         'application/json',
     ];
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDataRepository;
+    #[Flow\Inject]
+    protected FormDataRepository $formDataRepository;
 
     public function listAction(): void
     {

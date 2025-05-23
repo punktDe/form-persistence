@@ -39,29 +39,17 @@ class FormDataController extends ActionController
      */
     protected $defaultViewObjectName = FusionView::class;
 
-    /**
-     * @Flow\Inject
-     * @var FormDataRepository
-     */
-    protected $formDataRepository;
+    #[Flow\Inject]
+    protected FormDataRepository $formDataRepository;
 
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionProvider
-     */
-    protected $exportDefinitionProvider;
+    #[Flow\Inject]
+    protected ExportDefinitionProvider $exportDefinitionProvider;
 
-    /**
-     * @Flow\Inject
-     * @var ExporterFactory
-     */
-    protected $exporterFactory;
+    #[Flow\Inject]
+    protected ExporterFactory $exporterFactory;
 
-    /**
-     * @Flow\Inject
-     * @var ScheduledExportRepository
-     */
-    protected $scheduledExportRepository;
+    #[Flow\Inject]
+    protected ScheduledExportRepository $scheduledExportRepository;
 
     public function indexAction(): void
     {
