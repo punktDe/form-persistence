@@ -13,12 +13,12 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 class ContentDimensionPrivilegeTarget implements PrivilegeSubjectInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
     protected $contentDimensions = [];
 
     /**
-     * @param array $contentDimensions
+     * @param string[] $contentDimensions
      */
     public function __construct(array $contentDimensions)
     {
@@ -26,7 +26,7 @@ class ContentDimensionPrivilegeTarget implements PrivilegeSubjectInterface
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getContentDimensions(): array
     {

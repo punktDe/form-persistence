@@ -14,9 +14,8 @@ use Neos\Flow\Persistence\Doctrine\Repository;
 /**
  * @Flow\Scope("singleton")
  *
- * @method findOneByFormIdentifier(string $formIdentifier): \PunktDe\Form\Persistence\Domain\Model\ScheduledExport
+ * @method findOneByFormIdentifier(string $formIdentifier)
  */
 class ScheduledExportRepository extends Repository
 {
-
 }

@@ -12,8 +12,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 
 class SitePrivilegeTarget implements PrivilegeSubjectInterface
 {
-
-    protected $site;
+    protected string $site;
 
     public function __construct(string $site)
     {

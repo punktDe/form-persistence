@@ -17,11 +17,8 @@ class ExportDefinitionDataSource extends AbstractDataSource
 {
     protected static $identifier = 'punktde-form-persistence-export-definition';
 
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionProvider
-     */
-    protected $exportDefinitionProvider;
+    #[Flow\Inject]
+    protected ExportDefinitionProvider $exportDefinitionProvider;
 
     /**
      * Get data
@@ -32,7 +29,7 @@ class ExportDefinitionDataSource extends AbstractDataSource
      * @param array $arguments Additional arguments (key / value)
      * @return mixed JSON serializable data
      */
-    public function getData(NodeInterface $node = null, array $arguments = [])
+    public function getData(?NodeInterface $node = null, array $arguments = [])
     {
         $data = [];
 

@@ -15,15 +15,12 @@ use PunktDe\Form\Persistence\Domain\Model\FormData;
 
 class ExportDefinitionHelper implements ProtectedContextAwareInterface
 {
-    /**
-     * @Flow\Inject
-     * @var ExportDefinitionProvider
-     */
-    protected $exportDefinitionprovider;
+    #[Flow\Inject]
+    protected ExportDefinitionProvider $exportDefinitionProvider;
 
     public function getSuitableExportDefinitions(FormData $formData): array
     {
-        return $this->exportDefinitionprovider->findSuitableExportDefinitionsForFormData($formData);
+        return $this->exportDefinitionProvider->findSuitableExportDefinitionsForFormData($formData);
     }
 
     public function allowsCallOfMethod($methodName)
