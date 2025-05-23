@@ -207,11 +207,7 @@ class ScheduledExportSender
     {
         $formDataCollection = $this->formDataRepository->findByFormProperties($formDataRepresentative->getFormIdentifier(), $formDataRepresentative->getHash(), $formDataRepresentative->getSiteName(), $formDataRepresentative->getDimensionsHash());
 
-        $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
-            return $formData->getProcessedFormData($exportDefinition);
-        }, $formDataCollection->toArray());
-
-        $this->exporterFactory->makeExporterByExportDefinition($exportDefinition)->compileAndSave($formDataItems, $exportFilePath);
+        $this->exporterFactory->makeExporterByExportDefinition($exportDefinition)->compileAndSave($formDataCollection->toArray(), $exportFilePath, $exportDefinition);
         $attachment = Swift_Attachment::fromPath($exportFilePath)->setFilename($fileName);
         $mail->attach($attachment);
 

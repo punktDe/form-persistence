@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PunktDe\Form\Persistence\Controller\Backend;
 
 /*
- *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - https://punkt.de
+ *  (c) 2020-2025 punkt.de GmbH - Karlsruhe, Germany - https://punkt.de
  *  All rights reserved.
  */
 
@@ -97,11 +97,9 @@ class FormDataController extends ActionController
 
         $fileName = TemplateStringService::processTemplate($exportDefinition->getFileNamePattern(), $formIdentifier, $hash, $exportDefinition);
 
-        $formDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
-            return $formData->getProcessedFormData($exportDefinition);
-        }, $this->formDataRepository->findByFormProperties($formIdentifier, $hash, $siteName, $dimensionsHash)->toArray());
+        $formDataItems =  $this->formDataRepository->findByFormProperties($formIdentifier, $hash, $siteName, $dimensionsHash)->toArray();
 
-        $exporter->setFileName($fileName)->compileAndSend($formDataItems);
+        $exporter->setFileName($fileName)->compileAndSend($formDataItems, $exportDefinition);
         die();
     }
 

@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace PunktDe\Form\Persistence\Domain\Exporter;
 
 /*
- *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
+ *  (c) 2020-2025 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
  *  All rights reserved.
  */
+
+use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 
 interface FormDataExporterInterface
 {
@@ -15,15 +17,8 @@ interface FormDataExporterInterface
 
     public function setOptions(array $options): FormDataExporterInterface;
 
-    /**
-     * @param iterable $formDataItems
-     */
-    public function compileAndSend(iterable $formDataItems): void;
+    public function compileAndSend(array $formDataItems, ExportDefinitionInterface $exportDefinition): void;
 
-    /**
-     * @param iterable $formDataItems
-     * @param string $filePath
-     */
-    public function compileAndSave(iterable $formDataItems, string $filePath): void;
+    public function compileAndSave(array $formDataItems, string $filePath, ExportDefinitionInterface $exportDefinition): void;
 
 }
