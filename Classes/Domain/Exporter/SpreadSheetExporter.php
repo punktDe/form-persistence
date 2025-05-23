@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PunktDe\Form\Persistence\Domain\Exporter;
 
 /*
- *  (c) 2020 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
+ *  (c) 2020-2025 punkt.de GmbH - Karlsruhe, Germany - http://punkt.de
  *  All rights reserved.
  */
 
@@ -16,19 +16,17 @@ use PhpOffice\PhpSpreadsheet\Writer\Exception as WriterException;
 use Neos\Utility\MediaTypes ;
 use Neos\Flow\Annotations as Flow;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
+use PunktDe\Form\Persistence\Domain\Model\FormData;
 
 class SpreadSheetExporter implements FormDataExporterInterface
 {
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $options = [];
+    protected array $options = [];
 
-    /**
-     * @var string
-     */
-    protected $fileName = 'FormData.xlsx';
+    protected string $fileName = 'FormData.xlsx';
 
     public function setFileName(string $fileName): FormDataExporterInterface
     {
@@ -45,27 +43,17 @@ class SpreadSheetExporter implements FormDataExporterInterface
 
     /**
      * @param iterable $formDataItems
+     * @param ExportDefinitionInterface $exportDefinition
      * @return void
      * @throws WriterException|Exception
      */
-    public function compileAndSend(iterable $formDataItems): void
+    public function compileAndSend(array $formDataItems, ExportDefinitionInterface $exportDefinition): void
     {
-        header("Pragma: public"); // required
-        header("Expires: 0");
-        header('Cache-Control: max-age=0');
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: private", false); // required for certain browsers
-        header('Content-Type: ' . MediaTypes::getMediaTypeFromFilename($this->fileName));
-        header(
-            sprintf(
-                'Content-Disposition: attachment; filename="%s"',
-                $this->fileName
-
-            )
-        );
-        header("Content-Transfer-Encoding: binary");
-
-        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), $this->options['writerType']);
+        $this->sendHeader();
+        $processedFormDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
+            return $formData->getProcessedFormData($exportDefinition);
+        }, $formDataItems);
+        $writer = IOFactory::createWriter($this->compileXLS($processedFormDataItems), $this->options['writerType']);
         $writer->save('php://output');
         exit;
     }
@@ -75,9 +63,12 @@ class SpreadSheetExporter implements FormDataExporterInterface
      * @throws Exception
      * @throws WriterException
      */
-    public function compileAndSave(iterable $formDataItems, string $filePath): void
+    public function compileAndSave(array $formDataItems, string $filePath, ExportDefinitionInterface $exportDefinition): void
     {
-        $writer = IOFactory::createWriter($this->compileXLS($formDataItems), $this->options['writerType']);
+        $processedFormDataItems = array_map(static function (FormData $formData) use ($exportDefinition) {
+            return $formData->getProcessedFormData($exportDefinition);
+        }, $formDataItems);
+        $writer = IOFactory::createWriter($this->compileXLS($processedFormDataItems), $this->options['writerType']);
         $writer->save($filePath);
     }
 
@@ -115,5 +106,26 @@ class SpreadSheetExporter implements FormDataExporterInterface
         $spreadsheet->setActiveSheetIndex(0);
         $spreadsheet->getActiveSheet()->fromArray($formDataItems);
         return $spreadsheet;
+    }
+
+    /**
+     * @return void
+     */
+    public function sendHeader(): void
+    {
+        header("Pragma: public"); // required
+        header("Expires: 0");
+        header('Cache-Control: max-age=0');
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private", false); // required for certain browsers
+        header('Content-Type: ' . MediaTypes::getMediaTypeFromFilename($this->fileName));
+        header(
+            sprintf(
+                'Content-Disposition: attachment; filename="%s"',
+                $this->fileName
+
+            )
+        );
+        header("Content-Transfer-Encoding: binary");
     }
 }

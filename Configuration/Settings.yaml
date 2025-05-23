@@ -16,6 +16,11 @@ PunktDe:
           exporter: xlsx
           fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.xlsx"
 
+        zip:
+          label: ZIP Archive
+          exporter: zip
+          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.zip"
+
       exporter:
         csv:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
@@ -26,6 +31,10 @@ PunktDe:
             writerType: 'Xlsx'
             title: ''
             creator: ''
+        zip:
+          className: PunktDe\Form\Persistence\Domain\Exporter\ZipArchiveExporter
+          options: [ ]
+
 
       processorChain:
         # Flatten nested fields into an array with namespaces
