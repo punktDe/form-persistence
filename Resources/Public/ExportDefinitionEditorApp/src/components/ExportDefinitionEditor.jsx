@@ -40,11 +40,10 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
     const [isLoading, setIsLoading] = useState(true);
     const [list, setList] = useState([]);
     const [formIdentifier, setSelectedFormIdentifier] = useState('')
-
     const fetchData = () => {
         Promise.all([
             fetch(apiFormData),
-            fetch(apiExportDefinition + '/' + definitionIdentifier),
+            fetch(`${apiExportDefinition}${definitionIdentifier ? `/${definitionIdentifier}` : ''}`),
             fetch(apiExportDefinition)
         ]).then(([formsDataResponse, exportDefinitionResponse, allExportDefinitionResponse]) => {
             Promise.all([
