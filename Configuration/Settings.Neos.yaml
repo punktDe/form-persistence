@@ -2,9 +2,8 @@ Neos:
   Flow:
     mvc:
       routes:
-        'PunktDe.Form.Persistence':
+        PunktDe.Form.Persistence:
           position: start
-
     security:
       authentication:
         providers:
@@ -14,40 +13,42 @@ Neos:
                 pattern: ControllerObjectName
                 patternOptions:
                   controllerObjectNamePattern: 'PunktDe\Form\Persistence\Controller\.*'
-
   Neos:
     fusion:
       autoInclude:
-        'PunktDe.Form.Persistence': true
+        PunktDe.Form.Persistence: true
     modules:
       management:
         submodules:
           formDataDownload:
             label: 'Form Data Download'
-            controller: 'PunktDe\Form\Persistence\Controller\Backend\FormDataController'
+            controller: PunktDe\Form\Persistence\Controller\Backend\FormDataController
             description: 'Download saved form data for the forms on this site'
             icon: 'fas fa-file-download'
             privilegeTarget: 'PunktDe.Form.Persistence:DownLoadFormData'
     userInterface:
       translation:
         autoInclude:
-          'PunktDe.Form.Persistence':
+          PunktDe.Form.Persistence:
             - 'Modules/*'
             - 'NodeTypes/*'
-
   Fusion:
     defaultContext:
-      PunktDe.FormExport.ExportDefinition: 'PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper'
-
+      PunktDe.FormExport.ExportDefinition: PunktDe\Form\Persistence\Fusion\Eel\ExportDefinitionHelper
   Form:
     presets:
-      'default':
+      default:
         finisherPresets:
           'PunktDe.Form.Persistence:SaveFormDataFinisher':
             implementationClassName: PunktDe\Form\Persistence\Finishers\SaveFormDataFinisher
             options: {  }
-
     FusionRenderer:
       fusionAutoInclude:
-        'PunktDe.Form.Persistence': true
-
+        PunktDe.Form.Persistence: true
+  ContentRepositoryRegistry:
+    presets:
+      default:
+        contentGraphProjection:
+          catchUpHooks:
+            'PunktDe.Form.Persistence:NodePublished':
+              factoryObjectName: PunktDe\Form\Persistence\CatchUpHook\NodePublishedCatchUpHookFactory
