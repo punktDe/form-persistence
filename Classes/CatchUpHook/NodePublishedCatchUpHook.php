@@ -95,7 +95,7 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
         $node = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty())->findNodeById($nodeAggregateId);
 
         if ($node === null) {
-            // Node not found, nothing to do here.
+            $this->logger->info(sprintf('No Node found for node aggregate id %s.', $nodeAggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 
@@ -105,7 +105,7 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
 
 
         if (trim((string)$node->getProperty('scheduledExportRecipient')) === '' || trim((string)$node->getProperty('exportDefinition')) === '') {
-            // Needed information for schedule export is missing.
+            $this->logger->info(sprintf('Needed information for schedule export is missing. Node identifier: %s', $node->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 
