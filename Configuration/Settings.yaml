@@ -4,64 +4,49 @@ PunktDe:
       finisher:
         excludedFormTypes:
           'Neos.Form:StaticText': true
-
       exportDefinitions:
         csv:
-          label: Generic CSV
+          label: 'Generic CSV'
           exporter: csv
-          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.csv"
-
+          fileNamePattern: 'Form-Export-{formIdentifier}-{currentDate}.csv'
         excel:
-          label: Generic Xlsx
+          label: 'Generic Xlsx'
           exporter: xlsx
-          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.xlsx"
-
+          fileNamePattern: 'Form-Export-{formIdentifier}-{currentDate}.xlsx'
         zip:
-          label: ZIP Archive
+          label: 'ZIP Archive'
           exporter: zip
-          fileNamePattern: "Form-Export-{formIdentifier}-{currentDate}.zip"
-
+          fileNamePattern: 'Form-Export-{formIdentifier}-{currentDate}.zip'
       exporter:
         csv:
           className: PunktDe\Form\Persistence\Domain\Exporter\CsvExporter
-          options: [ ]
+          options: {  }
         xlsx:
           className: PunktDe\Form\Persistence\Domain\Exporter\SpreadSheetExporter
           options:
-            writerType: 'Xlsx'
+            writerType: Xlsx
             title: ''
             creator: ''
         zip:
           className: PunktDe\Form\Persistence\Domain\Exporter\ZipArchiveExporter
-          options: [ ]
-
-
+          options: {  }
       processorChain:
-        # Flatten nested fields into an array with namespaces
         flattenArray:
-          class: 'PunktDe\Form\Persistence\Domain\Processors\FlattenArrayProcessor'
-          position: 'start'
-
-        # add form metadata to the field data
+          class: PunktDe\Form\Persistence\Domain\Processors\FlattenArrayProcessor
+          position: start
         addMetaData:
-          class: 'PunktDe\Form\Persistence\Domain\Processors\AddMetaDataProcessor'
+          class: PunktDe\Form\Persistence\Domain\Processors\AddMetaDataProcessor
           position: 'before fieldKeyMapping'
           options:
             fields:
               date: form_submission_date
-
-        # Map data keys from form defined keys to output keys. Drop unmapped fields.
         fieldKeyMapping:
-          class: 'PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor'
-
-        # Convert form values to an exportable representation. Eg. Uploaded data to its filename
+          class: PunktDe\Form\Persistence\Domain\Processors\FieldKeyMappingProcessor
         valueFormatting:
-          class: 'PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor'
-
+          class: PunktDe\Form\Persistence\Domain\Processors\ValueFormattingProcessor
       scheduledExport:
-        senderName: Scheduled Form Data Export
+        senderName: 'Scheduled Form Data Export'
         senderMailAddress: noreply@localhost
-        subject: "Latest data of form {formIdentifier}"
-
+        subject: 'Latest data of form {formIdentifier}'
       formDataCleanup:
-        retentionPeriod: 'P30D'
+        retentionPeriod: P30D
