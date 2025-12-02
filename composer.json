@@ -9,6 +9,7 @@
         "neos/form": "*",
         "neos/fusion": "*",
         "neos/utility-arrays": "*",
+        "neos/form-builder": "*",
         "league/csv": "^9.0",
         "neos/swiftmailer": ">=7.0",
         "phpoffice/phpspreadsheet": "^3.3"
