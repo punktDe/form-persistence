@@ -4,19 +4,24 @@
 
 ## Features
 
-* **Persistence finisher** to persist form data into your database. 
-* It further provides a **backend module to download** the data in different formats. 
+* **Persistence finisher** to persist form data into your database.
+* It further provides a **backend module to download** the data in different formats.
 * An **export definition editor** lets you define your custom export definitions.
 * Data can be sent in **aggregated via email** regularly
 * A **retention policy** can be configured to respect data privacy policies
 * **Access to data can be restricted** by sites or content dimension
 * Form data is aggregated by the combination of the form identifier and a hash of the form field identifiers to **avoid conflicts when forms change**.
 
-
-
 ![Backend Module](Documentation/BackendModule.png)
 
-# Installation
+## Versions
+
+| Package Version | Neos Version|
+|-----------------|-------------|
+| 3.x             | 8.x         |
+| 4.x             | 9.x         |
+
+## Installation
 
 ```bash
 composer require punktde/form-persistence
@@ -24,9 +29,9 @@ composer require punktde/form-persistence
 
 After the successful installation run `./flow doctrine:migrate` to initialize the database table.
 
-# Configuration
+## Configuration
 
-## Exclude form types from saving
+### Exclude form types from saving
 
 Some form types are only for structuring the form or to display static text and should not be available for export. These form types can now be excluded using extendable configuration:
 
@@ -37,17 +42,17 @@ PunktDe:
       finisher:
         excludedFormTypes:
           'Neos.Form:StaticText': true
-```		  
+```
 
 ## Export Definitions
 
 Static export definitions can be defined via settings.
 
-**fileNamePattern**: 
+**fileNamePattern**:
 
 Example: `Form-Export-{formIdentifier}-{currentDate}.csv`
 
-The following variables ca be used: 
+The following variables ca be used:
 
 * formIdentifier
 * formVersionHash
@@ -69,15 +74,15 @@ PunktDe:
         myProcessor:
           class: 'Vendor\FormProcessors\MyProcessor'
           position: end
-```		  	          
+```
 
 ## Privileges
 
-Form data may contain sensitive data. The package thus offers priviliges to give backend users individual access. 
+Form data may contain sensitive data. The package thus offers priviliges to give backend users individual access.
 
 ### Site Privilege
 
-In a multi-site environment you can restrict the accessibility to form data depending on the site using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add 
+In a multi-site environment you can restrict the accessibility to form data depending on the site using the `PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege`. In a `Policy.yaml` add
 
 ```yaml
 'PunktDe\Form\Persistence\Authorization\Privilege\SitePrivilege':
@@ -109,9 +114,11 @@ In a multi-dimension environment you can restrict the accessibility to form data
 
 The matcher accepts, '*', or a json definition of the dimensions. See `ContentDimensionPrivilegeTargetTest.php` for details.
 
-# Usage
-## Add the SaveFormDataFinisher
-### Using the flow form configuration
+## Usage
+
+### Add the SaveFormDataFinisher
+
+#### Using the flow form configuration
 
 ```yaml
 type: 'Neos.Form:Form'
@@ -124,7 +131,8 @@ finishers:
     identifier: 'PunktDe.Form.Persistence:SaveFormDataFinisher'
 ```
 
-### Using the Neos Form Builder
+#### Using the Neos Form Builder
+
 Require the suggested package neos/form-builder and add the save form data finisher to your node based form in the neos backend.
 
 ## Scheduled Exports
@@ -136,7 +144,7 @@ To trigger the export, the command `formPersistence:sendExport` needs to be call
 
 ### Download form data
 
-A simple backend module is provided to download the form data as multiple formats like CSV,Excel and Html here`s a list of possible formats https://phpspreadsheet.readthedocs.io/en/latest/. The form version specifies the used fields and their position. 
+A simple backend module is provided to download the form data as multiple formats like CSV,Excel and Html here`s a list of possible formats <https://phpspreadsheet.readthedocs.io/en/latest/>. The form version specifies the used fields and their position.
 With that it is taken care, that if the form changes over time, a separate CSV or Excel file with consistent headers and column position is generated.
 
 ![Backend Module](Documentation/BackendModule.png)
@@ -148,7 +156,8 @@ The package brings a graphical editor for defining export definitions. With an e
 ![Backend Module](Documentation/ExportDefinitionEditor.png)
 
 ## Clean up old form data
-To clean up old form data entries manually or on a regular basis, one needs to configure the retention period and call the command `formpersistence:cleanupformdata`. 
+
+To clean up old form data entries manually or on a regular basis, one needs to configure the retention period and call the command `formpersistence:cleanupformdata`.
 In the following example a retention period of 30 days is configured and therefore every form data entry older than 30 days ist deleted upon calling the command.
 
 ```yaml
@@ -161,28 +170,28 @@ PunktDe:
 
 The whole functionality is encapsulated in a service to allow a better integration into different approaches for regular execution of this functionality for example with a scheduler or queuing work flow.
 
-# Developing the package
+## Developing the package
 
-## Export Definition Editor
+### Export Definition Editor
 
-### Working with the react app
+#### Working with the react app
 
 To start make changes to the export definition app go to the folder `PunktDe.Form.Persistence/Resources/Public/ExportDefinitionEditorApp`
 and run the command
 
 ```bash
-yarn install
+npm install
 ```
 
-After all dependencies are installed, you can adjust the code of the react app. 
+After all dependencies are installed, you can adjust the code of the react app.
 The is created with the help of creat-react-app scaffolding tool and therefore uses its build configuration with some adjustments.
 To see changes, you need to build the app with the following command.
 
 ```bash
-yarn build
+npm build
 ```
 
-The generated file `main.js` is located in the folder `build/static/js`.
+The generated file `index.js` is located in the folder `build/static/js`.
 This file is loaded in the Neos Backend and is the editor you see.
 
 ## Run tests with PHPStan
