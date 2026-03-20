@@ -67,9 +67,9 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
     {
         match ($eventInstance::class) {
             NodeAggregateWithNodeWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
-            NodePeerVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
-            NodeGeneralizationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
-            NodeSpecializationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
+            NodePeerVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
+            NodeGeneralizationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
+            NodeSpecializationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
             NodePropertiesWereSet::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
             SubtreeWasTagged::class => $this->handleSubtreeTags($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->tag, $eventInstance->affectedDimensionSpacePoints),
             SubtreeWasUntagged::class => $this->updateNodesInDimensionSpacePoints($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints),
