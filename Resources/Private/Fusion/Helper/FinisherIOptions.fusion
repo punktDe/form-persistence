@@ -1,4 +1,9 @@
 prototype(PunktDe.Form.Persistence:SaveFormDataFinisher.Options) < prototype(Neos.Fusion:DataStructure) {
-    siteName = ${site.name}
-    contentDimensions = ${site.dimensions}
+    siteName = ${Neos.Site.findBySiteNode(site).name}
+    contentDimensions = Neos.Fusion:Map {
+        items = ${Neos.Dimension.all(site)}
+        itemKey = 'dimension'
+        keyRenderer = ${dimension}
+        itemRenderer = ${Neos.Dimension.currentValue(site, dimension).value}
+    }
 }

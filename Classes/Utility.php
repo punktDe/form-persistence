@@ -7,9 +7,6 @@ class Utility
 {
     public static function sortDimensionValueArrayAndReturnDimensionsHash(array &$dimensionValues)
     {
-        foreach ($dimensionValues as &$values) {
-            sort($values);
-        }
         ksort($dimensionValues);
 
         return md5(json_encode($dimensionValues));
