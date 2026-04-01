@@ -122,6 +122,31 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
         fetchData();
     }, []);
 
+    const updateFormSelectOptions = (nextState) => {
+        const currentDefinitionFields = nextState.lines.map((line) => {
+            return line.value
+        });
+        const list = nextState.allFormsData.map((item) => {
+            if (isSuitable(item.processedFieldNames, currentDefinitionFields)) {
+                return {
+                    id: item.__identity,
+                    label: item.formIdentifier + '-' + item.hash.substring(0, 10)
+                }
+            }
+        }).filter((item) => item !== undefined);
+
+        setList(list)
+    }
+
+    // Keep form dropdown options in sync with selected field mappings; must not run inside setState updaters.
+    // Skip while no form is selected so fetchData / onFormSelected own the list (including create-flow placeholder).
+    useEffect(() => {
+        if (formIdentifier === '' || !state.allFormsData?.length) {
+            return;
+        }
+        updateFormSelectOptions(state);
+    }, [state.lines, state.allFormsData, formIdentifier]);
+
     const addLine = () => {
         setState(prevState => {
             const line = {
@@ -129,13 +154,11 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                 value: prevState.formFields[0].id,
                 conversionValue: ''
             };
-            const newState = {
+            return {
                 ...prevState,
                 lines: [...prevState.lines, line],
                 keyStart: prevState.keyStart + 1
             };
-            updateFormSelectOptions(newState);
-            return newState;
         });
     };
 
@@ -146,12 +169,10 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                 ...newLines[index],
                 value: event.target.value
             };
-            const newState = {
+            return {
                 ...prevState,
                 lines: newLines
             };
-            updateFormSelectOptions(newState);
-            return newState;
         });
     };
 
@@ -195,12 +216,10 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
         setState(prevState => {
             const newLines = [...prevState.lines];
             newLines.splice(index, 1);
-            const newState = {
+            return {
                 ...prevState,
                 lines: newLines
             };
-            updateFormSelectOptions(newState);
-            return newState;
         });
     };
 
@@ -287,22 +306,6 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
                 }));
             }
         });
-    }
-
-    const updateFormSelectOptions = (state) => {
-        const currentDefinitionFields = state.lines.map((line) => {
-            return line.value
-        });
-        const list = state.allFormsData.map((item) => {
-            if (isSuitable(item.processedFieldNames, currentDefinitionFields)) {
-                return {
-                    id: item.__identity,
-                    label: item.formIdentifier + '-' + item.hash.substring(0, 10)
-                }
-            }
-        }).filter((item) => item !== undefined);
-
-        setList(list)
     }
 
     return (

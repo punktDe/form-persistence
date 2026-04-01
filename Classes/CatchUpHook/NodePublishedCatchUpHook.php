@@ -67,9 +67,9 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
     {
         match ($eventInstance::class) {
             NodeAggregateWithNodeWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
-            NodePeerVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
-            NodeGeneralizationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
-            NodeSpecializationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->sourceOrigin->toDimensionSpacePoint()),
+            NodePeerVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->peerOrigin->toDimensionSpacePoint()),
+            NodeGeneralizationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->generalizationOrigin->toDimensionSpacePoint()),
+            NodeSpecializationVariantWasCreated::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->specializationOrigin->toDimensionSpacePoint()),
             NodePropertiesWereSet::class => $this->saveScheduledExportDefinition($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->originDimensionSpacePoint->toDimensionSpacePoint()),
             SubtreeWasTagged::class => $this->handleSubtreeTags($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->tag, $eventInstance->affectedDimensionSpacePoints),
             SubtreeWasUntagged::class => $this->updateNodesInDimensionSpacePoints($eventInstance->getWorkspaceName(), $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints),
@@ -99,10 +99,13 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
             return;
         }
 
-        if (!$this->nodeTypeManager->getNodeType($node->nodeTypeName)->isOfType(FormPersistenceNodeTypeInterface::NODE_TYPE_SAVE_FORM_DATA_FINISHER)) {
+        $nodeType = $this->nodeTypeManager->getNodeType($node->nodeTypeName);
+        if ($nodeType === null) {
             return;
         }
-
+        if (!$nodeType->isOfType(FormPersistenceNodeTypeInterface::NODE_TYPE_SAVE_FORM_DATA_FINISHER)) {
+            return;
+        }
 
         if (trim((string)$node->getProperty('scheduledExportRecipient')) === '' || trim((string)$node->getProperty('exportDefinition')) === '') {
             $this->logger->info(sprintf('Needed information for schedule export is missing. Node identifier: %s', $node->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
@@ -139,19 +142,23 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
             $node = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty())->findNodeById($nodeAggregateId);
 
             if ($node === null) {
-                // Node not found, nothing to do here.
-                return;
+                // Node not found in this dimension, try the next.
+                continue;
             }
 
-            if (!$this->nodeTypeManager->getNodeType($node->nodeTypeName)->isOfType(FormPersistenceNodeTypeInterface::NODE_TYPE_SAVE_FORM_DATA_FINISHER)) {
+            $nodeType = $this->nodeTypeManager->getNodeType($node->nodeTypeName);
+            if ($nodeType === null) {
                 return;
+            }
+            if (!$nodeType->isOfType(FormPersistenceNodeTypeInterface::NODE_TYPE_SAVE_FORM_DATA_FINISHER)) {
+                continue;
             }
 
             $form = (new FlowQuery([$node]))->closest('[instanceof Neos.Form.Builder:NodeBasedForm]')->get(0);
 
             if (!$form instanceof Node) {
                 $this->logger->error(sprintf('Error while removing the scheduled export definition for form data finisher with identifier %s. No form node could be determined', $node->aggregateId->value), LogEnvironment::fromMethodName(__METHOD__));
-                return;
+                continue;
             }
 
             $formIdentifier = $form->getProperty('identifier');
@@ -161,7 +168,7 @@ final class NodePublishedCatchUpHook implements CatchUpHookInterface
 
     private function handleSubtreeTags(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, SubtreeTag $tag, DimensionSpacePointSet $affectedDimensionSpacePoints): void
     {
-        if ($tag === NeosSubtreeTag::removed()) {
+        if ($tag->equals(NeosSubtreeTag::removed())) {
             $this->removeScheduledExportDefinition($workspaceName, $nodeAggregateId, $affectedDimensionSpacePoints);
             return;
         }

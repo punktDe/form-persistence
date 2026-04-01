@@ -13,7 +13,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Form\Core\Model\AbstractFinisher;
 use Neos\Form\Core\Model\AbstractFormElement;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use PunktDe\Form\Persistence\Domain\Repository\FormDataRepository;
 
@@ -72,14 +71,11 @@ class SaveFormDataFinisher extends AbstractFinisher
 
         $formData = new FormData();
 
-        /** @var NodeName $siteName */
-        $siteName = $this->options['siteName'];
-
         $formData->setFormIdentifier($this->options['formIdentifier'] ?? $formRuntime->getIdentifier());
         $formData->setHash(sha1($fieldIdentifiersString));
         $formData->setFormData($formFieldsData);
         $formData->setDate(new \DateTime());
-        $formData->setSiteName($siteName->value ?? '');
+        $formData->setSiteName(($this->options['siteName'] ?? null)?->value ?? '');
         $formData->setContentDimensions($this->options['contentDimensions'] ?? []);
 
         $this->formDataRepository->add($formData);
