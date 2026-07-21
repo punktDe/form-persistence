@@ -22,6 +22,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Utility\Exception\FilesException;
 use PunktDe\Form\Persistence\Domain\Model\FormData;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\Validation\Validator\EmailAddressValidator;
 use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use PunktDe\Form\Persistence\Domain\Model\ScheduledExport;
 use PunktDe\Form\Persistence\Service\TemplateStringService;
@@ -95,6 +96,14 @@ class ScheduledExportSender
         }
 
         $recipients = Arrays::trimExplode(',', $scheduledExport->getEmail());
+        $emailAddressValidator = new EmailAddressValidator();
+        foreach ($recipients as $recipient) {
+            $result = $emailAddressValidator->validate($recipient);
+            if ($result->hasErrors()) {
+                $this->logger->error(sprintf('Recipient "%s" specified in form with identifier "%s" is not a valid email address - export was skipped', $recipient, $scheduledExport->getFormIdentifier()), LogEnvironment::fromMethodName(__METHOD__));
+                return;
+            }
+        }
 
         $mail = (new Message())
             ->setFrom([$this->scheduledExportConfiguration['senderMailAddress'] => $this->scheduledExportConfiguration['senderName']])
@@ -124,7 +133,6 @@ class ScheduledExportSender
                 unlink($exportFilePath);
             }
         }
-
     }
 
     /**
