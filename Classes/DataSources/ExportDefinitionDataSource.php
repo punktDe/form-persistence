@@ -8,7 +8,7 @@ namespace PunktDe\Form\Persistence\DataSources;
  *  All rights reserved.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use \Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionProvider;
@@ -25,11 +25,11 @@ class ExportDefinitionDataSource extends AbstractDataSource
      *
      * The return value must be JSON serializable data structure.
      *
-     * @param NodeInterface|null $node The node that is currently edited (optional)
+     * @param Node|null $node The node that is currently edited (optional)
      * @param array $arguments Additional arguments (key / value)
      * @return mixed JSON serializable data
      */
-    public function getData(?NodeInterface $node = null, array $arguments = [])
+    public function getData(?Node $node = null, array $arguments = [])
     {
         $data = [];
 

@@ -21,6 +21,7 @@ class SaveFormDataFinisher extends AbstractFinisher
 
     #[Flow\Inject]
     protected FormDataRepository $formDataRepository;
+
     #[Flow\InjectConfiguration(path: 'finisher.excludedFormTypes', package: 'PunktDe.Form.Persistence')]
     protected array $excludedFormTypes = [];
 
@@ -74,7 +75,7 @@ class SaveFormDataFinisher extends AbstractFinisher
         $formData->setHash(sha1($fieldIdentifiersString));
         $formData->setFormData($formFieldsData);
         $formData->setDate(new \DateTime());
-        $formData->setSiteName($this->options['siteName'] ?? '');
+        $formData->setSiteName(($this->options['siteName'] ?? null)?->value ?? '');
         $formData->setContentDimensions($this->options['contentDimensions'] ?? []);
 
         $this->formDataRepository->add($formData);

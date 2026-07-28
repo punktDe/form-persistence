@@ -1,4 +1,4 @@
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 
 const InputLine = ({ inputLine, index, formFields, formFieldNameChanged, conversionFieldNameChanged , removeLine}) => {
     return (

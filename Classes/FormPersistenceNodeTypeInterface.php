@@ -12,5 +12,4 @@ interface FormPersistenceNodeTypeInterface
 {
 
     public const NODE_TYPE_SAVE_FORM_DATA_FINISHER = 'PunktDe.Form.Persistence:SaveFormDataFinisher';
-    
 }

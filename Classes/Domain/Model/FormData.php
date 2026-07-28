@@ -9,10 +9,10 @@ namespace PunktDe\Form\Persistence\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 use PunktDe\Form\Persistence\Domain\ExportDefinition\ExportDefinitionInterface;
 use PunktDe\Form\Persistence\Domain\Processors\ProcessorChain;
+use PunktDe\Form\Persistence\Utility;
 
 /**
  * @Flow\Entity

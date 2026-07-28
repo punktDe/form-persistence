@@ -31,9 +31,7 @@ class ScheduledExportService
     {
         $scheduledExport = $this->scheduledExportRepository->findOneByFormIdentifier($formIdentifier);
 
-        if ($scheduledExport instanceof ScheduledExport) {
-            $this->scheduledExportRepository->update($scheduledExport);
-        } else {
+        if (!$scheduledExport instanceof ScheduledExport) {
             $scheduledExport = new ScheduledExport();
             $this->scheduledExportRepository->add($scheduledExport);
         }
@@ -43,6 +41,7 @@ class ScheduledExportService
             ->setEmail($recipientEmail)
             ->setExportDefinitionIdentifier($exportDefinitionIdentifier);
 
+        $this->scheduledExportRepository->update($scheduledExport);
         $this->logger->info(sprintf('Scheduled Export Definition for form %s was defined by user %s with recipient %s and export definition identifier %s', $formIdentifier, $this->getCurrentBackendUser(), $recipientEmail, $exportDefinitionIdentifier), LogEnvironment::fromMethodName(__METHOD__));
     }
 

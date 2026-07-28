@@ -7,7 +7,7 @@ prototype(PunktDe.Form.Persistence:Backend.ExportDefinition.Index) < prototype(N
     }
 
     exportDefinitionEditorApp = Neos.Fusion:ResourceUri {
-        path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/main.js'
+        path = 'resource://PunktDe.Form.Persistence/Public/ExportDefinitionEditorApp/build/static/js/index.js'
     }
     exporterTypes = ${Json.stringify(Array.keys(Configuration.setting('PunktDe.Form.Persistence.exporter')))}
 

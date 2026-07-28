@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import update from 'react-addons-update';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import InputLine from './InputLine';
 import { generateFormFieldsForExportDefinition, isSuitable, uniqueForProperty } from '../utility/Helper';
 
@@ -123,46 +122,72 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
         fetchData();
     }, []);
 
-    const addLine = () => {
-        const line = {
-            id: `id-${state.keyStart + 1}`,
-            value: state.formFields[0].id,
-            conversionValue: ''
-        };
-        const newState = update(state, {
-            lines: {
-                $push: [line]
-            },
-            keyStart: { $set: state.keyStart + 1 }
+    const updateFormSelectOptions = (nextState) => {
+        const currentDefinitionFields = nextState.lines.map((line) => {
+            return line.value
         });
-        setState(newState);
-        updateFormSelectOptions(newState)
+        const list = nextState.allFormsData.map((item) => {
+            if (isSuitable(item.processedFieldNames, currentDefinitionFields)) {
+                return {
+                    id: item.__identity,
+                    label: item.formIdentifier + '-' + item.hash.substring(0, 10)
+                }
+            }
+        }).filter((item) => item !== undefined);
+
+        setList(list)
+    }
+
+    // Keep form dropdown options in sync with selected field mappings; must not run inside setState updaters.
+    // Skip while no form is selected so fetchData / onFormSelected own the list (including create-flow placeholder).
+    useEffect(() => {
+        if (formIdentifier === '' || !state.allFormsData?.length) {
+            return;
+        }
+        updateFormSelectOptions(state);
+    }, [state.lines, state.allFormsData, formIdentifier]);
+
+    const addLine = () => {
+        setState(prevState => {
+            const line = {
+                id: `id-${prevState.keyStart + 1}`,
+                value: prevState.formFields[0].id,
+                conversionValue: ''
+            };
+            return {
+                ...prevState,
+                lines: [...prevState.lines, line],
+                keyStart: prevState.keyStart + 1
+            };
+        });
     };
 
     const formFieldNameChanged = (event, index) => {
-        const newState = update(state, {
-            lines: {
-                [index]: {
-                    value: {
-                        $set: event.target.value
-                    }
-                }
-            }
+        setState(prevState => {
+            const newLines = [...prevState.lines];
+            newLines[index] = {
+                ...newLines[index],
+                value: event.target.value
+            };
+            return {
+                ...prevState,
+                lines: newLines
+            };
         });
-        setState(newState);
-        updateFormSelectOptions(newState);
     };
 
     const conversionFieldNameChanged = (event, index) => {
-        setState(update(state, {
-            lines: {
-                [index]: {
-                    conversionValue: {
-                        $set: event.target.value
-                    }
-                }
-            }
-        }));
+        setState(prevState => {
+            const newLines = [...prevState.lines];
+            newLines[index] = {
+                ...newLines[index],
+                conversionValue: event.target.value
+            };
+            return {
+                ...prevState,
+                lines: newLines
+            };
+        });
     };
 
     const onDragEnd = (result) => {
@@ -174,27 +199,28 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
             return;
         }
 
-        const lines = reorder(
-            state.lines,
-            result.source.index,
-            result.destination.index
-        );
-
-        setState(update(state, {
-            lines: {
-                $set: lines
-            }
-        }));
+        setState(prevState => {
+            const lines = reorder(
+                prevState.lines,
+                result.source.index,
+                result.destination.index
+            );
+            return {
+                ...prevState,
+                lines: lines
+            };
+        });
     };
 
     const removeLine = (index) => {
-        const newState = update(state, {
-            lines: {
-                $splice: [[index, 1]]
-            }
+        setState(prevState => {
+            const newLines = [...prevState.lines];
+            newLines.splice(index, 1);
+            return {
+                ...prevState,
+                lines: newLines
+            };
         });
-        setState(newState);
-        updateFormSelectOptions(newState);
     };
 
     const sendData = () => {
@@ -247,56 +273,39 @@ const ExportDefinitionEditor = ({ reset, definitionIdentifier, apiFormData, apiE
     };
 
     const onLabelChanged = (event) => {
-        setState(update(state, {
-            label: {
-                $set: event.target.value
-            }
+        setState(prevState => ({
+            ...prevState,
+            label: event.target.value
         }));
     };
 
     const onTypeSelected = (event) => {
-        setState(update(state, {
-            selectedType: {
-                $set: event.target.value
-            }
+        setState(prevState => ({
+            ...prevState,
+            selectedType: event.target.value
         }));
     };
 
     const onFormSelected = (event) => {
         setSelectedFormIdentifier(event.target.value);
-        setList(update(list, {
-            $splice: [[0, 1]]
-        }))
+        setList(prevList => {
+            const newList = [...prevList];
+            newList.splice(0, 1);
+            return newList;
+        });
         state.allFormsData.forEach((formData) => {
             if (formData.__identity === event.target.value) {
-                setState(update(state, {
-                    formFields: {
-                        $set: formData.processedFieldNames.map((item) => {
-                            return {
-                                id: item,
-                                label: item
-                            }
-                        })
-                    }
+                setState(prevState => ({
+                    ...prevState,
+                    formFields: formData.processedFieldNames.map((item) => {
+                        return {
+                            id: item,
+                            label: item
+                        }
+                    })
                 }));
             }
         });
-    }
-
-    const updateFormSelectOptions = (state) => {
-        const currentDefinitionFields = state.lines.map((line) => {
-            return line.value
-        });
-        const list = state.allFormsData.map((item) => {
-            if (isSuitable(item.processedFieldNames, currentDefinitionFields)) {
-                return {
-                    id: item.__identity,
-                    label: item.formIdentifier + '-' + item.hash.substring(0, 10)
-                }
-            }
-        }).filter((item) => item !== undefined);
-
-        setList(list)
     }
 
     return (

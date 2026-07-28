@@ -36,7 +36,7 @@ prototype(PunktDe.Form.Persistence:Backend.FormData.Index) < prototype(Neos.Fusi
 
             contentDimensions = Neos.Fusion:Map {
                 items = ${formData.contentDimensions}
-                itemRenderer = ${String.toUpperCase(Array.first(item))}
+                itemRenderer = ${String.toUpperCase(Type.isArray(item) ? Array.first(item) : item)}
                 @process.join = ${Array.join(value, '_')}
             }
 
