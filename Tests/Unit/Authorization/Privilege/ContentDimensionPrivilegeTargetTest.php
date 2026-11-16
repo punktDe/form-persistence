@@ -16,7 +16,7 @@ use PunktDe\Form\Persistence\Authorization\Privilege\ContentDimensionPrivilegeTa
 class ContentDimensionPrivilegeTargetTest extends UnitTestCase
 {
 
-    public function contentDimensionPrivilegeMatcherDataProvider(): array
+    public static function contentDimensionPrivilegeMatcherDataProvider(): array
     {
         return [
             'onlyMatchingCountry' => [
@@ -68,17 +68,17 @@ class ContentDimensionPrivilegeTargetTest extends UnitTestCase
      *
      * @param string $matcher
      * @param string $subject
-     * @param bool $expected
+     * @param bool $match
      * @throws \JsonException
      * @throws \Neos\Flow\Security\Exception\InvalidPrivilegeTypeException
      */
-    public function contentDimensionPrivilegeMatcherTest(string $matcher, string $subject, bool $expected): void
+    public function contentDimensionPrivilegeMatcherTest(string $matcher, string $subject, bool $match): void
     {
         $privilegeTargetMock = $this->getMockBuilder(PrivilegeTarget::class)->disableOriginalConstructor()->getMock();
         $contentDimensionPrivilegeTarget = new ContentDimensionPrivilegeTarget(json_decode($subject, true, 512, JSON_THROW_ON_ERROR));
         $contentDimensionPrivilegeMock = new ContentDimensionPrivilege($privilegeTargetMock, $matcher, 'GRANT', []);
 
-        self::assertEquals($expected, $contentDimensionPrivilegeMock->matchesSubject($contentDimensionPrivilegeTarget));
+        self::assertEquals($match, $contentDimensionPrivilegeMock->matchesSubject($contentDimensionPrivilegeTarget));
     }
 
 }
